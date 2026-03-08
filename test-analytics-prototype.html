@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard — Animated Prototype</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07071a;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --skeleton: rgba(255,255,255,0.06);
+      --skeleton-shine: rgba(255,255,255,0.13);
+      --text: #ffffff;
+      --subtext: #8888aa;
+      --teal: #4ecdc4;
+      --coral: #ff6b6b;
+      --gold: #ffd93d;
+      --lavender: #a78bfa;
+      --green: #6ee7b7;
+    }
+
+    body {
+      background: radial-gradient(ellipse at 50% 0%, #131332 0%, #07071a 65%);
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 64px;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+    .header .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 12px;
+      opacity: 0.85;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 30%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--subtext);
+    }
+
+    /* ── Section wrapper ── */
+    .dashboard {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--subtext);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Stat Cards ── */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px 24px;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.035) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* skeleton layer */
+    .skel-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 28px 24px 24px;
+      background: var(--surface);
+      border-radius: 20px;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .skel {
+      background: var(--skeleton);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .skel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, var(--skeleton-shine) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer 1.8s infinite;
+    }
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+
+    /* real card content */
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .card-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--subtext);
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .card-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .card-delta {
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .card-delta.up {
+      background: rgba(110, 231, 183, 0.12);
+      color: var(--green);
+    }
+    .card-delta.down {
+      background: rgba(255, 107, 107, 0.12);
+      color: var(--coral);
+    }
+
+    /* glow accent under the value */
+    .card-glow {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      filter: blur(32px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* ── Bar Chart Section ── */
+    .chart-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .chart-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .chart-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .chart-subtitle {
+      font-size: 12px;
+      color: var(--subtext);
+      margin-top: 4px;
+    }
+    .chart-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(78, 205, 196, 0.1);
+      color: var(--teal);
+      border: 1px solid rgba(78, 205, 196, 0.2);
+      letter-spacing: 0.04em;
+    }
+
+    .bars-area {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      height: 160px;
+      padding-bottom: 0;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+    }
+
+    .bar-fill {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      height: 0%; /* animated via GSAP */
+      position: relative;
+      overflow: hidden;
+      transition: none;
+    }
+
+    /* shimmer on bars during skeleton phase */
+    .bar-fill.skel-bar {
+      background: var(--skeleton);
+    }
+    .bar-fill.skel-bar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, var(--skeleton-shine) 0%, transparent 100%);
+      animation: barShimmer 1.6s ease-in-out infinite alternate;
+    }
+    @keyframes barShimmer {
+      0%   { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    .bar-day {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--subtext);
+      letter-spacing: 0.03em;
+      margin-top: 10px;
+    }
+
+    .bar-tip {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text);
+      opacity: 0;
+      white-space: nowrap;
+    }
+
+    /* grid lines */
+    .chart-grid {
+      position: relative;
+    }
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .grid-line {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Floating status dot ── */
+    .live-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--green);
+      margin-top: 20px;
+    }
+    .live-dot-circle {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.5);
+      animation: pulse 2s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0   rgba(110, 231, 183, 0.5); }
+      70%  { box-shadow: 0 0 0 8px rgba(110, 231, 183, 0);   }
+      100% { box-shadow: 0 0 0 0   rgba(110, 231, 183, 0);   }
+    }
+
+    /* ── Footer ── */
+    .footer-note {
+      margin-top: 52px;
+      font-size: 11px;
+      color: rgba(136, 136, 170, 0.5);
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="eyebrow">Animated Prototype</div>
+    <h1>Product Analytics Dashboard</h1>
+    <p>Skeleton loading → data reveal · loops continuously · dark premium theme</p>
+  </div>
+
+  <div class="dashboard">
+
+    <!-- ── Section 1: Key Metrics ── -->
+    <div>
+      <div class="section-label">Key Metrics</div>
+      <div class="cards-row" id="cards-row">
+
+        <!-- Card 1: DAU -->
+        <div class="card" id="card-dau">
+          <div class="skel-overlay" id="skel-dau">
+            <div class="skel" style="height:40px; width:40px; border-radius:12px;"></div>
+            <div class="skel" style="height:12px; width:55%;"></div>
+            <div class="skel" style="height:38px; width:80%;"></div>
+            <div class="skel" style="height:22px; width:40%; border-radius:20px;"></div>
+          </div>
+          <div class="card-content" style="opacity:0;" id="content-dau">
+            <div class="card-icon" style="background: rgba(78,205,196,0.15);">📊</div>
+            <div class="card-label">Daily Active Users</div>
+            <div class="card-value" id="val-dau" style="color: var(--teal);">0</div>
+            <div class="card-delta up">↑ 12.4% vs last week</div>
+            <div class="card-glow" style="background: var(--teal);"></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Revenue -->
+        <div class="card" id="card-rev">
+          <div class="skel-overlay" id="skel-rev">
+            <div class="skel" style="height:40px; width:40px; border-radius:12px;"></div>
+            <div class="skel" style="height:12px; width:55%;"></div>
+            <div class="skel" style="height:38px; width:80%;"></div>
+            <div class="skel" style="height:22px; width:40%; border-radius:20px;"></div>
+          </div>
+          <div class="card-content" style="opacity:0;" id="content-rev">
+            <div class="card-icon" style="background: rgba(255,217,61,0.12);">💰</div>
+            <div class="card-label">Monthly Revenue</div>
+            <div class="card-value" id="val-rev" style="color: var(--gold);">$0</div>
+            <div class="card-delta up">↑ 8.7% MoM</div>
+            <div class="card-glow" style="background: var(--gold);"></div>
+          </div>
+        </div>
+
+        <!-- Card 3: Churn Rate -->
+        <div class="card" id="card-churn">
+          <div class="skel-overlay" id="skel-churn">
+            <div class="skel" style="height:40px; width:40px; border-radius:12px;"></div>
+            <div class="skel" style="height:12px; width:55%;"></div>
+            <div class="skel" style="height:38px; width:80%;"></div>
+            <div class="skel" style="height:22px; width:40%; border-radius:20px;"></div>
+          </div>
+          <div class="card-content" style="opacity:0;" id="content-churn">
+            <div class="card-icon" style="background: rgba(167,139,250,0.12);">📉</div>
+            <div class="card-label">Churn Rate</div>
+            <div class="card-value" id="val-churn" style="color: var(--lavender);">0%</div>
+            <div class="card-delta down">↓ 0.3% vs last month</div>
+            <div class="card-glow" style="background: var(--lavender);"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Section 2: Bar Chart ── -->
+    <div>
+      <div class="section-label">Weekly Active Users</div>
+      <div class="chart-panel" id="chart-panel">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Weekly Active Users</div>
+            <div class="chart-subtitle">Mon – Sun · current week</div>
+          </div>
+          <div class="chart-badge" id="chart-badge">LIVE</div>
+        </div>
+
+        <div class="chart-grid" style="position:relative;">
+          <!-- background grid lines -->
+          <div class="grid-lines" style="height:160px; padding-bottom:0;">
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+          </div>
+
+          <div class="bars-area" id="bars-area">
+            <!-- bars injected by JS -->
+          </div>
+        </div>
+
+        <div class="live-dot">
+          <div class="live-dot-circle"></div>
+          Updating live
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">Auto-loops · built with GSAP · prototype only</div>
+
+<script>
+  // ─── Data ───────────────────────────────────────────────────────────────────
+  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  // heights as % of track (0–100)
+  const BAR_DATA = [42, 58, 71, 65, 88, 53, 36];
+  const BAR_COLORS = [
+    'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)',
+    'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)',
+    'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)',
+    'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)',
+    'linear-gradient(180deg, #4ecdc4 0%, #2ab8ae 100%)', // peak day — teal highlight
+    'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)',
+    'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)',
+  ];
+  const BAR_LABELS = ['24.1k', '32.8k', '40.2k', '37.5k', '49.6k', '30.1k', '20.9k'];
+
+  // ─── Build Bar Chart DOM ─────────────────────────────────────────────────────
+  const barsArea = document.getElementById('bars-area');
+  DAYS.forEach((day, i) => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill skel-bar';
+    fill.id = `bar-${i}`;
+    fill.style.height = '0%';
+
+    const tip = document.createElement('div');
+    tip.className = 'bar-tip';
+    tip.id = `tip-${i}`;
+    tip.textContent = BAR_LABELS[i];
+
+    fill.appendChild(tip);
+    track.appendChild(fill);
+
+    const label = document.createElement('div');
+    label.className = 'bar-day';
+    label.textContent = day;
+
+    col.appendChild(track);
+    col.appendChild(label);
+    barsArea.appendChild(col);
+  });
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────────
+  function resetCards() {
+    ['dau','rev','churn'].forEach(id => {
+      gsap.set(`#skel-${id}`, { opacity: 1, display: 'flex' });
+      gsap.set(`#content-${id}`, { opacity: 0 });
+    });
+    document.getElementById('val-dau').textContent   = '0';
+    document.getElementById('val-rev').textContent   = '$0';
+    document.getElementById('val-churn').textContent = '0%';
+  }
+
+  function resetBars() {
+    for (let i = 0; i < 7; i++) {
+      const bar = document.getElementById(`bar-${i}`);
+      const tip = document.getElementById(`tip-${i}`);
+      bar.classList.add('skel-bar');
+      bar.style.background = '';
+      gsap.set(bar, { height: '0%' });
+      gsap.set(tip, { opacity: 0 });
+    }
+  }
+
+  // ─── Card Reveal ─────────────────────────────────────────────────────────────
+  function revealCard(skelId, contentId, valueId, targetVal, formatter, color) {
+    const tl = gsap.timeline();
+    const skel    = document.getElementById(skelId);
+    const content = document.getElementById(contentId);
+    const valEl   = document.getElementById(valueId);
+    const icon    = content.querySelector('.card-icon');
+    const label   = content.querySelector('.card-label');
+    const value   = content.querySelector('.card-value');
+    const delta   = content.querySelector('.card-delta');
+
+    // pre-set real content elements
+    gsap.set([icon, label, value, delta], { opacity: 0, y: 12 });
+
+    tl
+      // skeleton fades out
+      .to(skel, { opacity: 0, duration: 0.45, ease: 'power2.out',
+                  onComplete: () => { skel.style.display = 'none'; } })
+      // content fades in
+      .to(content, { opacity: 1, duration: 0.3, ease: 'power2.out' }, '-=0.1')
+      // icon pops
+      .to(icon,    { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(2.2)' }, '-=0.15')
+      // label slides
+      .to(label,   { opacity: 1, y: 0, duration: 0.3, ease: 'power3.out' }, '-=0.2')
+      // value counts up
+      .add(() => {
+        const proxy = { val: 0 };
+        gsap.to(proxy, {
+          val: targetVal,
+          duration: 1.4,
+          ease: 'power2.out',
+          onUpdate: () => { valEl.textContent = formatter(proxy.val); }
+        });
+        gsap.to(value, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' });
+      }, '-=0.1')
+      // delta badge
+      .to(delta, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }, '+=0.8');
+
+    return tl;
+  }
+
+  // ─── Bar Chart Reveal ─────────────────────────────────────────────────────────
+  function runBarChart() {
+    const tl = gsap.timeline();
+
+    for (let i = 0; i < 7; i++) {
+      const bar = document.getElementById(`bar-${i}`);
+      const tip = document.getElementById(`tip-${i}`);
+      const targetH = BAR_DATA[i];
+
+      // stagger each bar by 0.1s
+      tl.add(() => {
+        bar.classList.remove('skel-bar');
+        bar.style.background = BAR_COLORS[i];
+        gsap.to(bar, {
+          height: targetH + '%',
+          duration: 0.7,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.to(tip, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+          }
+        });
+      }, i * 0.1);
+    }
+
+    return tl;
+  }
+
+  // ─── Main Loop: Cards ─────────────────────────────────────────────────────────
+  function runCardLoop() {
+    resetCards();
+    const masterTl = gsap.timeline({
+      onComplete: () => {
+        gsap.delayedCall(2.2, runCardLoop);
+      }
+    });
+
+    // each card reveals one by one with a gap
+    masterTl
+      .add(revealCard('skel-dau',   'content-dau',   'val-dau',   24618, v => Math.round(v).toLocaleString(), '#4ecdc4'), 0)
+      .add(revealCard('skel-rev',   'content-rev',   'val-rev',   182400, v => '$' + Math.round(v / 1000).toFixed(0) + 'K', '#ffd93d'), '+=0.6')
+      .add(revealCard('skel-churn', 'content-churn', 'val-churn', 2.1,   v => v.toFixed(1) + '%', '#a78bfa'), '+=0.6')
+      .to({}, { duration: 1.8 }); // hold before looping
+
+    return masterTl;
+  }
+
+  // ─── Main Loop: Bars ─────────────────────────────────────────────────────────
+  function runBarLoop() {
+    resetBars();
+
+    // skeleton bars grow slightly to show "loading" feel
+    for (let i = 0; i < 7; i++) {
+      gsap.set(document.getElementById(`bar-${i}`), { height: (BAR_DATA[i] * 0.25) + '%' });
+    }
+
+    // after skeleton hold, reveal real bars
+    gsap.delayedCall(1.5, () => {
+      const tl = runBarChart();
+      tl.add(() => {
+        gsap.delayedCall(3.5, runBarLoop);
+      });
+    });
+  }
+
+  // ─── Kick off both loops independently ───────────────────────────────────────
+  runCardLoop();
+  runBarLoop();
+</script>
+</body>
+</html>
