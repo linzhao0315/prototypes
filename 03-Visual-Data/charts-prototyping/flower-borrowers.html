@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Five Petals, Five Lives</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(ellipse at 50% 38%, #f5f0e4 0%, #faf6ef 65%);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+      padding-bottom: 60px;
+      opacity: 0;
+    }
+
+    /* Subtle paper grain texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      color: #a0b890;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      color: #3a4a30;
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.0;
+      margin-bottom: 0;
+    }
+
+    .subtitle {
+      color: #8a9878;
+      font-size: 15px;
+      font-weight: 300;
+      margin-top: 12px;
+    }
+
+    .scene {
+      position: relative;
+      width: 900px;
+      height: 700px;
+      margin: 0 auto;
+      z-index: 1;
+    }
+
+    svg.main-svg {
+      position: absolute;
+      left: 150px;
+      top: 0;
+      width: 600px;
+      height: 700px;
+      overflow: visible;
+    }
+
+    .hint-text {
+      position: absolute;
+      left: 150px;
+      width: 600px;
+      bottom: 48px;
+      text-align: center;
+      color: #a0b890;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: lowercase;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Info cards — minimal Korean/Japanese style */
+    .info-card {
+      position: absolute;
+      width: 185px;
+      background: rgba(255, 252, 246, 0.97);
+      border-radius: 16px;
+      padding: 18px 20px 18px 20px;
+      box-shadow: 0 8px 40px rgba(90,138,72,0.12), 0 2px 12px rgba(0,0,0,0.05);
+      border: none;
+      opacity: 0;
+      pointer-events: none;
+      will-change: transform, opacity;
+      display: flex;
+      gap: 0;
+    }
+
+    /* Left accent bar */
+    .card-accent {
+      width: 3px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-right: 14px;
+      align-self: stretch;
+    }
+
+    .card-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .card-emoji {
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .card-name {
+      color: #2e3e24;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .card-loc {
+      color: #a0b890;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-bottom: 10px;
+    }
+
+    .card-bio {
+      color: #5a7248;
+      font-size: 12px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .card-loan {
+      color: #5a8a48;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="eyebrow">loan portfolio</div>
+    <h1>Five petals,<br>five lives.</h1>
+    <p class="subtitle">Each bloom is someone you've helped grow.</p>
+  </header>
+
+  <div class="scene" id="scene">
+
+    <svg class="main-svg" id="main-svg" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Leaf blur for painterly soft edges -->
+        <filter id="leafBlur" x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur stdDeviation="0.6"/>
+        </filter>
+
+        <!-- Leaf radial gradient — watercolor organic look -->
+        <radialGradient id="leafGradL" cx="50%" cy="43%" r="55%">
+          <stop offset="0%" stop-color="#c0dba8"/>
+          <stop offset="100%" stop-color="#7aaa62"/>
+        </radialGradient>
+        <radialGradient id="leafGradR" cx="50%" cy="43%" r="55%">
+          <stop offset="0%" stop-color="#c0dba8"/>
+          <stop offset="100%" stop-color="#7aaa62"/>
+        </radialGradient>
+
+        <!-- Leaf depth shadow layers (darker, slightly larger) -->
+        <radialGradient id="leafDepthGrad" cx="50%" cy="43%" r="55%">
+          <stop offset="0%" stop-color="#5a8a48"/>
+          <stop offset="100%" stop-color="#4a7038"/>
+        </radialGradient>
+
+        <!-- Pistil gradients -->
+        <radialGradient id="pistilGrad" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#f9d080"/>
+          <stop offset="100%" stop-color="#e8a830"/>
+        </radialGradient>
+        <radialGradient id="pistilDotA" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#f9d080"/>
+          <stop offset="100%" stop-color="#e8a830"/>
+        </radialGradient>
+        <radialGradient id="pistilDotB" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#f9d080"/>
+          <stop offset="100%" stop-color="#e8b84b"/>
+        </radialGradient>
+
+        <!-- Petal radial gradients — dusty watercolor washes -->
+        <!-- Petal 0: dusty rose -->
+        <radialGradient id="petalGrad0" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#f5e8e8"/>
+          <stop offset="100%" stop-color="#eac9c9"/>
+        </radialGradient>
+        <!-- Petal 0 inner layer (lighter) -->
+        <radialGradient id="petalInner0" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#fdf5f5"/>
+          <stop offset="100%" stop-color="#f2d8d8"/>
+        </radialGradient>
+        <!-- Petal 1: warm ivory -->
+        <radialGradient id="petalGrad1" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#f8f0e0"/>
+          <stop offset="100%" stop-color="#ecdec8"/>
+        </radialGradient>
+        <radialGradient id="petalInner1" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#fdf8f0"/>
+          <stop offset="100%" stop-color="#f5ead8"/>
+        </radialGradient>
+        <!-- Petal 2: muted lavender -->
+        <radialGradient id="petalGrad2" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#e8e5f5"/>
+          <stop offset="100%" stop-color="#cec8e4"/>
+        </radialGradient>
+        <radialGradient id="petalInner2" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#f5f3fc"/>
+          <stop offset="100%" stop-color="#ddd8ee"/>
+        </radialGradient>
+        <!-- Petal 3: celadon -->
+        <radialGradient id="petalGrad3" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#dceee8"/>
+          <stop offset="100%" stop-color="#b8d4cc"/>
+        </radialGradient>
+        <radialGradient id="petalInner3" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#eef7f4"/>
+          <stop offset="100%" stop-color="#c8e0d8"/>
+        </radialGradient>
+        <!-- Petal 4: sage green -->
+        <radialGradient id="petalGrad4" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#dde8cc"/>
+          <stop offset="100%" stop-color="#ccd8b8"/>
+        </radialGradient>
+        <radialGradient id="petalInner4" cx="50%" cy="72%" r="60%">
+          <stop offset="0%" stop-color="#eef5e0"/>
+          <stop offset="100%" stop-color="#d8e4c4"/>
+        </radialGradient>
+
+        <!-- Leaf shadow filter -->
+        <filter id="leafShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="rgba(70,110,50,0.14)"/>
+        </filter>
+      </defs>
+
+      <!-- STEM -->
+      <path id="stem"
+        d="M 300,660 Q 304,560 300,460"
+        stroke="#8cc97a" stroke-width="3" fill="none"
+        stroke-linecap="round"/>
+
+      <!-- LEAF — depth shadow layers (slightly larger, darker, behind) -->
+      <path id="leaf-left-depth"
+        d="M 300,148 C 264,198 198,248 178,308 C 192,374 252,426 300,452"
+        fill="#5a8a48"
+        opacity="0"
+        transform="scale(1.04) translate(-11, -11)"
+        transform-origin="300px 300px"/>
+
+      <path id="leaf-right-depth"
+        d="M 300,148 C 336,198 402,248 422,308 C 408,374 348,426 300,452"
+        fill="#5a8a48"
+        opacity="0"
+        transform="scale(1.04) translate(11, -11)"
+        transform-origin="300px 300px"/>
+
+      <!-- LEAF main halves — painterly brushstroke paths -->
+      <path id="leaf-left"
+        d="M 300,148 C 264,198 198,248 178,308 C 192,374 252,426 300,452"
+        fill="url(#leafGradL)"
+        opacity="0"
+        filter="url(#leafBlur)"/>
+
+      <path id="leaf-right"
+        d="M 300,148 C 336,198 402,248 422,308 C 408,374 348,426 300,452"
+        fill="url(#leafGradR)"
+        opacity="0"
+        filter="url(#leafBlur)"/>
+
+      <!-- CENTER VEIN — ink brush stroke -->
+      <path id="vein-center"
+        d="M 300,150 C 299,220 301,340 300,450"
+        stroke="#5a8a48" stroke-width="1.3" fill="none"
+        stroke-linecap="round"
+        opacity="0.65"/>
+
+      <!-- BRANCH VEINS — organic, slightly irregular -->
+      <path class="branch-vein" d="M 300,208 C 278,218 255,228 237,244" stroke="#5a8a48" stroke-width="0.7" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path class="branch-vein" d="M 300,262 C 272,275 248,285 224,300" stroke="#5a8a48" stroke-width="0.7" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path class="branch-vein" d="M 300,318 C 274,330 253,342 234,358" stroke="#5a8a48" stroke-width="0.7" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path class="branch-vein" d="M 300,208 C 322,216 346,228 363,244" stroke="#5a8a48" stroke-width="0.7" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path class="branch-vein" d="M 300,262 C 328,274 353,285 376,300" stroke="#5a8a48" stroke-width="0.7" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path class="branch-vein" d="M 300,318 C 326,330 347,341 366,358" stroke="#5a8a48" stroke-width="0.7" fill="none" stroke-linecap="round" opacity="0.45"/>
+
+      <!-- PETALS — slightly asymmetric organic magnolia/sakura shapes -->
+
+      <!-- Petal 0: top (0°) — base shape -->
+      <g class="petal-group" id="petal-0" transform="translate(300,300) rotate(0)">
+        <path d="M 0,20 C 22,14 38,-22 28,-68 C 16,-96 -12,-98 -28,-72 C -40,-30 -24,14 0,20 Z"
+          fill="url(#petalInner0)" opacity="0.28"/>
+        <path d="M 0,20 C 22,14 38,-22 28,-68 C 16,-96 -12,-98 -28,-72 C -40,-30 -24,14 0,20 Z"
+          fill="url(#petalGrad0)"/>
+      </g>
+
+      <!-- Petal 1: 72° (upper-right) — subtle variation -->
+      <g class="petal-group" id="petal-1" transform="translate(300,300) rotate(72)">
+        <path d="M 0,20 C 24,14 40,-20 30,-70 C 18,-97 -10,-97 -26,-71 C -38,-29 -22,14 0,20 Z"
+          fill="url(#petalInner1)" opacity="0.28"/>
+        <path d="M 0,20 C 24,14 40,-20 30,-70 C 18,-97 -10,-97 -26,-71 C -38,-29 -22,14 0,20 Z"
+          fill="url(#petalGrad1)"/>
+      </g>
+
+      <!-- Petal 2: 144° (lower-right) — subtle variation -->
+      <g class="petal-group" id="petal-2" transform="translate(300,300) rotate(144)">
+        <path d="M 0,20 C 20,15 36,-24 26,-66 C 14,-95 -14,-99 -30,-73 C -42,-31 -26,15 0,20 Z"
+          fill="url(#petalInner2)" opacity="0.28"/>
+        <path d="M 0,20 C 20,15 36,-24 26,-66 C 14,-95 -14,-99 -30,-73 C -42,-31 -26,15 0,20 Z"
+          fill="url(#petalGrad2)"/>
+      </g>
+
+      <!-- Petal 3: 216° (lower-left) — subtle variation -->
+      <g class="petal-group" id="petal-3" transform="translate(300,300) rotate(216)">
+        <path d="M 0,20 C 23,13 39,-21 29,-69 C 17,-96 -11,-98 -27,-72 C -39,-30 -23,13 0,20 Z"
+          fill="url(#petalInner3)" opacity="0.28"/>
+        <path d="M 0,20 C 23,13 39,-21 29,-69 C 17,-96 -11,-98 -27,-72 C -39,-30 -23,13 0,20 Z"
+          fill="url(#petalGrad3)"/>
+      </g>
+
+      <!-- Petal 4: 288° (upper-left) — subtle variation -->
+      <g class="petal-group" id="petal-4" transform="translate(300,300) rotate(288)">
+        <path d="M 0,20 C 21,14 37,-23 27,-67 C 15,-96 -13,-98 -29,-73 C -41,-31 -25,14 0,20 Z"
+          fill="url(#petalInner4)" opacity="0.28"/>
+        <path d="M 0,20 C 21,14 37,-23 27,-67 C 15,-96 -13,-98 -29,-73 C -41,-31 -25,14 0,20 Z"
+          fill="url(#petalGrad4)"/>
+      </g>
+
+      <!-- PISTIL cluster — central gold circle + ring of tiny dots -->
+      <g id="pistil-group">
+        <circle id="pistil" cx="300" cy="300" r="14" fill="url(#pistilGrad)"/>
+        <!-- 8 tiny stamen dots around center at r=22 -->
+        <circle class="stamen-dot" cx="300" cy="278" r="3.5" fill="#f9d080"/>
+        <circle class="stamen-dot" cx="315.6" cy="282.2" r="3.5" fill="#e8b84b"/>
+        <circle class="stamen-dot" cx="322" cy="296.4" r="3.5" fill="#f9d080"/>
+        <circle class="stamen-dot" cx="315.6" cy="311.6" r="3.5" fill="#e8b84b"/>
+        <circle class="stamen-dot" cx="300" cy="322" r="3.5" fill="#f9d080"/>
+        <circle class="stamen-dot" cx="284.4" cy="317.8" r="3.5" fill="#e8b84b"/>
+        <circle class="stamen-dot" cx="278" cy="303.6" r="3.5" fill="#f9d080"/>
+        <circle class="stamen-dot" cx="284.4" cy="288.4" r="3.5" fill="#e8b84b"/>
+      </g>
+
+      <!-- HINT TEXT inside SVG for easy positioning -->
+      <text id="hint-text-svg" x="300" y="480" text-anchor="middle"
+        fill="#a0b890" font-family="Inter, sans-serif"
+        font-size="12" font-weight="400" letter-spacing="2"
+        opacity="0">hover a petal</text>
+
+    </svg>
+
+    <!-- INFO CARDS -->
+    <!-- Card 0 (top petal, 0°) -->
+    <div class="info-card" id="card-0" style="top: 60px; left: 260px;">
+      <div class="card-accent" style="background:#eac9c9;"></div>
+      <div class="card-body">
+        <div class="card-name-row">
+          <span class="card-emoji">🌸</span>
+          <span class="card-name">Maria Santos</span>
+        </div>
+        <div class="card-loc">📍 Philippines</div>
+        <p class="card-bio">"Expanding her store to send kids to school."</p>
+        <div class="card-loan">Loan: $1,200</div>
+      </div>
+    </div>
+
+    <!-- Card 1 (upper-right petal, 72°) -->
+    <div class="info-card" id="card-1" style="top: 175px; left: 768px;">
+      <div class="card-accent" style="background:#ecdec8;"></div>
+      <div class="card-body">
+        <div class="card-name-row">
+          <span class="card-emoji">🌾</span>
+          <span class="card-name">Amina Diallo</span>
+        </div>
+        <div class="card-loc">📍 Senegal</div>
+        <p class="card-bio">"Growing millet to feed the village and market."</p>
+        <div class="card-loan">Loan: $800</div>
+      </div>
+    </div>
+
+    <!-- Card 2 (lower-right petal, 144°) -->
+    <div class="info-card" id="card-2" style="top: 355px; left: 768px;">
+      <div class="card-accent" style="background:#cec8e4;"></div>
+      <div class="card-body">
+        <div class="card-name-row">
+          <span class="card-emoji">📚</span>
+          <span class="card-name">Priya Sharma</span>
+        </div>
+        <div class="card-loc">📍 India</div>
+        <p class="card-bio">"Solar lights for 30 students in evening classes."</p>
+        <div class="card-loan">Loan: $1,000</div>
+      </div>
+    </div>
+
+    <!-- Card 3 (lower-left petal, 216°) -->
+    <div class="info-card" id="card-3" style="top: 355px; left: -65px;">
+      <div class="card-accent" style="background:#b8d4cc;"></div>
+      <div class="card-body">
+        <div class="card-name-row">
+          <span class="card-emoji">🧵</span>
+          <span class="card-name">Keiko Tanaka</span>
+        </div>
+        <div class="card-loc">📍 Japan</div>
+        <p class="card-bio">"Preserving weaving by training apprentices."</p>
+        <div class="card-loan">Loan: $650</div>
+      </div>
+    </div>
+
+    <!-- Card 4 (upper-left petal, 288°) -->
+    <div class="info-card" id="card-4" style="top: 175px; left: -65px;">
+      <div class="card-accent" style="background:#ccd8b8;"></div>
+      <div class="card-body">
+        <div class="card-name-row">
+          <span class="card-emoji">✂️</span>
+          <span class="card-name">Fatima Al-Rashid</span>
+        </div>
+        <div class="card-loc">📍 Jordan</div>
+        <p class="card-bio">"Running a tailoring co-op for ten women."</p>
+        <div class="card-loan">Loan: $900</div>
+      </div>
+    </div>
+
+  </div><!-- end .scene -->
+
+  <script>
+    // ─── Petal accent colors (matching cards) ────────────────────────────────
+    const petalColors = ['#eac9c9', '#ecdec8', '#cec8e4', '#b8d4cc', '#ccd8b8'];
+
+    // ─── DOM refs ─────────────────────────────────────────────────────────────
+    const stem         = document.getElementById('stem');
+    const leafLeftEl   = document.getElementById('leaf-left');
+    const leafRightEl  = document.getElementById('leaf-right');
+    const leafLDepth   = document.getElementById('leaf-left-depth');
+    const leafRDepth   = document.getElementById('leaf-right-depth');
+    const veinCenter   = document.getElementById('vein-center');
+    const branchVeins  = document.querySelectorAll('.branch-vein');
+    const pistil       = document.getElementById('pistil');
+    const pistilGroup  = document.getElementById('pistil-group');
+    const stamenDots   = document.querySelectorAll('.stamen-dot');
+    const petalGroups  = document.querySelectorAll('.petal-group');
+    const cards        = document.querySelectorAll('.info-card');
+    const hintSvg      = document.getElementById('hint-text-svg');
+    const svgEl        = document.getElementById('main-svg');
+    const sceneEl      = document.getElementById('scene');
+
+    // ─── Stroke draw-on prep ──────────────────────────────────────────────────
+    function prepDraw(el) {
+      const len = el.getTotalLength ? el.getTotalLength() : 200;
+      el.style.strokeDasharray  = len;
+      el.style.strokeDashoffset = len;
+      return len;
+    }
+    prepDraw(stem);
+    prepDraw(veinCenter);
+    branchVeins.forEach(v => prepDraw(v));
+
+    // ─── Initial hidden states ────────────────────────────────────────────────
+    gsap.set(leafLeftEl,  { scaleX: 0, transformOrigin: '300px 300px', opacity: 0 });
+    gsap.set(leafRightEl, { scaleX: 0, transformOrigin: '300px 300px', opacity: 0 });
+    gsap.set(leafLDepth,  { scaleX: 0, transformOrigin: '300px 300px', opacity: 0 });
+    gsap.set(leafRDepth,  { scaleX: 0, transformOrigin: '300px 300px', opacity: 0 });
+    gsap.set(pistilGroup, { scale: 0, transformOrigin: '300px 300px' });
+    gsap.set(stamenDots,  { scale: 0, transformOrigin: '300px 300px', opacity: 0 });
+    gsap.set(petalGroups, { scale: 0, transformOrigin: '300px 300px' });
+    gsap.set(cards,       { opacity: 0, y: 10 });
+    gsap.set(hintSvg,     { opacity: 0 });
+
+    // ─── Breathing tween storage ──────────────────────────────────────────────
+    const breathingTweens = [];
+
+    // ─── Active petal state ───────────────────────────────────────────────────
+    let activePetal = null;
+
+    // ─── Main intro timeline ──────────────────────────────────────────────────
+    const tl = gsap.timeline();
+
+    // t=0: Page fade in
+    tl.to('body', { opacity: 1, duration: 0.7, ease: 'power2.out' }, 0);
+
+    // t=0.3: Stem draws on
+    tl.to(stem, { strokeDashoffset: 0, duration: 1.2, ease: 'power2.out' }, 0.3);
+
+    // t=1.0: Leaf depth shadows unfurl
+    tl.to(leafLDepth, {
+      scaleX: 1, opacity: 0.25,
+      duration: 1.7, ease: 'power3.out',
+      transformOrigin: '300px 300px'
+    }, 1.0);
+    tl.to(leafRDepth, {
+      scaleX: 1, opacity: 0.25,
+      duration: 1.7, ease: 'power3.out',
+      transformOrigin: '300px 300px'
+    }, 1.0);
+
+    // t=1.1: Leaf main halves unfurl (slight stagger for painted feel)
+    tl.to(leafLeftEl, {
+      scaleX: 1, opacity: 0.82,
+      duration: 1.6, ease: 'power3.out',
+      transformOrigin: '300px 300px'
+    }, 1.1);
+    tl.to(leafRightEl, {
+      scaleX: 1, opacity: 0.82,
+      duration: 1.6, ease: 'power3.out',
+      transformOrigin: '300px 300px'
+    }, 1.1);
+
+    // t=2.3: Center vein draws
+    tl.to(veinCenter, { strokeDashoffset: 0, duration: 0.55, ease: 'power2.out' }, 2.3);
+
+    // Branch veins stagger
+    branchVeins.forEach((v, i) => {
+      tl.to(v, { strokeDashoffset: 0, duration: 0.38, ease: 'power2.out' }, 2.5 + i * 0.07);
+    });
+
+    // t=2.9: Pistil group pops in
+    tl.to(pistilGroup, {
+      scale: 1, duration: 0.55,
+      ease: 'back.out(2.5)',
+      transformOrigin: '300px 300px'
+    }, 2.9);
+
+    // Stamen dots stagger in
+    tl.to(stamenDots, {
+      scale: 1, opacity: 1,
+      duration: 0.35,
+      ease: 'back.out(2)',
+      stagger: 0.05,
+      transformOrigin: '300px 300px'
+    }, 3.1);
+
+    // t=3.1: Petals bloom
+    tl.to(petalGroups, {
+      scale: 1,
+      duration: 0.7,
+      ease: 'back.out(1.7)',
+      stagger: 0.13,
+      transformOrigin: '300px 300px',
+      onComplete: () => {
+        petalGroups.forEach((p, i) => {
+          const tw = gsap.to(p, {
+            scale: 1.035 + i * 0.003,
+            duration: 2.3 + i * 0.35,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+            delay: i * 0.18,
+            transformOrigin: '300px 300px'
+          });
+          breathingTweens.push(tw);
+        });
+      }
+    }, 3.1);
+
+    // Pistil gentle pulse
+    tl.to(pistil, {
+      scale: 1.07,
+      duration: 1.6,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      transformOrigin: '300px 300px'
+    }, 3.9);
+
+    // t=4.5: Hint text fades in with pulse
+    tl.to(hintSvg, { opacity: 1, duration: 0.8, ease: 'power2.out',
+      onComplete: () => {
+        gsap.to(hintSvg, {
+          opacity: 0.6,
+          duration: 2.5,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1
+        });
+      }
+    }, 4.5);
+
+    // ─── Invisible hit circles setup ──────────────────────────────────────────
+    const FLOWER_CENTER = { x: 300, y: 300 };
+    const PETAL_VISUAL_OFFSET = 46;
+    const petalAngles = [0, 72, 144, 216, 288];
+
+    // We need the SVG element (the actual SVG DOM node, not the HTML element)
+    // Use the SVG element referenced by id
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const innerSvg = document.querySelector('svg.main-svg');
+
+    petalAngles.forEach((angleDeg, i) => {
+      const rad = (angleDeg - 90) * Math.PI / 180;
+      const cx = FLOWER_CENTER.x + PETAL_VISUAL_OFFSET * Math.cos(rad);
+      const cy = FLOWER_CENTER.y + PETAL_VISUAL_OFFSET * Math.sin(rad);
+
+      const hit = document.createElementNS(svgNS, 'circle');
+      hit.setAttribute('cx', cx);
+      hit.setAttribute('cy', cy);
+      hit.setAttribute('r', 70);
+      hit.style.fill = 'transparent';
+      hit.style.cursor = 'pointer';
+      hit.style.pointerEvents = 'all';
+      innerSvg.appendChild(hit);
+
+      let leaveTimer = null;
+
+      hit.addEventListener('mouseenter', () => {
+        clearTimeout(leaveTimer);
+        onPetalEnter(i);
+      });
+      hit.addEventListener('mouseleave', () => {
+        leaveTimer = setTimeout(() => onPetalLeave(i), 50);
+      });
+    });
+
+    // ─── Petal enter ──────────────────────────────────────────────────────────
+    function onPetalEnter(idx) {
+      // If another petal is active, hide its card instantly (no water drop)
+      if (activePetal !== null && activePetal !== idx) {
+        const prev = document.getElementById(`card-${activePetal}`);
+        gsap.set(prev, { opacity: 0, y: 10, scale: 1 });
+        prev.style.pointerEvents = 'none';
+        // Restore previous petal breathing
+        if (breathingTweens[activePetal]) breathingTweens[activePetal].play();
+        gsap.to(petalGroups[activePetal], {
+          opacity: 1, scale: 1,
+          duration: 0.2, ease: 'power2.out',
+          transformOrigin: '300px 300px'
+        });
+      }
+
+      activePetal = idx;
+      const card = document.getElementById(`card-${idx}`);
+
+      // Pause breathing for hovered petal
+      if (breathingTweens[idx]) breathingTweens[idx].pause();
+
+      // Scale up hovered petal
+      gsap.to(petalGroups[idx], {
+        scale: 1.12,
+        duration: 0.25,
+        ease: 'power2.out',
+        transformOrigin: '300px 300px'
+      });
+
+      // Dim all other petals
+      petalGroups.forEach((p, j) => {
+        if (j !== idx) {
+          gsap.to(p, {
+            opacity: 0.52, scale: 0.96,
+            duration: 0.25, ease: 'power2.out',
+            transformOrigin: '300px 300px'
+          });
+        }
+      });
+
+      // Show card
+      gsap.set(card, { scale: 1, y: 10 });
+      gsap.to(card, {
+        opacity: 1, y: 0,
+        duration: 0.28, ease: 'power3.out'
+      });
+      card.style.pointerEvents = 'auto';
+
+      // Hide hint
+      gsap.to(hintSvg, { opacity: 0, duration: 0.2 });
+    }
+
+    // ─── Petal leave ──────────────────────────────────────────────────────────
+    function onPetalLeave(idx) {
+      if (activePetal !== idx) return; // another petal is now active
+      activePetal = null;
+
+      const card = document.getElementById(`card-${idx}`);
+      card.style.pointerEvents = 'none';
+
+      // Restore all petals
+      if (breathingTweens[idx]) breathingTweens[idx].play();
+      gsap.to(petalGroups[idx], {
+        scale: 1, duration: 0.3, ease: 'power2.out',
+        transformOrigin: '300px 300px'
+      });
+      petalGroups.forEach((p, j) => {
+        if (j !== idx) {
+          gsap.to(p, {
+            opacity: 1, scale: 1,
+            duration: 0.3, ease: 'power2.out',
+            transformOrigin: '300px 300px'
+          });
+        }
+      });
+
+      // Water drop exit animation
+      waterDropExit(card, idx);
+
+      // Restore hint after drop completes (~1.2s)
+      gsap.delayedCall(1.2, () => {
+        if (activePetal === null) {
+          gsap.to(hintSvg, { opacity: 0.6, duration: 0.5 });
+        }
+      });
+    }
+
+    // ─── Water drop exit ──────────────────────────────────────────────────────
+    function waterDropExit(cardEl, petalIndex) {
+      // 1. Collapse card
+      gsap.to(cardEl, {
+        scale: 0.3, opacity: 0,
+        duration: 0.28, ease: 'back.in(2)',
+        onComplete: () => {
+          gsap.set(cardEl, { scale: 1, opacity: 0, y: 10 });
+        }
+      });
+
+      // 2. Compute drop start (card center in scene coordinates)
+      const rect = cardEl.getBoundingClientRect();
+      const sceneRect = sceneEl.getBoundingClientRect();
+      const startX = rect.left - sceneRect.left + rect.width / 2 - 5;
+      const startY = rect.top  - sceneRect.top  + rect.height / 2 - 7;
+
+      // 3. Pistil center in scene coordinates
+      // SVG is positioned at left:150px in scene; pistil at SVG (300,300)
+      // viewBox is "0 0 600 700", SVG element is 600x700 CSS px
+      // So SVG coords map 1:1 to CSS px within the SVG element
+      const pistilX = 150 + 300 - 5;  // 445
+      const pistilY = 0   + 300 - 7;  // 293
+
+      // 4. Create drop div
+      const drop = document.createElement('div');
+      drop.style.cssText = [
+        'position:absolute',
+        `left:${startX}px`,
+        `top:${startY}px`,
+        'width:10px',
+        'height:14px',
+        'background:rgba(140,190,120,0.5)',
+        'border-radius:50% 50% 50% 50% / 40% 40% 60% 60%',
+        'pointer-events:none',
+        'z-index:50',
+        'transform-origin:center center'
+      ].join(';');
+      sceneEl.appendChild(drop);
+
+      // 5. Animate drop falling to pistil
+      gsap.to(drop, {
+        x: pistilX - startX,
+        y: pistilY - startY,
+        scaleX: 1.3,
+        scaleY: 0.7,
+        duration: 0.55,
+        ease: 'power3.in',
+        onComplete: () => {
+          drop.remove();
+          createRipple();
+        }
+      });
+    }
+
+    // ─── Ripple on impact ─────────────────────────────────────────────────────
+    function createRipple() {
+      const svgNS2 = 'http://www.w3.org/2000/svg';
+      const svg2 = document.querySelector('svg.main-svg');
+
+      [0, 0.18, 0.36].forEach((delay) => {
+        const circle = document.createElementNS(svgNS2, 'circle');
+        circle.setAttribute('cx', 300);
+        circle.setAttribute('cy', 300);
+        circle.setAttribute('r', 3);
+        circle.setAttribute('fill', 'none');
+        circle.setAttribute('stroke', '#8cc97a');
+        circle.setAttribute('stroke-width', 1.5);
+        circle.setAttribute('opacity', 1);
+        svg2.appendChild(circle);
+
+        gsap.to(circle, {
+          attr: { r: 55, opacity: 0, 'stroke-width': 0.3 },
+          duration: 1.0,
+          delay,
+          ease: 'power2.out',
+          onComplete: () => circle.remove()
+        });
+      });
+    }
+  </script>
+</body>
+</html>

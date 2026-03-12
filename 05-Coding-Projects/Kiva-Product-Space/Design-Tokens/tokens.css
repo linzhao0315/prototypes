@@ -1,0 +1,706 @@
+/* Kiva Design System - CSS Custom Properties */
+/* Source: Figma Ecosystem 2026 (WIP) */
+/* Auto-generated from figma-capture - DO NOT EDIT MANUALLY */
+/* Regenerate: cd figma-capture && python3 build_tokens.py */
+
+:root {
+  /* Global Primitives */
+
+  /* type */
+  --type-font-family-serif: Dovetail MVB;
+  --type-font-family-sans: Kiva Post Grot;
+  --type-font-size-h1-sm: 22px;
+  --type-font-size-h1-lg: 26px;
+  --type-font-size-h1-md: 22px;
+  --type-font-size-h2-sm: 20px;
+  --type-font-size-h2-md: 20px;
+  --type-font-size-h2-lg: 22px;
+  --type-font-size-base-base: 16px;
+  --type-letter-spacing-neg500: -0.8px;
+  --type-letter-spacing-neg400: -0.72px;
+  --type-letter-spacing-neg300: -0.52px;
+  --type-letter-spacing-neg200: -0.22px;
+  --type-letter-spacing-neg100: -0.2px;
+  --type-letter-spacing-0: 0px;
+  --type-font-size-jumbo-sm: 36px;
+  --type-font-size-jumbo-md: 40px;
+  --type-font-size-jumbo-lg: 44px;
+  --type-line-height-jumbo-sm: 47px;
+  --type-line-height-jumbo-md: 52px;
+  --type-line-height-jumbo-lg: 57px;
+  --type-line-height-h1-sm: 31px;
+  --type-line-height-h1-md: 31px;
+  --type-line-height-h1-lg: 36px;
+  --type-line-height-h2-sm: 26px;
+  --type-line-height-h2-md: 26px;
+  --type-line-height-h2-lg: 31px;
+  --type-line-height-base-sm: 22px;
+  --type-line-height-base-md: 22px;
+  --type-line-height-base-lg: 22px;
+  --type-line-height-button-button: 21px;
+  --type-letter-spacing-neg600: -0.88px;
+  --type-font-size-h3-lg: 20px;
+  --type-font-size-h3-md: 18px;
+  --type-font-size-h3-sm: 18px;
+  --type-font-size-button-button: 17px;
+  --type-font-size-small-small: 14px;
+  --type-line-height-h3-lg: 26px;
+  --type-line-height-h3-md: 23px;
+  --type-line-height-h3-sm: 23px;
+  --type-line-height-upper-upper: 18px;
+  --type-line-height-caption-caption: 18px;
+  --type-line-height-label-label: 18px;
+
+  /* spacing */
+  --spacing-scale-0: 0px;
+  --spacing-scale-0-5: 4px;
+  --spacing-scale-1: 8px;
+  --spacing-scale-1-5: 12px;
+  --spacing-scale-2: 16px;
+  --spacing-scale-3: 24px;
+  --spacing-scale-4: 32px;
+  --spacing-scale-4-5: 36px;
+  --spacing-scale-5: 40px;
+  --spacing-scale-5-5: 44px;
+  --spacing-scale-6: 48px;
+
+  /* type */
+  --type-font-weight-normal: Book;
+  --type-font-weight-medium: Medium;
+
+  /* spacing */
+  --spacing-scale-2-5: 20px;
+  --spacing-scale-3-5: 28px;
+  --spacing-scale-6-5: 52px;
+  --spacing-scale-7: 56px;
+  --spacing-scale-7-5: 60px;
+  --spacing-scale-8: 64px;
+  --spacing-scale-8-5: 68px;
+  --spacing-scale-9: 72px;
+  --spacing-scale-9-5: 76px;
+  --spacing-scale-10: 80px;
+  --spacing-scale-10-5: 84px;
+  --spacing-scale-11: 88px;
+  --spacing-scale-11-5: 92px;
+  --spacing-scale-12: 96px;
+  --spacing-scale-12-5: 100px;
+  --spacing-scale-13: 104px;
+  --spacing-scale-13-5: 108px;
+  --spacing-scale-14: 112px;
+  --spacing-scale-14-5: 116px;
+  --spacing-scale-15: 120px;
+  --spacing-scale-15-5: 124px;
+  --spacing-scale-16: 128px;
+
+  /* color */
+  --color-neutral-white: #ffffff;
+  --color-neutral-black: #000000;
+  --color-gray-800: #212121;
+  --color-gray-700: #454545;
+  --color-gray-600: #505050;
+  --color-gray-500: #757575;
+  --color-gray-400: #9e9e9e;
+  --color-gray-300: #c4c4c4;
+  --color-gray-200: #e0e0e0;
+  --color-gray-100: #f5f5f5;
+  --color-gray-50: #fafafa;
+  --color-brand-1000: #19653e;
+  --color-brand-950: #1b6e43;
+  --color-brand-900: #1d7748;
+  --color-brand-800: #228752;
+  --color-brand-700: #26985d;
+  --color-brand-650: #28a062;
+  --color-brand-default: #2aa967;
+  --color-brand-550: #35ad6f;
+  --color-brand-500: #4ab67e;
+  --color-brand-400: #6ac395;
+  --color-brand-300: #95d4b3;
+  --color-brand-200: #bfe5d1;
+  --color-brand-100: #eaf6f0;
+  --color-brand-50: #f4fbf7;
+  --color-eco-green-1: #edf4f1;
+  --color-eco-green-2: #78c79f;
+  --color-eco-green-3: #276a43;
+  --color-eco-green-4: #223829;
+  --color-eco-green-default: #2aa967;
+  --color-marigold-1: #f8f2e6;
+  --color-marigold-2: #f8cd69;
+  --color-marigold-3: #996210;
+  --color-marigold-4: #593207;
+  --color-marigold-default: #f4b539;
+  --color-desert-rose-1: #f9f0ef;
+  --color-desert-rose-2: #e0988d;
+  --color-desert-rose-3: #a24536;
+  --color-desert-rose-4: #5c2a22;
+  --color-desert-rose-default: #c45f4f;
+  --color-stone-1: #f3f1ef;
+  --color-stone-2: #aa9e8d;
+  --color-stone-3: #635544;
+  --color-stone-4: #2e271e;
+  --color-stone-default: #dfd0bc;
+
+  /* layout */
+  --layout-breakpoint-lg: 1024px;
+  --layout-breakpoint-md: 734px;
+  --layout-breakpoint-sm: 320px;
+  --layout-content-max-width-lg: 896px;
+  --layout-content-max-width-md: 670px;
+  --layout-content-max-width-sm: 350px;
+  --layout-page-margin-lg: 64px;
+  --layout-page-margin-md: 32px;
+  --layout-page-margin-sm: 20px;
+  --layout-grid-columns-lg: 12px;
+  --layout-grid-columns-md: 8px;
+  --layout-grid-columns-sm: 4px;
+  --layout-gutter-lg: 32px;
+  --layout-gutter-md: 24px;
+  --layout-gutter-sm: 16px;
+
+  /* radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-default: 16px;
+  --radius-lg: 20px;
+
+  /* elevation */
+  --elevation-y-sm: 1px;
+  --elevation-y-md: 4px;
+  --elevation-y-lg: 10px;
+  --elevation-blur-sm: 2px;
+  --elevation-blur-md: 6px;
+  --elevation-blur-lg: 15px;
+  --elevation-spread-clean: -1px;
+  --elevation-spread-deep: -3px;
+  --elevation-opacity-sm: 0.1px;
+  --elevation-opacity-md: 0.15px;
+  --elevation-opacity-lg: 0.2px;
+
+  /* layout */
+  --layout-breakpoint-xl: 1440px;
+  --layout-page-margin-xl: 120px;
+  --layout-grid-columns-xl: 12px;
+  --layout-gutter-xl: 32px;
+  --layout-content-max-width-xl: 1200px;
+
+  /* radius */
+  --radius-xl: 24px;
+
+  /* border */
+  --border-default: 1px;
+
+  /* layout */
+  --layout-breakpoint-xs: 0px;
+  --layout-page-margin-xs: 20px;
+  --layout-grid-columns-xs: 4px;
+  --layout-gutter-xs: 16px;
+
+  /* color */
+  --color-shadow-default: rgba(0,0,0,0.08);
+  --color-shadow-hover: rgba(0,0,0,0.16);
+  --color-shadow-click-active: rgba(0,0,0,0.08);
+
+  /* border */
+  --border-hover: 1.2px;
+  --border-active: 1.2px;
+
+  /* color */
+  --color-eco-green-3-1: rgba(39,106,67,0.3);
+  --color-gray-400-1: rgba(158,158,158,0.3);
+
+  /* Semantic Colors */
+
+  /* default theme */
+  --default-theme-text-primary: #223829;
+  --default-theme-text-primary-inverse: #edf4f1;
+  --default-theme-text-secondary: #757575;
+  --default-theme-text-tertiary: #9e9e9e;
+  --default-theme-text-action: #276a43;
+  --default-theme-text-action-highlight: #223829;
+  --default-theme-text-caution: #593207;
+  --default-theme-text-caution-highlight: #996210;
+  --default-theme-text-danger: #5c2a22;
+  --default-theme-text-danger-highlight: #a24536;
+  --default-theme-background-primary: #ffffff;
+  --default-theme-background-primary-inverse: #223829;
+  --default-theme-background-secondary: #edf4f1;
+  --default-theme-background-tertiary: #c4c4c4;
+  --default-theme-background-action: #276a43;
+  --default-theme-background-action-highlight: #223829;
+  --default-theme-background-caution: #f8cd69;
+  --default-theme-background-caution-highlight: #f8f2e6;
+  --default-theme-background-danger: #e0988d;
+  --default-theme-background-danger-highlight: #f9f0ef;
+  --default-theme-border-primary: #505050;
+  --default-theme-border-primary-inverse: #ffffff;
+  --default-theme-border-secondary: #757575;
+  --default-theme-border-tertiary: #c4c4c4;
+  --default-theme-border-action: #276a43;
+  --default-theme-border-action-highlight: #223829;
+  --default-theme-border-caution: #f8cd69;
+  --default-theme-border-caution-highlight: #f8f2e6;
+  --default-theme-border-danger: #e0988d;
+  --default-theme-border-danger-highlight: #f9f0ef;
+  --default-theme-heading-underline-primary: #2aa967;
+
+  /* green-light theme */
+  --green-light-theme-background-primary: #edf4f1;
+  --green-light-theme-background-secondary: #ffffff;
+
+  /* green-dark theme */
+  --green-dark-theme-text-primary: #edf4f1;
+  --green-dark-theme-text-primary-inverse: #223829;
+  --green-dark-theme-text-secondary: #c4c4c4;
+  --green-dark-theme-text-tertiary: #e0e0e0;
+  --green-dark-theme-text-action: #78c79f;
+  --green-dark-theme-text-action-highlight: #edf4f1;
+  --green-dark-theme-background-primary: #223829;
+  --green-dark-theme-background-primary-inverse: #ffffff;
+  --green-dark-theme-background-secondary: #276a43;
+  --green-dark-theme-background-tertiary: #c4c4c4;
+  --green-dark-theme-background-action: #78c79f;
+  --green-dark-theme-background-action-highlight: #edf4f1;
+  --green-dark-theme-background-caution-highlight: #f8f2e6;
+  --green-dark-theme-background-danger-highlight: #f9f0ef;
+  --green-dark-theme-border-primary: #edf4f1;
+  --green-dark-theme-border-primary-inverse: #223829;
+  --green-dark-theme-border-secondary: #276a43;
+  --green-dark-theme-border-action: #78c79f;
+  --green-dark-theme-border-action-highlight: #edf4f1;
+  --green-dark-theme-border-caution-highlight: #f8f2e6;
+  --green-dark-theme-border-danger-highlight: #f9f0ef;
+
+  /* marigold-light theme */
+  --marigold-light-theme-text-primary: #593207;
+  --marigold-light-theme-text-primary-inverse: #f8f2e6;
+  --marigold-light-theme-text-action: #996210;
+  --marigold-light-theme-text-action-highlight: #593207;
+  --marigold-light-theme-background-primary: #f8f2e6;
+  --marigold-light-theme-border-primary: #996210;
+  --marigold-light-theme-border-primary-inverse: #f8f2e6;
+  --marigold-light-theme-border-secondary: #f8cd69;
+  --marigold-light-theme-border-action: #996210;
+  --marigold-light-theme-border-action-highlight: #593207;
+  --marigold-light-theme-border-caution-highlight: #f8f2e6;
+  --marigold-light-theme-border-danger-highlight: #f9f0ef;
+  --marigold-light-theme-background-primary-inverse: #593207;
+  --marigold-light-theme-background-secondary: #ffffff;
+  --marigold-light-theme-background-tertiary: #c4c4c4;
+  --marigold-light-theme-background-action: #996210;
+  --marigold-light-theme-background-action-highlight: #593207;
+  --marigold-light-theme-background-caution-highlight: #f8f2e6;
+  --marigold-light-theme-background-danger-highlight: #f9f0ef;
+  --marigold-light-theme-border-tertiary: #ffffff;
+  --marigold-light-theme-heading-underline-primary: #f8cd69;
+
+  /* stone-light theme */
+  --stone-light-theme-text-primary: #2e271e;
+  --stone-light-theme-text-primary-inverse: #f3f1ef;
+  --stone-light-theme-text-action: #635544;
+  --stone-light-theme-text-action-highlight: #2e271e;
+  --stone-light-theme-background-primary: #f3f1ef;
+  --stone-light-theme-border-primary: #635544;
+  --stone-light-theme-border-primary-inverse: #f3f1ef;
+  --stone-light-theme-border-secondary: #aa9e8d;
+  --stone-light-theme-border-tertiary: #ffffff;
+  --stone-light-theme-border-action: #635544;
+  --stone-light-theme-border-action-highlight: #2e271e;
+  --stone-light-theme-background-primary-inverse: #2e271e;
+  --stone-light-theme-background-secondary: #ffffff;
+  --stone-light-theme-background-action: #635544;
+  --stone-light-theme-background-action-highlight: #2e271e;
+  --stone-light-theme-heading-underline-primary: #aa9e8d;
+
+  /* green-light theme */
+  --green-light-theme-background-other-variables: Inherited: Same as Default (Caution, Danger, danger, caution, and Interactive states);
+
+  /* green-dark theme */
+  --green-dark-theme-text-other-variables: Inherited: Same as Default (Caution, Danger, and Interactive states);
+
+  /* marigold-light theme */
+  --marigold-light-theme-text-other-variables: Inherited: Same as Default (Caution, Danger, and Interactive states);
+
+  /* default theme */
+  --default-theme-shadow-default: rgba(0,0,0,0.08);
+
+  /* green-dark theme */
+  --green-dark-theme-shadow-default: rgba(0,0,0,0.08);
+
+  /* default theme */
+  --default-theme-shadow-hover: rgba(0,0,0,0.16);
+  --default-theme-shadow-click-active: rgba(0,0,0,0.08);
+
+  /* green-dark theme */
+  --green-dark-theme-shadow-hover: rgba(0,0,0,0.16);
+  --green-dark-theme-shadow-click-active: rgba(0,0,0,0.08);
+
+  /* default theme */
+  --default-theme-background-action-secondary: #ffffff;
+  --default-theme-background-action-secondary-highlight: #edf4f1;
+
+  /* green-dark theme */
+  --green-dark-theme-background-action-secondary-highlight: #454545;
+
+  /* default theme */
+  --default-theme-text-action-secondary: #223829;
+  --default-theme-background-primary-disabled: rgba(39,106,67,0.3);
+  --default-theme-background-secondary-disabled: rgba(158,158,158,0.3);
+  --default-theme-text-secondary-disabled: rgba(158,158,158,0.3);
+
+  /* Semantic Text / Spacing / Layout - desktop lg default */
+
+  /* text */
+  --text-display-font-size: 44px;
+  --text-display-line-height: 57px;
+  --text-display-font-family: Dovetail MVB;
+  --text-display-letter-spacing: -0.88px;
+  --text-headline-1-font-family: Dovetail MVB;
+  --text-headline-1-font-size: 26px;
+  --text-headline-1-line-height: 36px;
+  --text-headline-1-letter-spacing: -0.52px;
+  --text-headline-2-font-family: Dovetail MVB;
+  --text-headline-2-font-size: 22px;
+  --text-headline-2-line-height: 31px;
+  --text-headline-2-letter-spacing: -0.22px;
+  --text-title-font-family: Kiva Post Grot;
+  --text-title-font-size: 20px;
+  --text-title-line-height: 26px;
+  --text-title-letter-spacing: 0px;
+  --text-base-font-family: Kiva Post Grot;
+  --text-base-font-size: 16px;
+  --text-base-line-height: 22px;
+  --text-base-letter-spacing: 0px;
+  --text-button-font-family: Kiva Post Grot;
+  --text-button-font-size: 17px;
+  --text-button-line-height: 21px;
+  --text-button-letter-spacing: 0px;
+  --text-upper-font-family: Kiva Post Grot;
+  --text-upper-font-size: 14px;
+  --text-upper-line-height: 18px;
+  --text-upper-letter-spacing: 0px;
+  --text-label-font-family: Kiva Post Grot;
+  --text-label-font-size: 14px;
+  --text-label-line-height: 18px;
+  --text-label-letter-spacing: 0px;
+  --text-caption-font-family: Kiva Post Grot;
+  --text-caption-font-size: 14px;
+  --text-caption-line-height: 18px;
+  --text-caption-letter-spacing: 0px;
+
+  /* spacing */
+  --spacing-structure-xl: 32px;
+  --spacing-structure-l: 24px;
+  --spacing-component-gap-l: 16px;
+  --spacing-component-inset-xl: 32px;
+  --spacing-component-inset-l: 24px;
+  --spacing-component-inset-m: 16px;
+  --spacing-structure-m: 16px;
+  --spacing-component-gap-m: 8px;
+  --spacing-component-gap-s: 4px;
+  --spacing-component-inset-s: 8px;
+  --spacing-component-inset-xs: 4px;
+  --spacing-micro-micro: 4px;
+
+  /* text */
+  --text-display-font-weight: Medium;
+  --text-headline-1-font-weight: Medium;
+  --text-headline-2-font-weight: Medium;
+  --text-title-font-weight: Medium;
+  --text-base-font-weight: Book;
+  --text-button-font-weight: Medium;
+  --text-upper-font-weight: Medium;
+  --text-label-font-weight: Medium;
+  --text-caption-font-weight: Book;
+  --text-subheadline-font-family: Kiva Post Grot;
+  --text-subheadline-font-size: 20px;
+  --text-subheadline-font-weight: Book;
+  --text-subheadline-line-height: 26px;
+  --text-subheadline-letter-spacing: 0px;
+
+  /* spacing */
+  --spacing-structure-s: 8px;
+
+  /* layout */
+  --layout-breakpoint: 1024px;
+  --layout-grid-columns: 12px;
+  --layout-grid-margin: 64px;
+  --layout-grid-gutter: 32px;
+  --layout-content-max-width: 896px;
+
+  /* Radius */
+  --button: 8px;
+  --input: 8px;
+  --card: 20px;
+  --dropdown: 12px;
+  --modal: 24px;
+  --none: 0px;
+  --full: 9999px;
+
+  /* Border */
+  --default: 1px;
+  --active: 1.2px;
+  --hover: 1.2px;
+
+  /* Mapped Tokens - primary */
+
+  /* button */
+  --button-color-default: #276a43;
+  --button-color-hover: #223829;
+  --button-color-text: #edf4f1;
+  --button-text-font-family: Kiva Post Grot;
+  --button-text-font-weight: Medium;
+  --button-text-line-height: 21;
+  --button-text-font-size: 17;
+  --button-text-letter-spacing: 0;
+  --button-inset-lg: 18;
+  --button-color-disabled: rgba(39,106,67,0.3);
+  --button-color-active: #276a43;
+  --button-inset-md: 14;
+  --button-inset-sm: 8;
+  --button-radius-lg: 16;
+  --button-radius-md: 16;
+  --button-radius-sm: 8;
+  --button-color-border: rgba(255,255,255,0);
+  --button-border-stroke-weight-default: 0;
+  --button-border-stroke-weight-hover: 0;
+  --button-border-stroke-weight-active: 0;
+  --button-border-stroke-weight-loading: 0;
+
+  /* Elevation Raw Values */
+  --rest-y: 1px;
+  --rest-blur: 2px;
+  --rest-spread: 0px;
+  --rest-opacity: 0.1px;
+  --raised-y: 4px;
+  --raised-blur: 6px;
+  --raised-spread: -1px;
+  --raised-opacity: 0.15px;
+  --overlay-y: 10px;
+  --overlay-blur: 15px;
+  --overlay-spread: -3px;
+  --overlay-opacity: 0.2px;
+}
+
+@media (max-width: 734px) {
+  :root {
+    --text-display-font-size: 40px;
+    --text-display-line-height: 52px;
+    --text-display-font-family: Dovetail MVB;
+    --text-display-letter-spacing: -0.8px;
+    --text-headline-1-font-family: Dovetail MVB;
+    --text-headline-1-font-size: 22px;
+    --text-headline-1-line-height: 31px;
+    --text-headline-1-letter-spacing: -0.22px;
+    --text-headline-2-font-family: Dovetail MVB;
+    --text-headline-2-font-size: 20px;
+    --text-headline-2-line-height: 26px;
+    --text-headline-2-letter-spacing: -0.2px;
+    --text-title-font-family: Kiva Post Grot;
+    --text-title-font-size: 18px;
+    --text-title-line-height: 23px;
+    --text-title-letter-spacing: 0px;
+    --text-base-font-family: Kiva Post Grot;
+    --text-base-font-size: 16px;
+    --text-base-line-height: 22px;
+    --text-base-letter-spacing: 0px;
+    --text-button-font-family: Kiva Post Grot;
+    --text-button-font-size: 17px;
+    --text-button-line-height: 21px;
+    --text-button-letter-spacing: 0px;
+    --text-upper-font-family: Kiva Post Grot;
+    --text-upper-font-size: 14px;
+    --text-upper-line-height: 18px;
+    --text-upper-letter-spacing: 0px;
+    --text-label-font-family: Kiva Post Grot;
+    --text-label-font-size: 14px;
+    --text-label-line-height: 18px;
+    --text-label-letter-spacing: 0px;
+    --text-caption-font-family: Kiva Post Grot;
+    --text-caption-font-size: 14px;
+    --text-caption-line-height: 18px;
+    --text-caption-letter-spacing: 0px;
+    --spacing-structure-xl: 32px;
+    --spacing-structure-l: 24px;
+    --spacing-component-gap-l: 16px;
+    --spacing-component-inset-xl: 24px;
+    --spacing-component-inset-l: 24px;
+    --spacing-component-inset-m: 16px;
+    --spacing-structure-m: 16px;
+    --spacing-component-gap-m: 8px;
+    --spacing-component-gap-s: 4px;
+    --spacing-component-inset-s: 8px;
+    --spacing-component-inset-xs: 4px;
+    --spacing-micro-micro: 4px;
+    --text-display-font-weight: Medium;
+    --text-headline-1-font-weight: Medium;
+    --text-headline-2-font-weight: Medium;
+    --text-title-font-weight: Medium;
+    --text-base-font-weight: Book;
+    --text-button-font-weight: Medium;
+    --text-upper-font-weight: Medium;
+    --text-label-font-weight: Medium;
+    --text-caption-font-weight: Book;
+    --text-subheadline-font-family: Kiva Post Grot;
+    --text-subheadline-font-size: 18px;
+    --text-subheadline-font-weight: Book;
+    --text-subheadline-line-height: 23px;
+    --text-subheadline-letter-spacing: 0px;
+    --spacing-structure-s: 8px;
+    --layout-breakpoint: 734px;
+    --layout-grid-columns: 8px;
+    --layout-grid-margin: 32px;
+    --layout-grid-gutter: 24px;
+    --layout-content-max-width: 24px;
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    --text-display-font-size: 36px;
+    --text-display-line-height: 47px;
+    --text-display-font-family: Dovetail MVB;
+    --text-display-letter-spacing: -0.72px;
+    --text-headline-1-font-family: Dovetail MVB;
+    --text-headline-1-font-size: 22px;
+    --text-headline-1-line-height: 31px;
+    --text-headline-1-letter-spacing: -0.22px;
+    --text-headline-2-font-family: Dovetail MVB;
+    --text-headline-2-font-size: 20px;
+    --text-headline-2-line-height: 26px;
+    --text-headline-2-letter-spacing: -0.2px;
+    --text-title-font-family: Kiva Post Grot;
+    --text-title-font-size: 18px;
+    --text-title-line-height: 23px;
+    --text-title-letter-spacing: 0px;
+    --text-base-font-family: Kiva Post Grot;
+    --text-base-font-size: 16px;
+    --text-base-line-height: 22px;
+    --text-base-letter-spacing: 0px;
+    --text-button-font-family: Kiva Post Grot;
+    --text-button-font-size: 17px;
+    --text-button-line-height: 21px;
+    --text-button-letter-spacing: 0px;
+    --text-upper-font-family: Kiva Post Grot;
+    --text-upper-font-size: 14px;
+    --text-upper-line-height: 18px;
+    --text-upper-letter-spacing: 0px;
+    --text-label-font-family: Kiva Post Grot;
+    --text-label-font-size: 14px;
+    --text-label-line-height: 18px;
+    --text-label-letter-spacing: 0px;
+    --text-caption-font-family: Kiva Post Grot;
+    --text-caption-font-size: 14px;
+    --text-caption-line-height: 18px;
+    --text-caption-letter-spacing: 0px;
+    --spacing-structure-xl: 24px;
+    --spacing-structure-l: 16px;
+    --spacing-component-gap-l: 16px;
+    --spacing-component-inset-xl: 20px;
+    --spacing-component-inset-l: 20px;
+    --spacing-component-inset-m: 16px;
+    --spacing-structure-m: 16px;
+    --spacing-component-gap-m: 8px;
+    --spacing-component-gap-s: 4px;
+    --spacing-component-inset-s: 8px;
+    --spacing-component-inset-xs: 4px;
+    --spacing-micro-micro: 4px;
+    --text-display-font-weight: Medium;
+    --text-headline-1-font-weight: Medium;
+    --text-headline-2-font-weight: Medium;
+    --text-title-font-weight: Medium;
+    --text-base-font-weight: Book;
+    --text-button-font-weight: Medium;
+    --text-upper-font-weight: Medium;
+    --text-label-font-weight: Medium;
+    --text-caption-font-weight: Book;
+    --text-subheadline-font-family: Kiva Post Grot;
+    --text-subheadline-font-size: 18px;
+    --text-subheadline-font-weight: Book;
+    --text-subheadline-line-height: 23px;
+    --text-subheadline-letter-spacing: 0px;
+    --spacing-structure-s: 8px;
+    --layout-breakpoint: 320px;
+    --layout-grid-columns: 4px;
+    --layout-grid-margin: 20px;
+    --layout-grid-gutter: 16px;
+    --layout-content-max-width: 350px;
+  }
+}
+
+@media (max-width: 320px) {
+  :root {
+    --text-display-font-size: 36px;
+    --text-display-line-height: 47px;
+    --text-display-font-family: Dovetail MVB;
+    --text-display-letter-spacing: -0.72px;
+    --text-headline-1-font-family: Dovetail MVB;
+    --text-headline-1-font-size: 22px;
+    --text-headline-1-line-height: 31px;
+    --text-headline-1-letter-spacing: -0.22px;
+    --text-headline-2-font-family: Dovetail MVB;
+    --text-headline-2-font-size: 20px;
+    --text-headline-2-line-height: 26px;
+    --text-headline-2-letter-spacing: -0.2px;
+    --text-title-font-family: Kiva Post Grot;
+    --text-title-font-size: 18px;
+    --text-title-line-height: 23px;
+    --text-title-letter-spacing: 0px;
+    --text-base-font-family: Kiva Post Grot;
+    --text-base-font-size: 16px;
+    --text-base-line-height: 22px;
+    --text-base-letter-spacing: 0px;
+    --text-button-font-family: Kiva Post Grot;
+    --text-button-font-size: 17px;
+    --text-button-line-height: 21px;
+    --text-button-letter-spacing: 0px;
+    --text-upper-font-family: Kiva Post Grot;
+    --text-upper-font-size: 14px;
+    --text-upper-line-height: 18px;
+    --text-upper-letter-spacing: 0px;
+    --text-label-font-family: Kiva Post Grot;
+    --text-label-font-size: 14px;
+    --text-label-line-height: 18px;
+    --text-label-letter-spacing: 0px;
+    --text-caption-font-family: Kiva Post Grot;
+    --text-caption-font-size: 14px;
+    --text-caption-line-height: 18px;
+    --text-caption-letter-spacing: 0px;
+    --spacing-structure-xl: 24px;
+    --spacing-structure-l: 16px;
+    --spacing-component-gap-l: 16px;
+    --spacing-component-inset-xl: 20px;
+    --spacing-component-inset-l: 20px;
+    --spacing-component-inset-m: 16px;
+    --spacing-structure-m: 16px;
+    --spacing-component-gap-m: 8px;
+    --spacing-component-gap-s: 4px;
+    --spacing-component-inset-s: 8px;
+    --spacing-component-inset-xs: 4px;
+    --spacing-micro-micro: 4px;
+    --text-display-font-weight: Medium;
+    --text-headline-1-font-weight: Medium;
+    --text-headline-2-font-weight: Medium;
+    --text-title-font-weight: Medium;
+    --text-base-font-weight: Book;
+    --text-button-font-weight: Medium;
+    --text-upper-font-weight: Medium;
+    --text-label-font-weight: Medium;
+    --text-caption-font-weight: Book;
+    --text-subheadline-font-family: Kiva Post Grot;
+    --text-subheadline-font-size: 18px;
+    --text-subheadline-font-weight: Book;
+    --text-subheadline-line-height: 23px;
+    --text-subheadline-letter-spacing: 0px;
+    --spacing-structure-s: 8px;
+    --layout-breakpoint: 0px;
+    --layout-grid-columns: 4px;
+    --layout-grid-margin: 20px;
+    --layout-grid-gutter: 16px;
+    --layout-content-max-width: 350px;
+  }
+}
+
+/* Elevation box-shadow helpers */
+:root {
+  --shadow-rest: 0 1px 2px 0px rgba(0,0,0,0.1);
+}

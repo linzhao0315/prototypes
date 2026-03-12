@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Impact Dashboard — Empty States (Lin)</title>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════════════
+       KIVA DESIGN TOKENS
+       Source: ./Design-Tokens/tokens.json  →  "Global/Mode 1"
+       All values below are direct reads from the token file.
+    ═══════════════════════════════════════════════════════════════════════════ */
+    :root {
+      /* color.neutral ─────────────────────────────────────────────────────── */
+      --color-neutral-white:        #ffffff;   /* color.neutral.white         */
+      --color-neutral-black:        #000000;   /* color.neutral.black         */
+
+      /* color.gray ────────────────────────────────────────────────────────── */
+      --color-gray-50:              #fafafa;   /* color.gray.50               */
+      --color-gray-100:             #f5f5f5;   /* color.gray.100              */
+      --color-gray-200:             #e0e0e0;   /* color.gray.200              */
+      --color-gray-300:             #c4c4c4;   /* color.gray.300              */
+      --color-gray-400:             #9e9e9e;   /* color.gray.400              */
+      --color-gray-500:             #757575;   /* color.gray.500              */
+      --color-gray-600:             #505050;   /* color.gray.600              */
+      --color-gray-700:             #454545;   /* color.gray.700              */
+      --color-gray-800:             #212121;   /* color.gray.800              */
+
+      /* color.brand ───────────────────────────────────────────────────────── */
+      --color-brand-50:             #f4fbf7;   /* color.brand.50              */
+      --color-brand-100:            #eaf6f0;   /* color.brand.100             */
+      --color-brand-200:            #bfe5d1;   /* color.brand.200             */
+      --color-brand-300:            #95d4b3;   /* color.brand.300             */
+      --color-brand-400:            #6ac395;   /* color.brand.400             */
+      --color-brand-500:            #4ab67e;   /* color.brand.500             */
+      --color-brand-550:            #35ad6f;   /* color.brand.550             */
+      --color-brand-650:            #28a062;   /* color.brand.650             */
+      --color-brand-700:            #26985d;   /* color.brand.700  ← CTA btn  */
+      --color-brand-800:            #228752;   /* color.brand.800  ← hover    */
+      --color-brand-900:            #1d7748;   /* color.brand.900  ← active   */
+      --color-brand-default:        #2aa967;   /* color.brand.default         */
+
+      /* color.eco-green ───────────────────────────────────────────────────── */
+      --color-eco-green-1:          #edf4f1;   /* color.eco-green.1           */
+      --color-eco-green-2:          #78c79f;   /* color.eco-green.2           */
+      --color-eco-green-3:          #276a43;   /* color.eco-green.3           */
+      --color-eco-green-4:          #223829;   /* color.eco-green.4           */
+
+      /* color.marigold ────────────────────────────────────────────────────── */
+      --color-marigold-1:           #f8f2e6;   /* color.marigold.1            */
+      --color-marigold-2:           #f8cd69;   /* color.marigold.2            */
+      --color-marigold-3:           #996210;   /* color.marigold.3            */
+      --color-marigold-default:     #f4b539;   /* color.marigold.default      */
+
+      /* color.desert-rose ─────────────────────────────────────────────────── */
+      --color-desert-rose-1:        #f9f0ef;   /* color.desert-rose.1         */
+      --color-desert-rose-2:        #e0988d;   /* color.desert-rose.2         */
+      --color-desert-rose-3:        #a24536;   /* color.desert-rose.3         */
+      --color-desert-rose-default:  #c45f4f;   /* color.desert-rose.default   */
+
+      /* color.stone ───────────────────────────────────────────────────────── */
+      --color-stone-1:              #f3f1ef;   /* color.stone.1               */
+      --color-stone-2:              #aa9e8d;   /* color.stone.2               */
+      --color-stone-3:              #635544;   /* color.stone.3               */
+      --color-stone-4:              #2e271e;   /* color.stone.4               */
+      --color-stone-default:        #dfd0bc;   /* color.stone.default         */
+
+      /* type.font-family ──────────────────────────────────────────────────── */
+      --font-sans: "Kiva Post Grot", system-ui, -apple-system,
+                   BlinkMacSystemFont, "Segoe UI", sans-serif;
+                   /* type.font-family.sans = "Kiva Post Grot"               */
+
+      /* type.font-size ────────────────────────────────────────────────────── */
+      --font-size-jumbo-lg:         44px;      /* type.font-size.jumbo.lg     */
+      --font-size-h1-lg:            26px;      /* type.font-size.h1.lg        */
+      --font-size-h2-lg:            22px;      /* type.font-size.h2.lg        */
+      --font-size-base:             16px;      /* type.font-size.base.base    */
+      --font-size-button:           17px;      /* type.font-size.button       */
+      --font-size-small:            14px;      /* type.font-size.small.small  */
+
+      /* type.letter-spacing ───────────────────────────────────────────────── */
+      --letter-spacing-500:         -0.8px;    /* type.letter-spacing.-500    */
+      --letter-spacing-300:         -0.52px;   /* type.letter-spacing.-300    */
+      --letter-spacing-200:         -0.22px;   /* type.letter-spacing.-200    */
+      --letter-spacing-100:         -0.2px;    /* type.letter-spacing.-100    */
+
+      /* type.line-height ──────────────────────────────────────────────────── */
+      --line-height-jumbo-lg:       57px;      /* type.line-height.jumbo.lg   */
+      --line-height-h1-lg:          36px;      /* type.line-height.h1.lg      */
+      --line-height-h2-lg:          31px;      /* type.line-height.h2.lg      */
+      --line-height-base:           22px;      /* type.line-height.base.lg    */
+      --line-height-button:         21px;      /* type.line-height.button     */
+
+      /* spacing (8px base grid) ───────────────────────────────────────────── */
+      --spacing-0-5:                4px;       /* spacing.spacing.0-5         */
+      --spacing-1:                  8px;       /* spacing.spacing.1           */
+      --spacing-1-5:                12px;      /* spacing.spacing.1-5         */
+      --spacing-2:                  16px;      /* spacing.spacing.2           */
+      --spacing-3:                  24px;      /* spacing.spacing.3           */
+      --spacing-4:                  32px;      /* spacing.spacing.4           */
+      --spacing-5:                  40px;      /* spacing.spacing.5           */
+      --spacing-6:                  48px;      /* spacing.spacing.6           */
+      --spacing-7:                  56px;      /* spacing.spacing.7           */
+      --spacing-8:                  64px;      /* spacing.spacing.8           */
+
+      /* layout ────────────────────────────────────────────────────────────── */
+      --content-max-width-xl:       1200px;    /* layout.content-max-width.xl */
+      --page-margin-lg:             64px;      /* layout.page-margin.lg       */
+
+      /* radius (Kiva product convention — 12px card / container) ─────────── */
+      --radius-container:           12px;
+      --radius-card:                10px;
+      --radius-sm:                   8px;
+      --radius-pill:               100px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════════════════════════════════ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: var(--font-size-base);        /* type.font-size.base.base    */
+    }
+
+    body {
+      font-family: var(--font-sans);           /* type.font-family.sans       */
+      background-color: var(--color-neutral-white); /* color.neutral.white    */
+      color: var(--color-neutral-black);       /* color.neutral.black         */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       PAGE LAYOUT
+    ═══════════════════════════════════════════════════════════════════════════ */
+    .page-wrapper {
+      max-width: var(--content-max-width-xl);  /* layout.content-max-width.xl */
+      margin: 0 auto;
+      padding: var(--spacing-6) var(--page-margin-lg);
+      /* spacing.6 = 48px top/bottom, layout.page-margin.lg = 64px sides      */
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       SECTION SPACING
+    ═══════════════════════════════════════════════════════════════════════════ */
+    .empty-state-section {
+      margin-bottom: var(--spacing-8);         /* spacing.8 = 64px            */
+    }
+
+    .empty-state-section:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       TYPOGRAPHY — SECTION HEADERS
+    ═══════════════════════════════════════════════════════════════════════════ */
+    .section-heading {
+      /* 32px is intentionally above token h1.lg (26px) — this is a
+         display-level heading for dashboard section titling.
+         Using 32px per design brief. Token: type.font-size.h1.lg = 26px
+         is the closest anchor; this heads toward jumbo range.               */
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: var(--letter-spacing-300); /* type.letter-spacing.-300 */
+      line-height: 1.15;
+      color: var(--color-neutral-black);       /* color.neutral.black         */
+      margin-bottom: var(--spacing-1);         /* spacing.1 = 8px             */
+    }
+
+    .section-subtitle {
+      font-size: var(--font-size-base);        /* type.font-size.base.base    */
+      line-height: var(--line-height-base);    /* type.line-height.base.lg    */
+      color: var(--color-gray-500);            /* color.gray.500 = #757575    */
+      max-width: 700px;
+      margin-bottom: var(--spacing-4);         /* spacing.4 = 32px            */
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       CONTAINER — DASHED BORDER WRAPPER
+    ═══════════════════════════════════════════════════════════════════════════ */
+    .container-dashed {
+      border: 1.5px dashed var(--color-gray-200); /* color.gray.200 = #e0e0e0 */
+      border-radius: var(--radius-container);  /* 12px                        */
+      overflow: hidden;
+      background-color: var(--color-neutral-white); /* color.neutral.white    */
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       SKELETON SHIMMER ANIMATION
+    ═══════════════════════════════════════════════════════════════════════════ */
+    @keyframes shimmer {
+      0%   { background-position: -900px 0; }
+      100% { background-position: 900px 0; }
+    }
+
+    .skel-line {
+      height: 11px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(
+        90deg,
+        var(--color-gray-100) 25%,           /* color.gray.100 = #f5f5f5    */
+        var(--color-gray-200) 50%,           /* color.gray.200 = #e0e0e0    */
+        var(--color-gray-100) 75%            /* color.gray.100 = #f5f5f5    */
+      );
+      background-size: 900px 100%;
+      animation: shimmer 1.9s infinite linear;
+    }
+
+    .skel-line--w80 { width: 80%; }
+    .skel-line--w60 { width: 60%; }
+    .skel-line--w90 { width: 90%; }
+    .skel-line--w70 { width: 70%; }
+    .skel-line--w50 { width: 50%; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       EMPTY STATE A — "These are not just statistics"
+    ═══════════════════════════════════════════════════════════════════════════ */
+    .state-a-inner {
+      padding: var(--spacing-5);              /* spacing.5 = 40px            */
+    }
+
+    .cards-row {
+      display: flex;
+      gap: var(--spacing-3);                  /* spacing.3 = 24px            */
+    }
+
+    .borrower-card {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--color-gray-200); /* color.gray.200 = #e0e0e0  */
+      border-radius: var(--radius-card);       /* 10px                       */
+      padding: var(--spacing-3);               /* spacing.3 = 24px           */
+      background: var(--color-neutral-white);  /* color.neutral.white        */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-2);                   /* spacing.2 = 16px           */
+    }
+
+    .avatar-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: var(--color-gray-100); /* color.gray.100 = #f5f5f5  */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-skel-lines {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1);                   /* spacing.1 = 8px            */
+      margin-top: var(--spacing-0-5);          /* spacing.0-5 = 4px          */
+    }
+
+    /* CTA Banner */
+    .cta-banner {
+      margin-top: var(--spacing-4);            /* spacing.4 = 32px           */
+      background-color: var(--color-gray-100); /* color.gray.100 = #f5f5f5  */
+      border-radius: var(--radius-sm);         /* 8px                        */
+      padding: var(--spacing-4) var(--spacing-5);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-3);                   /* spacing.3 = 24px           */
+    }
+
+    .cta-banner-text {
+      font-size: var(--font-size-small);       /* type.font-size.small = 14px */
+      line-height: 1.65;
+      color: var(--color-gray-500);            /* color.gray.500 = #757575   */
+      max-width: 580px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-brand-700); /* color.brand.700 = #26985d */
+      color: var(--color-neutral-white);        /* color.neutral.white        */
+      font-family: var(--font-sans);
+      font-size: var(--font-size-button);       /* type.font-size.button = 17px */
+      font-weight: 600;
+      line-height: var(--line-height-button);   /* type.line-height.button = 21px */
+      letter-spacing: var(--letter-spacing-100); /* type.letter-spacing.-100  */
+      padding: 13px var(--spacing-5);           /* spacing.5 = 40px          */
+      border: none;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, transform 90ms ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-brand-800); /* color.brand.800 = #228752 */
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+      background-color: var(--color-brand-900); /* color.brand.900 = #1d7748 */
+    }
+
+    .btn-primary:focus-visible {
+      outline: 3px solid var(--color-brand-300); /* color.brand.300 = #95d4b3 */
+      outline-offset: 3px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       EMPTY STATE B — "Reaching across borders"
+    ═══════════════════════════════════════════════════════════════════════════ */
+    .map-container {
+      background-color: var(--color-gray-50);  /* color.gray.50 = #fafafa    */
+      padding: var(--spacing-5) var(--spacing-6); /* spacing.5/6             */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-3);                   /* spacing.3 = 24px           */
+      min-height: 380px;
+      justify-content: center;
+    }
+
+    .map-empty-label {
+      font-size: var(--font-size-small);       /* type.font-size.small = 14px */
+      color: var(--color-gray-400);            /* color.gray.400 = #9e9e9e   */
+      letter-spacing: 0.3px;
+    }
+
+    .world-map-svg {
+      width: 100%;
+      max-width: 920px;
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       EMPTY STATE C — "Reaching across categories"
+    ═══════════════════════════════════════════════════════════════════════════ */
+    .chart-layout {
+      display: flex;
+      gap: var(--spacing-8);                   /* spacing.8 = 64px           */
+      align-items: flex-start;
+      padding: var(--spacing-5);               /* spacing.5 = 40px           */
+    }
+
+    /* Donut column */
+    .donut-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-3);                   /* spacing.3 = 24px           */
+      flex-shrink: 0;
+    }
+
+    .donut-label-block {
+      text-align: center;
+    }
+
+    .donut-pct-text {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: var(--letter-spacing-500); /* type.letter-spacing.-500 */
+      color: var(--color-gray-300);            /* color.gray.300 = #c4c4c4   */
+      line-height: 1;
+      display: block;
+    }
+
+    .donut-empty-label {
+      font-size: var(--font-size-small);       /* type.font-size.small = 14px */
+      color: var(--color-gray-400);            /* color.gray.400 = #9e9e9e   */
+      margin-top: var(--spacing-1);            /* spacing.1 = 8px            */
+      display: block;
+    }
+
+    /* Legend column */
+    .legend-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);                   /* spacing.2 = 16px           */
+      padding: 9px 0;
+      border-bottom: 1px solid var(--color-gray-100); /* color.gray.100      */
+    }
+
+    .legend-row:last-child {
+      border-bottom: none;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-name {
+      flex: 1;
+      font-size: var(--font-size-small);       /* type.font-size.small = 14px */
+      color: var(--color-gray-700);            /* color.gray.700 = #454545   */
+    }
+
+    .legend-pct {
+      font-size: var(--font-size-small);       /* type.font-size.small = 14px */
+      color: var(--color-gray-400);            /* color.gray.400 = #9e9e9e   */
+      font-variant-numeric: tabular-nums;
+      min-width: 28px;
+      text-align: right;
+    }
+
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       EMPTY STATE A — "These are not just statistics"
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="empty-state-section" aria-label="Borrower stories — empty state">
+    <h2 class="section-heading">These are not just statistics</h2>
+    <p class="section-subtitle">They're real people with real lives</p>
+
+    <div class="container-dashed">
+      <div class="state-a-inner">
+
+        <!-- 3 skeleton borrower cards -->
+        <div class="cards-row" role="list" aria-label="Borrower story cards, loading">
+
+          <!-- Card 1 -->
+          <article class="borrower-card" role="listitem" aria-label="Loading borrower story">
+            <div class="avatar-circle" aria-hidden="true">
+              <!-- Person icon — stroke only, color.gray.300 = #c4c4c4 -->
+              <svg width="38" height="38" viewBox="0 0 38 38" fill="none"
+                   xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="19" cy="14" r="7" stroke="#c4c4c4" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 34c0-7.732 6.268-14 14-14s14 6.268 14 14"
+                      stroke="#c4c4c4" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="card-skel-lines" aria-hidden="true">
+              <div class="skel-line skel-line--w80" role="presentation"></div>
+              <div class="skel-line skel-line--w60" role="presentation"></div>
+              <div class="skel-line skel-line--w90" role="presentation"></div>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="borrower-card" role="listitem" aria-label="Loading borrower story">
+            <div class="avatar-circle" aria-hidden="true">
+              <svg width="38" height="38" viewBox="0 0 38 38" fill="none"
+                   xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="19" cy="14" r="7" stroke="#c4c4c4" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 34c0-7.732 6.268-14 14-14s14 6.268 14 14"
+                      stroke="#c4c4c4" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="card-skel-lines" aria-hidden="true">
+              <div class="skel-line skel-line--w80" role="presentation"></div>
+              <div class="skel-line skel-line--w60" role="presentation"></div>
+              <div class="skel-line skel-line--w90" role="presentation"></div>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="borrower-card" role="listitem" aria-label="Loading borrower story">
+            <div class="avatar-circle" aria-hidden="true">
+              <svg width="38" height="38" viewBox="0 0 38 38" fill="none"
+                   xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="19" cy="14" r="7" stroke="#c4c4c4" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 34c0-7.732 6.268-14 14-14s14 6.268 14 14"
+                      stroke="#c4c4c4" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="card-skel-lines" aria-hidden="true">
+              <div class="skel-line skel-line--w80" role="presentation"></div>
+              <div class="skel-line skel-line--w60" role="presentation"></div>
+              <div class="skel-line skel-line--w90" role="presentation"></div>
+            </div>
+          </article>
+
+        </div><!-- /cards-row -->
+
+        <!-- CTA Banner -->
+        <div class="cta-banner">
+          <p class="cta-banner-text">
+            As your network contributes, their donations will be immediately lent to
+            entrepreneurs around the world, and you'll see their stories populate in these cards.
+          </p>
+          <a href="#" class="btn-primary"
+             aria-label="Make your first donation to see borrower stories">
+            Make your first donation
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       EMPTY STATE B — "Reaching across borders"
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="empty-state-section" aria-label="Global reach map — empty state">
+    <h2 class="section-heading">Reaching across borders</h2>
+    <p class="section-subtitle">
+      As donations are added to your fundraiser, this map will populate to show your global
+      reach and the countries you're making an impact in.
+    </p>
+
+    <div class="container-dashed">
+      <div class="map-container">
+        <!--
+          World map SVG — simplified Natural Earth outline projection
+          Country fills:   color.gray.100 = #f5f5f5
+          Country borders: color.gray.200 = #e0e0e0
+          Ocean/bg:        color.gray.50  = #fafafa
+        -->
+        <svg class="world-map-svg" viewBox="0 0 1000 500"
+             xmlns="http://www.w3.org/2000/svg"
+             aria-label="World map — no countries reached yet" role="img">
+
+          <!-- Ocean background — color.gray.50 = #fafafa -->
+          <rect width="1000" height="500" fill="#fafafa"/>
+
+          <!-- Graticule lines — color.gray.200 at low opacity -->
+          <!-- Latitude lines -->
+          <g stroke="#e0e0e0" stroke-width="0.6" opacity="0.55">
+            <line x1="0" y1="42"  x2="1000" y2="42"/>   <!-- 75°N -->
+            <line x1="0" y1="112" x2="1000" y2="112"/>  <!-- 60°N -->
+            <line x1="0" y1="182" x2="1000" y2="182"/>  <!-- 45°N -->
+            <line x1="0" y1="250" x2="1000" y2="250"/>  <!-- equator -->
+            <line x1="0" y1="318" x2="1000" y2="318"/>  <!-- 30°S -->
+            <line x1="0" y1="388" x2="1000" y2="388"/>  <!-- 45°S -->
+            <line x1="0" y1="458" x2="1000" y2="458"/>  <!-- 60°S -->
+          </g>
+          <!-- Longitude lines -->
+          <g stroke="#e0e0e0" stroke-width="0.6" opacity="0.55">
+            <line x1="111"  y1="0" x2="111"  y2="500"/>  <!-- 120°W -->
+            <line x1="222"  y1="0" x2="222"  y2="500"/>  <!-- 80°W  -->
+            <line x1="333"  y1="0" x2="333"  y2="500"/>  <!-- 40°W  -->
+            <line x1="444"  y1="0" x2="444"  y2="500"/>  <!-- 0°    -->
+            <line x1="556"  y1="0" x2="556"  y2="500"/>  <!-- 40°E  -->
+            <line x1="667"  y1="0" x2="667"  y2="500"/>  <!-- 80°E  -->
+            <line x1="778"  y1="0" x2="778"  y2="500"/>  <!-- 120°E -->
+            <line x1="889"  y1="0" x2="889"  y2="500"/>  <!-- 160°E -->
+          </g>
+
+          <!-- ──────────────────────── NORTH AMERICA ──────────────────────── -->
+          <!-- Alaska -->
+          <path d="M 48 95 L 28 100 L 18 112 L 28 118 L 45 112 L 60 102 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Greenland -->
+          <path d="M 218 22 L 250 16 L 278 28 L 285 50 L 268 65 L 244 62 L 222 48 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Canada + USA -->
+          <path d="M 72 88 L 95 72 L 130 60 L 175 55 L 210 65 L 232 82 L 245 102
+                   L 242 125 L 228 145 L 210 158 L 198 178 L 190 198 L 178 210
+                   L 165 202 L 150 186 L 135 172 L 118 162 L 100 170 L 85 180
+                   L 72 172 L 62 158 L 58 140 L 62 118 L 68 100 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Mexico + Central America -->
+          <path d="M 178 210 L 192 206 L 198 220 L 196 238 L 186 250 L 174 258
+                   L 165 248 L 162 232 L 165 216 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Cuba -->
+          <ellipse cx="210" cy="210" rx="18" ry="8" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Caribbean islands (simplified) -->
+          <circle cx="232" cy="222" r="5" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+          <circle cx="248" cy="230" r="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+
+          <!-- ──────────────────────── SOUTH AMERICA ──────────────────────── -->
+          <path d="M 190 262 L 210 252 L 238 252 L 262 265 L 278 288 L 285 320
+                   L 282 355 L 272 388 L 255 415 L 235 428 L 215 420 L 195 398
+                   L 178 368 L 168 335 L 162 302 L 164 272 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Falklands -->
+          <ellipse cx="248" cy="435" rx="7" ry="4" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+
+          <!-- ──────────────────────── EUROPE ──────────────────────────────── -->
+          <!-- Scandinavia -->
+          <path d="M 472 30 L 490 22 L 508 30 L 518 50 L 510 65 L 498 60 L 484 50 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- UK + Ireland -->
+          <path d="M 418 85 L 428 78 L 438 85 L 435 98 L 424 102 L 415 95 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <ellipse cx="408" cy="88" rx="6" ry="9" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+          <!-- Continental Europe -->
+          <path d="M 440 60 L 472 52 L 510 58 L 532 70 L 540 88 L 530 102
+                   L 515 110 L 495 115 L 475 118 L 458 112 L 442 102 L 435 88 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Iberian Peninsula -->
+          <path d="M 432 108 L 448 106 L 460 116 L 456 132 L 440 136 L 428 124 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Italy -->
+          <path d="M 492 112 L 505 110 L 514 122 L 512 136 L 502 140 L 492 130 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Greece -->
+          <ellipse cx="528" cy="130" rx="10" ry="8" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+
+          <!-- ──────────────────────── AFRICA ───────────────────────────────── -->
+          <path d="M 440 148 L 472 140 L 515 142 L 548 152 L 568 172 L 578 200
+                   L 580 232 L 574 265 L 562 298 L 545 330 L 522 358 L 498 372
+                   L 474 366 L 450 348 L 432 320 L 420 290 L 416 258 L 418 225
+                   L 424 198 L 432 175 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Madagascar -->
+          <path d="M 594 272 L 605 262 L 616 278 L 614 312 L 602 322 L 590 308
+                   L 588 286 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+
+          <!-- ──────────────────────── MIDDLE EAST ──────────────────────────── -->
+          <path d="M 550 148 L 585 142 L 618 148 L 635 168 L 630 190 L 612 205
+                   L 592 210 L 572 198 L 556 178 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+
+          <!-- ──────────────────────── RUSSIA / CENTRAL ASIA ────────────────── -->
+          <path d="M 522 42 L 570 34 L 640 30 L 720 34 L 800 42 L 860 52
+                   L 908 65 L 925 82 L 918 100 L 895 110 L 858 112 L 818 108
+                   L 778 112 L 745 120 L 715 120 L 682 115 L 652 112 L 620 115
+                   L 590 118 L 562 115 L 538 108 L 524 95 L 518 78 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Eastern Siberia extension -->
+          <path d="M 858 28 L 910 20 L 950 30 L 965 50 L 945 62 L 910 58
+                   L 872 48 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <path d="M 720 20 L 800 15 L 858 22 L 858 32 L 792 35 L 720 32 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Kamchatka + Sakhalin -->
+          <path d="M 938 78 L 950 72 L 962 85 L 960 105 L 948 112 L 938 98 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+
+          <!-- ──────────────────────── SOUTH ASIA / INDIA ───────────────────── -->
+          <path d="M 638 148 L 672 140 L 706 145 L 728 162 L 732 185 L 726 210
+                   L 710 232 L 690 248 L 668 255 L 646 242 L 632 220 L 626 196
+                   L 628 170 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Sri Lanka -->
+          <ellipse cx="698" cy="262" rx="7" ry="10" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+
+          <!-- ──────────────────────── SOUTHEAST ASIA ───────────────────────── -->
+          <!-- Mainland -->
+          <path d="M 738 148 L 775 142 L 808 148 L 832 162 L 836 182 L 820 192
+                   L 795 195 L 768 188 L 748 175 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Indochina peninsula -->
+          <path d="M 762 192 L 798 192 L 818 205 L 822 228 L 812 245 L 795 252
+                   L 775 244 L 760 225 L 755 208 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Indonesia / Philippines (blobs) -->
+          <ellipse cx="838" cy="205" rx="20" ry="12" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <ellipse cx="808" cy="268" rx="32" ry="13" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <ellipse cx="858" cy="258" rx="28" ry="11" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <ellipse cx="880" cy="238" rx="16" ry="10" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <ellipse cx="862" cy="228" rx="10" ry="8"  fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+
+          <!-- ──────────────────────── CHINA / EAST ASIA ────────────────────── -->
+          <path d="M 732 120 L 790 112 L 842 115 L 870 128 L 878 148 L 862 165
+                   L 835 172 L 800 170 L 768 165 L 742 155 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Korean peninsula -->
+          <path d="M 858 125 L 874 120 L 886 132 L 882 148 L 868 152 L 856 140 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Japan -->
+          <path d="M 894 108 L 910 100 L 926 112 L 928 132 L 916 142 L 902 136
+                   L 894 122 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <ellipse cx="908" cy="155" rx="8" ry="12" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+
+          <!-- ──────────────────────── AUSTRALIA ────────────────────────────── -->
+          <path d="M 808 308 L 848 292 L 892 292 L 928 304 L 952 328 L 960 360
+                   L 955 392 L 935 418 L 905 428 L 868 428 L 838 415 L 812 392
+                   L 796 362 L 794 332 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <!-- Tasmania -->
+          <ellipse cx="858" cy="440" rx="12" ry="8" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+          <!-- New Zealand -->
+          <path d="M 962 385 L 974 375 L 982 388 L 978 406 L 964 408 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+          <path d="M 968 418 L 980 410 L 988 425 L 980 438 L 966 432 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1.2"/>
+
+          <!-- ──────────────────────── ANTARCTICA (simplified cap) ───────────── -->
+          <path d="M 0 478 Q 125 462 250 468 Q 375 458 500 465 Q 625 458 750 465
+                   Q 875 460 1000 472 L 1000 500 L 0 500 Z"
+                fill="#f5f5f5" stroke="#e0e0e0" stroke-width="0.8"/>
+
+          <!-- Empty-state caption -->
+          <text x="500" y="493" text-anchor="middle"
+                font-family="system-ui, -apple-system, sans-serif"
+                font-size="11" fill="#9e9e9e" letter-spacing="0.4">
+            No countries reached yet
+          </text>
+
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       EMPTY STATE C — "Reaching across categories"
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <section class="empty-state-section" aria-label="Category breakdown chart — empty state">
+    <h2 class="section-heading">Reaching across categories</h2>
+    <p class="section-subtitle">
+      As you donate to more types of categories, this chart will fill up to show the
+      diversity of your impact across different sectors.
+    </p>
+
+    <div class="container-dashed">
+      <div class="chart-layout">
+
+        <!-- Donut chart + label -->
+        <div class="donut-col">
+          <!--
+            Donut SVG
+            Ring fill:   color.gray.200 = #e0e0e0
+            Inner fill:  color.gray.100 = #f5f5f5
+            Center:      color.neutral.white = #ffffff
+          -->
+          <svg width="252" height="252" viewBox="0 0 252 252"
+               aria-label="Empty donut chart — 0% category distribution" role="img">
+            <!-- Outer ring — color.gray.200 = #e0e0e0 -->
+            <circle cx="126" cy="126" r="104" fill="none"
+                    stroke="#e0e0e0" stroke-width="30"/>
+            <!-- Inner fill — color.gray.100 = #f5f5f5 -->
+            <circle cx="126" cy="126" r="74" fill="#f5f5f5"/>
+            <!-- Center white — color.neutral.white = #ffffff -->
+            <circle cx="126" cy="126" r="62" fill="#ffffff"/>
+          </svg>
+
+          <div class="donut-label-block">
+            <span class="donut-pct-text" aria-label="Zero percent">0%</span>
+            <span class="donut-empty-label">No categories yet</span>
+          </div>
+        </div>
+
+        <!-- Category legend -->
+        <!--
+          Legend dot color annotations:
+          — Token-mapped colors reference tokens.json "Global/Mode 1"
+          — [TOKEN GAP] marks colors with no current Kiva token equivalent;
+            new tokens should be created in the design system.
+        -->
+        <div class="legend-col" role="list" aria-label="Category legend">
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #78c79f;"
+                  aria-hidden="true"></span>
+            <!-- color.eco-green.2 = #78c79f -->
+            <span class="legend-name">Agriculture</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #bfe5d1;"
+                  aria-hidden="true"></span>
+            <!-- color.brand.200 = #bfe5d1 -->
+            <span class="legend-name">Retail</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #6ac395;"
+                  aria-hidden="true"></span>
+            <!-- color.brand.400 = #6ac395 -->
+            <span class="legend-name">Wholesale</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #f8cd69;"
+                  aria-hidden="true"></span>
+            <!-- color.marigold.2 = #f8cd69 -->
+            <span class="legend-name">Arts</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #93c5e8;"
+                  aria-hidden="true"></span>
+            <!-- [TOKEN GAP] sky-blue — no Kiva token. Flag: add color.sky.200 -->
+            <span class="legend-name">Services</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #e0988d;"
+                  aria-hidden="true"></span>
+            <!-- color.desert-rose.2 = #e0988d -->
+            <span class="legend-name">Clothing</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #b5a9d4;"
+                  aria-hidden="true"></span>
+            <!-- [TOKEN GAP] muted lavender — no Kiva token. Flag: add color.lavender.200 -->
+            <span class="legend-name">Health</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #f4b539;"
+                  aria-hidden="true"></span>
+            <!-- color.marigold.default = #f4b539 -->
+            <span class="legend-name">Transportation</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #95d4b3;"
+                  aria-hidden="true"></span>
+            <!-- color.brand.300 = #95d4b3 -->
+            <span class="legend-name">Education</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #4ab67e;"
+                  aria-hidden="true"></span>
+            <!-- color.brand.500 = #4ab67e -->
+            <span class="legend-name">Re-use and recycle</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #276a43;"
+                  aria-hidden="true"></span>
+            <!-- color.eco-green.3 = #276a43 -->
+            <span class="legend-name">Clean energy</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #dfd0bc;"
+                  aria-hidden="true"></span>
+            <!-- color.stone.default = #dfd0bc -->
+            <span class="legend-name">Construction</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+          <div class="legend-row" role="listitem">
+            <span class="legend-dot" style="background-color: #aa9e8d;"
+                  aria-hidden="true"></span>
+            <!-- color.stone.2 = #aa9e8d -->
+            <span class="legend-name">Housing</span>
+            <span class="legend-pct" aria-label="0 percent">0%</span>
+          </div>
+
+        </div><!-- /legend-col -->
+
+      </div><!-- /chart-layout -->
+    </div><!-- /container-dashed -->
+  </section>
+
+</div><!-- /page-wrapper -->
+</body>
+</html>

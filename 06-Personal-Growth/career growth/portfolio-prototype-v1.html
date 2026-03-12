@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lin Zhao — Principal Product Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+/* ─── RESET & BASE ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface2: #161616;
+  --border: #222222;
+  --border-subtle: #1a1a1a;
+  --text: #f0f0f0;
+  --text-secondary: #888888;
+  --text-dim: #444444;
+  --green: #2aa967;
+  --green-deep: #276a43;
+  --green-glow: rgba(42, 169, 103, 0.15);
+  --green-glow-strong: rgba(42, 169, 103, 0.3);
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --max-w: 1100px;
+  --pad: clamp(24px, 6vw, 80px);
+  --radius: 12px;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--green-glow-strong); color: var(--green); }
+
+/* ─── SCROLLBAR ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ─── NAV ───────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px var(--pad);
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
+}
+nav.scrolled {
+  background: rgba(10,10,10,0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom-color: var(--border-subtle);
+}
+.nav-logo {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.9;
+}
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+/* ─── LAYOUT HELPERS ────────────────────────────────────────────── */
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--pad); }
+section { padding: 120px 0; }
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 16px;
+  font-weight: 400;
+}
+.section-sub {
+  font-size: 17px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.65;
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+/* ─── HERO ──────────────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px var(--pad) 80px;
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+.hero-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--green);
+}
+.hero-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(52px, 7vw, 96px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 28px;
+  max-width: 900px;
+}
+.hero-headline em {
+  font-style: italic;
+  color: var(--green);
+}
+.hero-sub {
+  font-size: 18px;
+  color: var(--text-secondary);
+  max-width: 560px;
+  line-height: 1.65;
+  margin-bottom: 60px;
+}
+
+/* Pipeline */
+.pipeline-wrap {
+  margin-bottom: 56px;
+}
+.pipeline-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  gap: 8px 0;
+}
+.pipeline-node {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.node-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 40px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: border-color 0.3s, color 0.3s, background 0.3s, box-shadow 0.3s;
+  white-space: nowrap;
+}
+.node-pill.active {
+  border-color: var(--green);
+  color: var(--text);
+  background: rgba(42, 169, 103, 0.08);
+  box-shadow: 0 0 20px var(--green-glow);
+}
+.node-icon { font-size: 15px; }
+.pipeline-arrow {
+  width: 40px;
+  height: 2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+.pipeline-arrow svg {
+  width: 100%;
+  height: 12px;
+  overflow: visible;
+}
+.arrow-line {
+  stroke: var(--border);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 4 3;
+  transition: stroke 0.4s;
+}
+.arrow-line.active {
+  stroke: var(--green);
+  stroke-dashoffset: 0;
+  animation: flowDash 1s linear infinite;
+}
+@keyframes flowDash {
+  from { stroke-dashoffset: 14; }
+  to { stroke-dashoffset: 0; }
+}
+.arrow-head {
+  fill: var(--border);
+  transition: fill 0.4s;
+}
+.arrow-head.active { fill: var(--green); }
+
+/* Hero stats */
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.hero-stat {}
+.stat-number {
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.stat-number .arrow-text {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--green);
+}
+.stat-number .highlight {
+  color: var(--green);
+}
+.stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: var(--pad);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0;
+}
+.scroll-chevron {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  animation: bounce 2s ease-in-out infinite;
+}
+.scroll-chevron span {
+  display: block;
+  width: 8px;
+  height: 1px;
+  background: var(--text-dim);
+}
+.scroll-chevron span:first-child {
+  transform: rotate(45deg) translateX(2px);
+  transform-origin: right;
+}
+.scroll-chevron span:last-child {
+  transform: rotate(-45deg) translateX(2px);
+  transform-origin: right;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* ─── DIVIDER ───────────────────────────────────────────────────── */
+.section-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+/* ─── RESEARCH FOUNDATION ───────────────────────────────────────── */
+#research {
+  background: var(--bg);
+  padding: 100px 0;
+}
+.research-intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  margin-top: 52px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.research-col {
+  padding: 32px 28px;
+  border-right: 1px solid var(--border);
+}
+.research-col:last-child { border-right: none; }
+.research-col-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+}
+.research-col-content {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.research-col-content strong { color: var(--text); font-weight: 500; }
+.research-col-content em { color: var(--green); font-style: normal; font-weight: 500; }
+
+/* Findings */
+.findings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+.finding-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 24px 28px;
+  position: relative;
+}
+.finding-number {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.finding-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.finding-text strong { color: var(--text); font-weight: 500; }
+
+/* Pivot insight */
+.pivot-insight {
+  margin-top: 48px;
+  padding: 40px 48px;
+  background: rgba(42, 169, 103, 0.05);
+  border: 1px solid rgba(42, 169, 103, 0.2);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.pivot-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+.pivot-quote {
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 3vw, 36px);
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.pivot-context {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+.pivot-context strong { color: var(--text); font-weight: 500; }
+
+/* Research pull quote */
+.research-interview-quote {
+  margin-top: 40px;
+  padding: 32px 36px;
+  border-left: 2px solid var(--border);
+  background: var(--surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.riq-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  font-style: italic;
+  margin-bottom: 14px;
+}
+.riq-text em { font-style: normal; color: var(--green); }
+.riq-source {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Bridge arrow to CS1 */
+.research-bridge {
+  margin-top: 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.bridge-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border) 30%, var(--green) 70%, transparent);
+}
+.bridge-text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .research-intro-grid { grid-template-columns: 1fr; }
+  .research-col { border-right: none; border-bottom: 1px solid var(--border); }
+  .research-col:last-child { border-bottom: none; }
+  .findings-grid { grid-template-columns: 1fr; }
+  .pivot-insight { padding: 28px 24px; }
+}
+
+/* ─── CS1: THE FULL LOOP ────────────────────────────────────────── */
+#cs1 { background: var(--bg); }
+.cs1-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+  margin-top: 56px;
+  min-width: 0; /* prevent grid column blowout */
+}
+.cs1-narrative { min-width: 0; } /* allow text wrapping */
+.cs-beat {
+  margin-bottom: 36px;
+}
+.beat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.beat-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.beat-text strong { color: var(--text); font-weight: 500; }
+
+/* Mini pipeline */
+.mini-pipeline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0;
+}
+.mini-node {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface);
+  white-space: nowrap;
+}
+.mini-arrow {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* Result stats */
+.result-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 8px;
+}
+.result-stat {}
+.result-number {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.result-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Browser mockup */
+.browser-wrap {
+  position: sticky;
+  top: 120px;
+  min-width: 0; /* critical: lets grid column constrain this */
+}
+.browser-mock {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+  display: block;
+  width: 100%; /* never exceed the grid cell */
+}
+.browser-mock:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px var(--green-glow);
+  border-color: var(--green-deep);
+}
+.browser-chrome {
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.browser-url {
+  flex: 1;
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: 'Courier New', monospace;
+  letter-spacing: -0.01em;
+}
+/* ─── INLINE DEMO (replaces iframe) ────────────────────────── */
+.browser-screen {
+  height: 400px;
+  background: #0c1a10;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.demo-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+.demo-topbar {
+  height: 32px;
+  background: #1e2e20;
+  border-bottom: 1px solid rgba(42,169,103,0.15);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.demo-topbar-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.demo-topbar-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-left: auto;
+  margin-right: auto;
+}
+.demo-sections {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  overflow: hidden;
+}
+/* Bar chart section */
+.demo-chart-panel {
+  flex: 1;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(42,169,103,0.12);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 0;
+}
+.demo-panel-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+/* Skeleton shimmer reuse */
+.demo-skel {
+  background: rgba(255,255,255,0.07);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.demo-skel::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: shimmer 2s infinite;
+}
+/* Bar chart */
+.demo-bars-area {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  padding-bottom: 18px;
+  position: relative;
+}
+.demo-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+}
+.demo-bar-pair {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  flex: 1;
+  width: 100%;
+}
+.demo-bar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+}
+.demo-bar.is-skel { background: rgba(255,255,255,0.07); }
+.demo-bar.is-stone { background: #2e271e; }
+.demo-bar.is-green { background: #2aa967; }
+.demo-year {
+  font-size: 7px;
+  color: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+/* Bottom row */
+.demo-bottom-row {
+  display: flex;
+  gap: 10px;
+  height: 148px;
+  flex-shrink: 0;
+}
+.demo-viz-panel {
+  flex: 1;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(42,169,103,0.12);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+/* Skeleton overlay for bottom panels */
+.demo-viz-skel {
+  position: absolute;
+  inset: 0;
+  background: #0c1a10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 8px;
+  z-index: 2;
+  transition: opacity 0.5s ease;
+}
+.demo-viz-skel.gone { opacity: 0; pointer-events: none; }
+.skel-circle {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+}
+.skel-line { height: 7px; width: 70%; }
+.skel-line-short { height: 7px; width: 45%; }
+/* Donut SVG */
+#demoDonutSvg { transform: rotate(-90deg); overflow: visible; }
+/* Globe SVG */
+#demoGlobeSvg { overflow: visible; }
+.globe-country-dot {
+  filter: drop-shadow(0 0 4px rgba(42,169,103,0.8));
+}
+/* Hover overlay */
+.hover-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10,26,18,0.82);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s;
+  font-size: 14px; font-weight: 600; color: var(--green);
+  letter-spacing: 0.05em; gap: 8px; cursor: pointer;
+  z-index: 10;
+}
+.browser-mock:hover .hover-overlay { opacity: 1; }
+
+.cs-quote {
+  margin-top: 56px;
+  padding: 32px 40px;
+  border-left: 2px solid var(--green);
+  background: rgba(42,169,103,0.04);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.cs-quote-text {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--text);
+  font-style: italic;
+}
+.cs-quote-source {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+}
+
+/* ─── CS2: THE SYSTEM ───────────────────────────────────────────── */
+#cs2 { background: var(--surface); }
+.system-diagram {
+  max-width: 520px;
+  margin: 56px auto;
+}
+.diagram-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.diagram-node-box {
+  width: 100%;
+  padding: 18px 28px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(12px);
+}
+.diagram-node-box.highlighted {
+  border-color: var(--green);
+  background: rgba(42,169,103,0.07);
+}
+.diagram-node-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.diagram-node-note {
+  font-size: 12px;
+  color: var(--green);
+  font-style: italic;
+  text-align: right;
+  max-width: 200px;
+}
+.diagram-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  opacity: 0;
+}
+.connector-line {
+  width: 1.5px;
+  height: 24px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.connector-line::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 8px;
+  background: var(--green);
+  animation: flowDown 1.5s ease-in-out infinite;
+}
+@keyframes flowDown {
+  0% { transform: translateY(-100%); opacity: 0; }
+  30% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateY(300%); opacity: 0; }
+}
+.connector-arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--border);
+  margin-top: 1px;
+}
+.stat-pills {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 48px;
+}
+.stat-pill {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  background: var(--surface2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.stat-pill-number {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -0.02em;
+}
+.stat-pill-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.insight-callout {
+  max-width: 640px;
+  margin: 48px auto 0;
+  padding: 24px 28px;
+  background: rgba(42,169,103,0.05);
+  border: 1px solid rgba(42,169,103,0.2);
+  border-radius: var(--radius);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+.insight-callout .green { color: var(--green); }
+
+/* ─── CS3: THE CRAFT ────────────────────────────────────────────── */
+#cs3 { background: var(--bg); }
+.versions-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 24px;
+  align-items: center;
+  margin-top: 56px;
+}
+.version-card {
+  padding: 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+}
+.version-card.v2 {
+  border-color: var(--green);
+  background: rgba(42,169,103,0.05);
+  box-shadow: 0 0 40px var(--green-glow);
+}
+.version-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.version-card.v2 .version-tag { color: var(--green); }
+.version-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+.version-tech {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.tech-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  width: fit-content;
+}
+.version-card.v2 .tech-tag { border-color: rgba(42,169,103,0.2); color: var(--text); }
+.version-question {
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-secondary);
+  font-family: var(--font-serif);
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.version-card.v2 .version-question { color: var(--green); border-top-color: rgba(42,169,103,0.2); }
+.version-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+.version-arrow-hours {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+.version-arrow-icon {
+  font-size: 20px;
+  color: var(--green);
+}
+.craft-insight {
+  margin-top: 48px;
+  padding: 28px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 680px;
+}
+.craft-insight strong { color: var(--text); }
+.github-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 12px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  transition: border-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.github-btn:hover { border-color: var(--green); color: var(--text); }
+.github-icon { font-size: 16px; }
+
+/* ─── CS4: EXPLORING THE BOUNDARIES ────────────────────────────── */
+#cs4 { background: var(--bg); }
+.exploration-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 56px;
+}
+.exploration-card {
+  padding: 28px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.exploration-card:hover {
+  border-color: var(--green);
+  box-shadow: 0 0 20px var(--green-glow);
+}
+.exploration-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.exploration-desc {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.exploration-desc p {
+  margin: 0;
+}
+.exploration-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+  transition: all 0.2s;
+  width: fit-content;
+}
+.exploration-link:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+.exploration-insight {
+  margin-top: 48px;
+  padding: 28px;
+  background: rgba(42,169,103,0.05);
+  border: 1px solid rgba(42,169,103,0.2);
+  border-radius: var(--radius);
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.exploration-insight p {
+  margin: 0;
+}
+.exploration-insight strong { color: var(--text); }
+.exploration-comparison {
+  margin-top: 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.comp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.comp-row:last-child { border-bottom: none; }
+.comp-row.comp-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.comp-cell {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.comp-header .comp-cell {
+  color: var(--text);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.exploration-footnote {
+  margin-top: 32px;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.exploration-footnote p {
+  margin: 0;
+}
+
+/* ─── CS5: THE FRAMEWORK (previously CS4) ──────────────────────────── */
+#cs5 { background: var(--surface); }
+.framework-beats {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 48px 0;
+  max-width: 680px;
+}
+.framework-beat {
+  display: flex;
+  gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.framework-beat:last-child { border-bottom: none; }
+.beat-number {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  padding-top: 2px;
+  flex-shrink: 0;
+  width: 24px;
+}
+.beat-content {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+.beat-content strong { color: var(--text); font-weight: 500; }
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin: 48px 0;
+}
+.pillar-card {
+  padding: 20px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.pillar-card.new-pillar {
+  border-color: var(--green);
+  background: rgba(42,169,103,0.08);
+}
+.pillar-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: rgba(42,169,103,0.15);
+  padding: 2px 8px;
+  border-radius: 40px;
+  margin-bottom: 10px;
+}
+.pillar-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+.pillar-card:not(.new-pillar) .pillar-name { color: var(--text-secondary); }
+.framework-quote {
+  margin: 48px 0 0;
+  max-width: 680px;
+}
+.framework-quote-text {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  line-height: 1.45;
+  color: var(--text);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+.framework-quote-attr {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ─── CHAPTER SYSTEM ────────────────────────────────────────────── */
+.chapter-opener {
+  font-size: 14px;
+  color: var(--text-dim);
+  font-style: italic;
+  line-height: 1.7;
+  max-width: 560px;
+  margin-bottom: 48px;
+  padding-left: 16px;
+  border-left: 2px solid var(--border);
+}
+.chapter-opener strong { color: var(--text-secondary); font-style: normal; }
+
+.chapter-bridge {
+  margin-top: 72px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.chapter-bridge-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+.chapter-bridge-text {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding: 6px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+}
+.chapter-bridge-arrow {
+  font-size: 12px;
+  color: var(--green);
+  flex-shrink: 0;
+}
+
+/* ─── FINALE ─────────────────────────────────────────────────────── */
+#finale {
+  background: var(--surface);
+  padding: 120px 0;
+  position: relative;
+  overflow: hidden;
+}
+#finale::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green) 50%, transparent);
+}
+.finale-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 20px;
+}
+.finale-title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 32px;
+  max-width: 800px;
+}
+.finale-title em { font-style: italic; color: var(--green); }
+
+.finale-chain {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0;
+  margin: 56px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.finale-chain-item {
+  padding: 24px 20px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.finale-chain-item:last-child { border-right: none; }
+.finale-chain-num {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.finale-chain-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.finale-chain-kill {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.finale-chain-kill em {
+  font-style: normal;
+  color: var(--green);
+  opacity: 0.8;
+}
+
+.finale-insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 48px 0;
+}
+.finale-insight-card {
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+.finale-insight-card.accent {
+  border-color: rgba(42,169,103,0.3);
+  background: rgba(42,169,103,0.04);
+}
+.fi-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+}
+.fi-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+.fi-text strong { color: var(--text); font-weight: 500; }
+
+.finale-closing {
+  margin-top: 56px;
+  padding-top: 56px;
+  border-top: 1px solid var(--border-subtle);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: end;
+}
+.finale-closing-quote {
+  font-family: var(--font-serif);
+  font-size: clamp(20px, 2.5vw, 28px);
+  line-height: 1.35;
+  color: var(--text);
+  font-style: italic;
+}
+.finale-closing-quote em { font-style: normal; color: var(--green); }
+.finale-next {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+.finale-next strong { color: var(--text); font-weight: 500; }
+.finale-next p + p { margin-top: 16px; }
+
+@media (max-width: 768px) {
+  .finale-chain { grid-template-columns: 1fr 1fr; }
+  .finale-chain-item { border-bottom: 1px solid var(--border); }
+  .finale-insights { grid-template-columns: 1fr; }
+  .finale-closing { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* ─── ABOUT ─────────────────────────────────────────────────────── */
+#about { background: var(--bg); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-top: 56px;
+  align-items: start;
+}
+.observations {}
+.observation {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.observation:first-child { border-top: 1px solid var(--border-subtle); }
+.obs-arrow {
+  color: var(--green);
+  font-size: 14px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.obs-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.obs-text strong { color: var(--text); font-weight: 500; }
+.about-bio {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+.about-bio p { margin-bottom: 16px; }
+.about-bio strong { color: var(--text); font-weight: 500; }
+.about-targets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.target-tag {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 8px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.target-tag strong { color: var(--text); }
+.target-tag .green { color: var(--green); }
+
+/* ─── CONTACT ───────────────────────────────────────────────────── */
+#contact {
+  padding: 120px var(--pad);
+  text-align: center;
+  border-top: 1px solid var(--border-subtle);
+}
+.contact-inner { max-width: var(--max-w); margin: 0 auto; }
+.contact-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 6vw, 80px);
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 32px;
+}
+.contact-email {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--green);
+  border-bottom: 1px solid var(--green-deep);
+  padding-bottom: 2px;
+  transition: opacity 0.2s;
+  margin-bottom: 48px;
+}
+.contact-email:hover { opacity: 0.7; }
+.footer-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+.footer-note .green { color: rgba(42,169,103,0.6); }
+
+/* ─── RESPONSIVE ────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .cs1-grid { grid-template-columns: 1fr; gap: 48px; }
+  .browser-wrap { position: static; }
+  .versions-grid { grid-template-columns: 1fr; }
+  .version-arrow { flex-direction: row; writing-mode: horizontal-tb; padding: 12px 0; }
+  .version-arrow-hours { writing-mode: horizontal-tb; }
+  .version-arrow-icon { transform: rotate(90deg); }
+  .exploration-grid { grid-template-columns: 1fr; }
+  .comp-row { grid-template-columns: 1fr; }
+  .pillars-grid { grid-template-columns: repeat(3, 1fr); }
+  .about-grid { grid-template-columns: 1fr; gap: 48px; }
+}
+@media (max-width: 600px) {
+  section { padding: 80px 0; }
+  .pipeline { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .pipeline-arrow { transform: rotate(90deg); margin: 4px 0; }
+  .pillars-grid { grid-template-columns: 1fr 1fr; }
+  .versions-grid { gap: 16px; }
+  .nav-links { display: none; }
+  .hero-stats { flex-direction: column; gap: 28px; }
+}
+
+/* ─── SECTION NUMBER DECORATORS ─────────────────────────────────── */
+.cs-header { position: relative; }
+.cs-company {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+.cs-company-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
+<nav id="nav">
+  <div class="nav-logo">Lin Zhao</div>
+  <div class="nav-links">
+    <a href="#research">Story</a>
+    <a href="#finale">Synthesis</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────────── -->
+<section id="hero" style="position:relative;">
+  <div class="hero-eyebrow reveal">Principal Product Designer · AI Workflow Architect</div>
+  <h1 class="hero-headline reveal">I don't wait for <em>the handoff.</em></h1>
+  <p class="hero-sub reveal">Every product team has the same hidden tax: good thinking that disappears somewhere between the research session and the shipped product. I went looking for where it was going. This is what I found.</p>
+
+  <!-- Pipeline -->
+  <div class="pipeline-wrap reveal">
+    <div class="pipeline-label">From first user interview to shipped product — zero translation loss</div>
+    <div class="pipeline" id="heroPipeline">
+      <div class="pipeline-node">
+        <div class="node-pill" data-node="0"><span class="node-icon">🔬</span> Research</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 48 12" preserveAspectRatio="none">
+          <line class="arrow-line" data-arrow="0" x1="0" y1="6" x2="40" y2="6"/>
+          <polygon class="arrow-head" data-arrow="0" points="40,2 48,6 40,10"/>
+        </svg>
+      </div>
+      <div class="pipeline-node">
+        <div class="node-pill" data-node="1"><span class="node-icon">🎨</span> Figma</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 48 12" preserveAspectRatio="none">
+          <line class="arrow-line" data-arrow="1" x1="0" y1="6" x2="40" y2="6"/>
+          <polygon class="arrow-head" data-arrow="1" points="40,2 48,6 40,10"/>
+        </svg>
+      </div>
+      <div class="pipeline-node">
+        <div class="node-pill" data-node="2"><span class="node-icon">🔌</span> MCP</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 48 12" preserveAspectRatio="none">
+          <line class="arrow-line" data-arrow="2" x1="0" y1="6" x2="40" y2="6"/>
+          <polygon class="arrow-head" data-arrow="2" points="40,2 48,6 40,10"/>
+        </svg>
+      </div>
+      <div class="pipeline-node">
+        <div class="node-pill" data-node="3"><span class="node-icon">🤖</span> Claude Code</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 48 12" preserveAspectRatio="none">
+          <line class="arrow-line" data-arrow="3" x1="0" y1="6" x2="40" y2="6"/>
+          <polygon class="arrow-head" data-arrow="3" points="40,2 48,6 40,10"/>
+        </svg>
+      </div>
+      <div class="pipeline-node">
+        <div class="node-pill" data-node="4"><span class="node-icon">🌐</span> Live</div>
+      </div>
+      <div class="pipeline-arrow">
+        <svg viewBox="0 0 48 12" preserveAspectRatio="none">
+          <line class="arrow-line" data-arrow="4" x1="0" y1="6" x2="40" y2="6"/>
+          <polygon class="arrow-head" data-arrow="4" points="40,2 48,6 40,10"/>
+        </svg>
+      </div>
+      <div class="pipeline-node">
+        <div class="node-pill" data-node="5"><span class="node-icon">✦</span> Iterate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="hero-stats reveal">
+    <div class="hero-stat">
+      <div class="stat-number">
+        <span id="statWeeks">3–4 wks</span>
+        <span class="arrow-text">→</span>
+        <span class="highlight">4 days</span>
+      </div>
+      <div class="stat-label">Design-to-live cycle, compressed</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-number">
+        <span id="statReduction" class="highlight">60–70%</span>
+      </div>
+      <div class="stat-label">Total cycle time reduction</div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator" id="scrollIndicator">
+    <div class="scroll-chevron"><span></span><span></span></div>
+    scroll
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── RESEARCH FOUNDATION ───────────────────────────────────────── -->
+<section id="research">
+  <div class="container">
+    <div class="section-label reveal">Chapter 01 · The Brief</div>
+    <h2 class="section-title reveal">Before the pipeline,<br>the brief.</h2>
+    <p class="section-sub reveal">Speed without understanding is just fast failure. Every decision in this project traces back to a single research insight. This is where the story starts.</p>
+
+    <!-- 3-column strategy brief -->
+    <div class="research-intro-grid reveal">
+      <div class="research-col">
+        <div class="research-col-label">The Strategic Context</div>
+        <div class="research-col-content">Kiva's Amplify pillar needed new <strong>SME + HNWI</strong> customers — not enterprise. CSR programs were being defunded. The product flywheel needed a new, self-serve entry point.</div>
+      </div>
+      <div class="research-col">
+        <div class="research-col-label">My Research Role</div>
+        <div class="research-col-content">I wasn't the researcher. I was the <em>question designer</em> — I defined which product hypotheses needed validation, then worked with the research team to test them against real SME interviews.</div>
+      </div>
+      <div class="research-col">
+        <div class="research-col-label">The Product Decision</div>
+        <div class="research-col-content">Impact Page + <strong>"Try Before You Buy."</strong> Not enterprise self-serve tools. The one feature that converts "curious but not committed" into a first deposit — designed for trust, not features.</div>
+      </div>
+    </div>
+
+    <!-- 3 research findings -->
+    <div class="findings-grid">
+      <div class="finding-card reveal">
+        <div class="finding-number">FINDING 01</div>
+        <div class="finding-text">SMEs prefer giving <strong>locally</strong>. Kiva's global reach is a barrier to B2B adoption — not a selling point. Local community relevance drives their giving decisions.</div>
+      </div>
+      <div class="finding-card reveal">
+        <div class="finding-number">FINDING 02</div>
+        <div class="finding-text">They frame Kiva as a <strong>brand development tool</strong>, not a customer acquisition channel. The right metrics are NPS and brand awareness — not conversion rates.</div>
+      </div>
+      <div class="finding-card reveal">
+        <div class="finding-number">FINDING 03</div>
+        <div class="finding-text">Personal mission alignment is the <strong>green shoot</strong>. Most SMEs would consider Kiva for personal giving. B2B starts with making Kiva feel personal — then the business case follows.</div>
+      </div>
+    </div>
+
+    <!-- Pivot insight -->
+    <div class="pivot-insight reveal">
+      <div class="pivot-eyebrow">The insight that changed the roadmap</div>
+      <div class="pivot-quote">"They're not disinterested. They're stuck."</div>
+      <div class="pivot-context">SMEs are <strong>willing but stuck</strong> — blocked by local relevance gaps, not a lack of mission alignment. This reframed the product question: don't sell the value prop, <strong>remove the friction</strong>. Design for the aha moment first.</div>
+    </div>
+
+    <!-- SME interview pull quote -->
+    <div class="research-interview-quote reveal">
+      <div class="riq-text">"I would view this as a brand development tool, more so than a customer acquisition or conversion tool… if I wanted to measure the impact of this program, I would want to know: how many people are familiar with and know my brand, and what is <em>their NPS</em>."</div>
+      <div class="riq-source">SME interview participant · Kiva Partnerships Research · 2026</div>
+    </div>
+
+    <!-- Bridge to Ch02 -->
+    <div class="chapter-bridge reveal">
+      <div class="chapter-bridge-line"></div>
+      <div class="chapter-bridge-text">The research defined what to build. The next question: how fast could we build it without losing the intent?</div>
+      <div class="chapter-bridge-line"></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── CS1: THE FULL LOOP ────────────────────────────────────────── -->
+<section id="cs1">
+  <div class="container">
+    <div class="section-label reveal">Chapter 02 · The Build</div>
+    <div class="cs-company reveal">
+      Kiva <span class="cs-company-dot"></span> Impact Dashboard <span class="cs-company-dot"></span> 2026
+    </div>
+    <h2 class="section-title reveal">From Figma to Live<br>in 4 Days</h2>
+    <p class="section-sub reveal">The research said: design for trust, not features. But trust is invisible in a Figma file — you only know if you got it right when someone real clicks through it.</p>
+
+    <div class="cs1-grid">
+      <!-- Left: narrative -->
+      <div class="cs1-narrative">
+        <div class="cs-beat reveal">
+          <div class="beat-label">The Old Experience</div>
+          <div class="beat-text">SMEs landing on the Giving Fund page faced a quiet fog. Not hostility — just confusion. <strong>Who's raising money? Who is Kiva? Who are the borrowers?</strong> Three rounds of user testing kept surfacing the same issue: participants couldn't hold the three entities in their heads at once. They left curious, not committed. Not because they didn't care — because the page gave them nothing solid to hold onto.</div>
+        </div>
+        <div class="cs-beat reveal">
+          <div class="beat-label">The Design Response</div>
+          <div class="beat-text">Trust signals, not feature lists. Real borrower profiles — <em>"I am independent, and if I am independent, I can do anything I want."</em> Concrete proof: <strong>1 person funded every 90 seconds</strong>. 90% quality-of-life improvement, cited from 60 Decibels research. And one clear hierarchy: <strong>you raise. Kiva deploys.</strong> The design wasn't about aesthetics. It was about removing every reason to hesitate.</div>
+        </div>
+        <div class="cs-beat reveal">
+          <div class="beat-label">The Gap</div>
+          <div class="beat-text">But static mockups couldn't prove it worked. Every round surfaced comprehension issues. Stakeholders were making decisions from screenshots — guessing at how it would feel. Users were still confused in testing. The design might be right. <strong>Might isn't enough to ship.</strong> Both groups needed something real to react to.</div>
+        </div>
+        <div class="cs-beat reveal">
+          <div class="beat-label">The Pipeline</div>
+          <div class="mini-pipeline">
+            <span class="mini-node">🎨 Figma</span>
+            <span class="mini-arrow">→</span>
+            <span class="mini-node">🔌 MCP</span>
+            <span class="mini-arrow">→</span>
+            <span class="mini-node">🤖 Claude</span>
+            <span class="mini-arrow">→</span>
+            <span class="mini-node">🌐 HTML</span>
+            <span class="mini-arrow">→</span>
+            <span class="mini-node">✦ Figma</span>
+          </div>
+          <div class="beat-text">MCP reads exact Figma values. Claude generates the code. Browser validates. Back to Figma for alignment. Not optimizing for speed — optimizing for <strong>reality</strong>. Something users could click. Something stakeholders could feel.</div>
+        </div>
+        <div class="cs-beat reveal">
+          <div class="beat-label">The Result</div>
+          <div class="beat-text" style="margin-bottom:20px;">Round 3 of user testing, on the live URL: participants finally held it all together — <em>"Lin is raising, Kiva deploys the funds."</em> The confusion cleared. <strong>"Try before you buy"</strong> moved to high-confidence priority. Eight features went to the backlog. The conversation shifted.</div>
+          <div class="result-stats">
+            <div class="result-stat">
+              <div class="result-number">4</div>
+              <div class="result-label">days to a URL<br>users could actually test</div>
+            </div>
+            <div class="result-stat">
+              <div class="result-number">8 →</div>
+              <div class="result-label">features to backlog,<br>1 priority confirmed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: browser mockup with live iframe -->
+      <div class="browser-wrap reveal">
+        <div class="browser-mock" id="browserMock">
+          <div class="browser-chrome">
+            <div class="browser-dots">
+              <div class="browser-dot" style="background:#ff5f56"></div>
+              <div class="browser-dot" style="background:#ffbd2e"></div>
+              <div class="browser-dot" style="background:#27c93f"></div>
+            </div>
+            <div class="browser-url">kiva-impac-dash-demo.netlify.app</div>
+          </div>
+          <div class="browser-screen">
+            <div class="demo-inner">
+              <!-- Top bar -->
+              <div class="demo-topbar">
+                <div class="demo-topbar-dot" style="background:#ff5f56"></div>
+                <div class="demo-topbar-dot" style="background:#ffbd2e"></div>
+                <div class="demo-topbar-dot" style="background:#27c93f"></div>
+                <div class="demo-topbar-title">Tracking our lasting impact · A deeper look</div>
+              </div>
+              <div class="demo-sections">
+
+                <!-- BAR CHART: Tracking our lasting impact -->
+                <div class="demo-chart-panel">
+                  <div class="demo-panel-label">Tracking our lasting impact</div>
+                  <div class="demo-bars-area" id="demoBarsArea">
+                    <!-- 5 year groups: 2026–2030 -->
+                    <div class="demo-bar-col">
+                      <div class="demo-bar-pair">
+                        <div class="demo-bar is-skel" id="b0s" style="height:100%"></div>
+                        <div class="demo-bar is-skel" id="b0g" style="height:100%"></div>
+                      </div>
+                      <div class="demo-year">2026</div>
+                    </div>
+                    <div class="demo-bar-col">
+                      <div class="demo-bar-pair">
+                        <div class="demo-bar is-skel" id="b1s" style="height:100%"></div>
+                        <div class="demo-bar is-skel" id="b1g" style="height:100%"></div>
+                      </div>
+                      <div class="demo-year">2027</div>
+                    </div>
+                    <div class="demo-bar-col">
+                      <div class="demo-bar-pair">
+                        <div class="demo-bar is-skel" id="b2s" style="height:100%"></div>
+                        <div class="demo-bar is-skel" id="b2g" style="height:100%"></div>
+                      </div>
+                      <div class="demo-year">2028</div>
+                    </div>
+                    <div class="demo-bar-col">
+                      <div class="demo-bar-pair">
+                        <div class="demo-bar is-skel" id="b3s" style="height:100%"></div>
+                        <div class="demo-bar is-skel" id="b3g" style="height:100%"></div>
+                      </div>
+                      <div class="demo-year">2029</div>
+                    </div>
+                    <div class="demo-bar-col">
+                      <div class="demo-bar-pair">
+                        <div class="demo-bar is-skel" id="b4s" style="height:100%"></div>
+                        <div class="demo-bar is-skel" id="b4g" style="height:100%"></div>
+                      </div>
+                      <div class="demo-year">2030</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- BOTTOM ROW: Donut + Globe -->
+                <div class="demo-bottom-row">
+
+                  <!-- Donut: By loan category -->
+                  <div class="demo-viz-panel">
+                    <div class="demo-panel-label" style="align-self:flex-start">By category</div>
+                    <!-- Skeleton overlay -->
+                    <div class="demo-viz-skel" id="donutSkel">
+                      <div class="demo-skel skel-circle"></div>
+                      <div class="demo-skel skel-line"></div>
+                      <div class="demo-skel skel-line-short"></div>
+                    </div>
+                    <!-- Real donut -->
+                    <svg id="demoDonutSvg" width="76" height="76" viewBox="0 0 76 76">
+                      <!-- Track -->
+                      <circle cx="38" cy="38" r="28" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12"/>
+                      <!-- Agriculture 28% -->
+                      <circle id="ds0" cx="38" cy="38" r="28" fill="none" stroke="#2aa967" stroke-width="12"
+                        stroke-dasharray="0 175.9" stroke-dashoffset="0"/>
+                      <!-- Services 22% -->
+                      <circle id="ds1" cx="38" cy="38" r="28" fill="none" stroke="#276a43" stroke-width="12"
+                        stroke-dasharray="0 175.9" stroke-dashoffset="0"/>
+                      <!-- Eco-friendly 20% -->
+                      <circle id="ds2" cx="38" cy="38" r="28" fill="none" stroke="#4ecb8d" stroke-width="12"
+                        stroke-dasharray="0 175.9" stroke-dashoffset="0"/>
+                      <!-- Water 18% -->
+                      <circle id="ds3" cx="38" cy="38" r="28" fill="none" stroke="#1a4d30" stroke-width="12"
+                        stroke-dasharray="0 175.9" stroke-dashoffset="0"/>
+                      <!-- Food 12% -->
+                      <circle id="ds4" cx="38" cy="38" r="28" fill="none" stroke="#0d3a1e" stroke-width="12"
+                        stroke-dasharray="0 175.9" stroke-dashoffset="0"/>
+                    </svg>
+                    <div style="font-size:7px;color:rgba(255,255,255,0.25);letter-spacing:0.06em;text-align:center;line-height:1.5">
+                      Agriculture · Services<br>Eco-friendly · Water
+                    </div>
+                  </div>
+
+                  <!-- Globe: Global reach -->
+                  <div class="demo-viz-panel">
+                    <div class="demo-panel-label" style="align-self:flex-start">Global reach</div>
+                    <!-- Skeleton overlay -->
+                    <div class="demo-viz-skel" id="globeSkel">
+                      <div class="demo-skel skel-circle"></div>
+                      <div class="demo-skel skel-line"></div>
+                      <div class="demo-skel skel-line-short"></div>
+                    </div>
+                    <!-- Real globe -->
+                    <svg id="demoGlobeSvg" width="76" height="76" viewBox="0 0 76 76">
+                      <!-- Ocean -->
+                      <circle cx="38" cy="38" r="34" fill="#0a1f14" stroke="rgba(42,169,103,0.25)" stroke-width="1"/>
+                      <!-- Latitude lines -->
+                      <ellipse cx="38" cy="38" rx="34" ry="12" fill="none" stroke="rgba(42,169,103,0.1)" stroke-width="0.5"/>
+                      <ellipse cx="38" cy="38" rx="34" ry="24" fill="none" stroke="rgba(42,169,103,0.08)" stroke-width="0.5"/>
+                      <line x1="4" y1="38" x2="72" y2="38" stroke="rgba(42,169,103,0.1)" stroke-width="0.5"/>
+                      <!-- Country blobs (simplified) -->
+                      <ellipse cx="26" cy="30" rx="6" ry="4" fill="#1a3d28" opacity="0.7"/><!-- W.Africa -->
+                      <ellipse cx="42" cy="32" rx="5" ry="3" fill="#1a3d28" opacity="0.7"/><!-- E.Africa -->
+                      <ellipse cx="54" cy="28" rx="7" ry="5" fill="#1a3d28" opacity="0.7"/><!-- S.Asia -->
+                      <ellipse cx="60" cy="36" rx="6" ry="4" fill="#1a3d28" opacity="0.7"/><!-- SE.Asia -->
+                      <ellipse cx="20" cy="42" rx="5" ry="7" fill="#1a3d28" opacity="0.7"/><!-- S.America -->
+                      <!-- Animated borrower dots -->
+                      <circle id="gd0" class="globe-country-dot" cx="42" cy="32" r="3.5" fill="#2aa967" opacity="0"/><!-- Kenya -->
+                      <circle id="gd1" class="globe-country-dot" cx="60" cy="37" r="3.5" fill="#2aa967" opacity="0"/><!-- Philippines -->
+                      <circle id="gd2" class="globe-country-dot" cx="20" cy="44" r="3.5" fill="#2aa967" opacity="0"/><!-- Peru -->
+                      <circle id="gd3" class="globe-country-dot" cx="54" cy="27" r="3.5" fill="#2aa967" opacity="0"/><!-- India -->
+                      <circle id="gd4" class="globe-country-dot" cx="28" cy="31" r="3.5" fill="#2aa967" opacity="0"/><!-- Ghana -->
+                    </svg>
+                    <div style="font-size:7px;color:rgba(255,255,255,0.25);letter-spacing:0.06em;text-align:center;line-height:1.5">
+                      Kenya · Philippines<br>India · Peru · Ghana
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <!-- hover CTA -->
+            <div class="hover-overlay" onclick="window.open('https://kiva-impac-dash-demo.netlify.app/','_blank')">
+              ↗ Open Live Dashboard
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px; font-size:11px; color:var(--text-dim); text-align:center; letter-spacing:0.06em;">
+          LIVE DEMO · CLICK TO OPEN
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-quote reveal">
+      <div class="cs-quote-text">"The stakeholders stopped asking 'what will it look like?' and started asking 'what should we change?' That's a different conversation."</div>
+      <div class="cs-quote-source">— On the shift from static to live</div>
+    </div>
+
+    <div class="chapter-bridge reveal">
+      <div class="chapter-bridge-line"></div>
+      <div class="chapter-bridge-text">One successful build proves a concept. But a pipeline is only valuable if it's repeatable — project after project, token by token.</div>
+      <div class="chapter-bridge-line"></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── CS2: THE SYSTEM ───────────────────────────────────────────── -->
+<section id="cs2">
+  <div class="container" style="text-align:center;">
+    <div class="section-label reveal">Chapter 03 · The System</div>
+    <h2 class="section-title reveal" style="margin:0 auto 16px;">A Design System That AI Can Read</h2>
+    <p class="section-sub reveal" style="margin:0 auto;">One successful build proves the concept. Repeatability requires something deeper: a design system that isn't just human-readable — but machine-executable.</p>
+
+    <div class="system-diagram" id="systemDiagram">
+      <div class="diagram-row">
+        <div class="diagram-node-box" id="dnode0">
+          <span class="diagram-node-name">🎨 Figma Variables</span>
+          <span class="diagram-node-note">One source of truth</span>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-connector" id="dconn0">
+          <div class="connector-line"></div>
+          <div class="connector-arrow-down"></div>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-node-box highlighted" id="dnode1">
+          <span class="diagram-node-name">📦 JSON Token Export</span>
+          <span class="diagram-node-note">Machine-readable. Not just human-readable.</span>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-connector" id="dconn1">
+          <div class="connector-line"></div>
+          <div class="connector-arrow-down"></div>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-node-box" id="dnode2">
+          <span class="diagram-node-name">🤖 Claude Code</span>
+          <span class="diagram-node-note">Executes against the token API</span>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-connector" id="dconn2">
+          <div class="connector-line"></div>
+          <div class="connector-arrow-down"></div>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-node-box highlighted" id="dnode3">
+          <span class="diagram-node-name">✅ Component Output</span>
+          <span class="diagram-node-note">90–95% fidelity. First pass.</span>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-connector" id="dconn3">
+          <div class="connector-line"></div>
+          <div class="connector-arrow-down"></div>
+        </div>
+      </div>
+      <div class="diagram-row">
+        <div class="diagram-node-box" id="dnode4">
+          <span class="diagram-node-name">✦ Figma Re-import → Final Polish</span>
+          <span class="diagram-node-note">The loop closes</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-pills reveal">
+      <div class="stat-pill">
+        <span class="stat-pill-number">↓99%</span>
+        <span class="stat-pill-label">consistency errors</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-pill-number">2wk → 2d</span>
+        <span class="stat-pill-label">new product setup</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-pill-number">90–95%</span>
+        <span class="stat-pill-label">AI fidelity, first pass</span>
+      </div>
+    </div>
+
+    <div class="insight-callout reveal">
+      <span class="green">// why 90–95% fidelity is achievable</span><br>
+      The Alias layer doesn't define a color. It defines an <span class="green">intent</span>.<br>
+      <span style="font-family:monospace;font-size:12px;color:var(--text-dim)">button-primary-bg</span> doesn't say "this is green" —<br>
+      it says "this is what you reach for when the action matters most."<br><br>
+      When AI reads purpose instead of pixels, precision isn't magic.<br>
+      It's structural. The design system isn't a component library.<br>
+      It's an <span class="green">API</span> that speaks in intent.
+    </div>
+
+    <div class="chapter-bridge reveal">
+      <div class="chapter-bridge-line"></div>
+      <div class="chapter-bridge-text">When the system is machine-readable, you can afford to throw away version 1. Architectural rewrites cost 48 hours, not 2 weeks.</div>
+      <div class="chapter-bridge-line"></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── CS3: THE CRAFT ────────────────────────────────────────────── -->
+<section id="cs3">
+  <div class="container">
+    <div class="section-label reveal">Chapter 04 · The Craft</div>
+    <h2 class="section-title reveal">One Project,<br>Two Architectures</h2>
+    <p class="section-sub reveal">The same project, 48 hours apart. The difference isn't visual — it's structural.</p>
+
+    <div class="versions-grid">
+      <div class="version-card reveal">
+        <div class="version-tag">Version 1 · March 6, 2026</div>
+        <div class="version-title">Can it animate?</div>
+        <div class="version-tech">
+          <span class="tech-tag">D3.js orthographic globe</span>
+          <span class="tech-tag">TopoJSON rendering</span>
+          <span class="tech-tag">Basic animation loops</span>
+        </div>
+        <div class="version-question">"Can it animate?"</div>
+      </div>
+
+      <div class="version-arrow reveal">
+        <div class="version-arrow-hours">48 hours</div>
+        <div class="version-arrow-icon">→</div>
+      </div>
+
+      <div class="version-card v2 reveal">
+        <div class="version-tag">Version 2 · March 8, 2026</div>
+        <div class="version-title">Can it be composed?</div>
+        <div class="version-tech">
+          <span class="tech-tag">CancellableTimer class</span>
+          <span class="tech-tag">SectionAnimator abstraction</span>
+          <span class="tech-tag">rAF smoothing + state lifecycle</span>
+        </div>
+        <div class="version-question">"Can the animation be cancelled, resumed, and composed?"</div>
+      </div>
+    </div>
+
+    <div class="craft-insight reveal">
+      The difference between v1 and v2 isn't visual. It's architectural. <strong>V2 treats animation as state — not as side effects.</strong> That's the same way I think about design systems: not as a collection of components, but as a set of invariants the system enforces.
+    </div>
+
+    <a class="github-btn reveal" href="https://github.com/linzhao0315/kiva-impact-demo" target="_blank" rel="noopener">
+      <span class="github-icon">⌥</span>
+      View source on GitHub →
+    </a>
+
+    <div class="chapter-bridge reveal">
+      <div class="chapter-bridge-line"></div>
+      <div class="chapter-bridge-text">Architectural quality in 48 hours. The next question: could creative exploration be just as fast?</div>
+      <div class="chapter-bridge-line"></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── CS4: EXPLORING THE BOUNDARIES ──────────────────────────────── -->
+<section id="cs4">
+  <div class="container">
+    <div class="section-label reveal">Chapter 05 · The Exploration</div>
+    <div class="cs-company reveal">
+      AI Workflow · Vibe Coding Experiments · 2026
+    </div>
+    <h2 class="section-title reveal">Exploring the Boundaries</h2>
+    <p class="section-sub reveal">Speed recovers time. The real question is what you do with it. Two prototypes, 48 hours, two completely different design hypotheses — exploring what's possible when exploration is no longer the bottleneck.</p>
+
+    <!-- Two live prototypes side by side -->
+    <div class="exploration-grid reveal">
+      <div class="exploration-card">
+        <div class="exploration-label">Donation Impact Preview</div>
+        <div class="exploration-desc">
+          <p><strong>Focus:</strong> Storytelling through data. Skeleton loading states that feel like discovering real people and their impact.</p>
+          <p style="margin-top: 12px;"><strong>Techniques:</strong> D3.js globe with rotating regions, emoji-based borrower markers, Bézier-smoothed counter animations, shimmer overlays, staggered content reveals.</p>
+          <p style="margin-top: 12px;"><strong>Design question:</strong> How do we make data feel human?</p>
+        </div>
+        <a href="https://linzhao0315.github.io/prototypes/donation-impact-preview.html" target="_blank" class="exploration-link">
+          View Live <span style="font-size: 14px;">→</span>
+        </a>
+      </div>
+
+      <div class="exploration-card">
+        <div class="exploration-label">Analytics Dashboard Prototype</div>
+        <div class="exploration-desc">
+          <p><strong>Focus:</strong> Real-time precision. Stat cards that update instantly, bar charts that reveal data in layers, glassmorphic UI with subtle depth.</p>
+          <p style="margin-top: 12px;"><strong>Techniques:</strong> GSAP timelines for staggered animations, gradient bar fills, counter animations with momentum easing, pulsing "LIVE" indicator, responsive layout.</p>
+          <p style="margin-top: 12px;"><strong>Design question:</strong> How do we make speed feel accurate and trustworthy?</p>
+        </div>
+        <a href="https://linzhao0315.github.io/prototypes/test-analytics-prototype.html" target="_blank" class="exploration-link">
+          View Live <span style="font-size: 14px;">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Key insight -->
+    <div class="exploration-insight reveal">
+      <p><strong>What I learned:</strong> AI doesn't just make you faster at execution. It lets you explore the <em>space</em> of what's possible. In 48 hours, I could prototype 2–3 different animation strategies, test them with real data, and refine based on what actually feels right — not what I <em>thought</em> would feel right.</p>
+      <p style="margin-top: 16px;">The old workflow: design → build → iterate (weeks). The new one: ideate → prototype → iterate (days). The quality bar is the same. The exploration depth is 10x deeper.</p>
+    </div>
+
+    <!-- Comparison table -->
+    <div class="exploration-comparison reveal">
+      <div class="comp-row comp-header">
+        <div class="comp-cell" style="font-weight: 700;">Aspect</div>
+        <div class="comp-cell" style="font-weight: 700;">Donation Impact</div>
+        <div class="comp-cell" style="font-weight: 700;">Analytics</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">Primary Goal</div>
+        <div class="comp-cell">Emotional connection + data literacy</div>
+        <div class="comp-cell">Precision + confidence</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">Animation Complexity</div>
+        <div class="comp-cell">High (globe, multiple sequences)</div>
+        <div class="comp-cell">Moderate (focused, linear)</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">Easing Strategy</div>
+        <div class="comp-cell">Soft bounces, elastic reveals</div>
+        <div class="comp-cell">Momentum-based, power easing</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">Visual Depth</div>
+        <div class="comp-cell">Layered (globe, cards, data)</div>
+        <div class="comp-cell">Flat & minimal (glassmorphic)</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">Load State Handling</div>
+        <div class="comp-cell">Skeleton overlays with shimmer</div>
+        <div class="comp-cell">Skeleton overlays with shimmer</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell">Iteration Speed</div>
+        <div class="comp-cell">5–6 hours to v1 with Claude</div>
+        <div class="comp-cell">3–4 hours to v1 with Claude</div>
+      </div>
+    </div>
+
+    <div class="exploration-footnote reveal">
+      <p>Both prototypes are built as single HTML files — no build tools, no CI/CD, just pure GSAP + SVG. That's the whole point: faster exploration, faster feedback.</p>
+    </div>
+
+    <div class="chapter-bridge reveal">
+      <div class="chapter-bridge-line"></div>
+      <div class="chapter-bridge-text">The process was proven. The system was scalable. The exploration was fast. One translation loss remained: organizational language.</div>
+      <div class="chapter-bridge-line"></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── CS5: THE FRAMEWORK ──────────────────────────────────────────── -->
+<section id="cs5">
+  <div class="container">
+    <div class="section-label reveal">Chapter 06 · The Framework</div>
+    <h2 class="section-title reveal">I Wrote the Career Ladder<br>Because I Needed It</h2>
+    <p class="section-sub reveal">I had demonstrated a new way of working. But the organization had no vocabulary for it. When the existing frameworks don't capture what's actually happening, you write a new one.</p>
+
+    <div class="framework-beats">
+      <div class="framework-beat reveal">
+        <div class="beat-number">01</div>
+        <div class="beat-content">Figma's four-pillar framework was built for a <strong>pre-AI world</strong>. It had no dimension for "systems that multiply team output." Strategy, Craft, Collaboration, Impact — useful, but incomplete.</div>
+      </div>
+      <div class="framework-beat reveal">
+        <div class="beat-number">02</div>
+        <div class="beat-content">I proposed a <strong>fifth pillar: Systems & Automation</strong> — and a new level: Senior Principal Designer. The highest IC path with org-wide scope, defined for the first time.</div>
+      </div>
+      <div class="framework-beat reveal">
+        <div class="beat-number">03</div>
+        <div class="beat-content">My company adopted it. The framework is now the basis for how <strong>hybrid design-engineering roles</strong> are evaluated and compensated going forward.</div>
+      </div>
+    </div>
+
+    <div class="pillars-grid">
+      <div class="pillar-card reveal">
+        <div class="pillar-name">Strategic Vision</div>
+      </div>
+      <div class="pillar-card reveal">
+        <div class="pillar-name">Design Craft & Judgment</div>
+      </div>
+      <div class="pillar-card new-pillar reveal">
+        <div class="pillar-badge">New</div>
+        <div class="pillar-name">Systems & Automation</div>
+      </div>
+      <div class="pillar-card reveal">
+        <div class="pillar-name">Cross-Functional Influence</div>
+      </div>
+      <div class="pillar-card reveal">
+        <div class="pillar-name">Measurable Impact</div>
+      </div>
+    </div>
+
+    <div class="framework-quote reveal">
+      <div class="framework-quote-text">"There's a gap in the industry right now where this hybrid path is not reflected anywhere in anyone's ladders. I'm trying to figure out how to do that without any precedent."</div>
+      <div class="framework-quote-attr">— Lin's manager, March 2026</div>
+    </div>
+
+    <div class="chapter-bridge reveal">
+      <div class="chapter-bridge-line"></div>
+      <div class="chapter-bridge-text">Six chapters. Six translation points eliminated. Here's what the full picture looks like.</div>
+      <div class="chapter-bridge-line"></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── FINALE: ZERO TRANSLATION LOSS ──────────────────────────────── -->
+<section id="finale">
+  <div class="container">
+    <div class="finale-label reveal">The Loop Closes</div>
+    <h2 class="finale-title reveal">Zero<br><em>Translation Loss.</em></h2>
+    <p class="section-sub reveal" style="max-width:640px;">This portfolio doesn't document six case studies. It documents a single process of elimination — finding every point where intent degrades, and removing it.</p>
+
+    <!-- The 6-chapter chain -->
+    <div class="finale-chain reveal">
+      <div class="finale-chain-item">
+        <div class="finale-chain-num">CH.01</div>
+        <div class="finale-chain-title">The Brief</div>
+        <div class="finale-chain-kill">Eliminated: <em>research that doesn't reach product decisions</em></div>
+      </div>
+      <div class="finale-chain-item">
+        <div class="finale-chain-num">CH.02</div>
+        <div class="finale-chain-title">The Build</div>
+        <div class="finale-chain-kill">Eliminated: <em>design intent lost in the handoff to engineering</em></div>
+      </div>
+      <div class="finale-chain-item">
+        <div class="finale-chain-num">CH.03</div>
+        <div class="finale-chain-title">The System</div>
+        <div class="finale-chain-kill">Eliminated: <em>one-project insights that don't transfer to the next</em></div>
+      </div>
+      <div class="finale-chain-item">
+        <div class="finale-chain-num">CH.04</div>
+        <div class="finale-chain-title">The Craft</div>
+        <div class="finale-chain-kill">Eliminated: <em>the tradeoff between shipping speed and architectural quality</em></div>
+      </div>
+      <div class="finale-chain-item">
+        <div class="finale-chain-num">CH.05</div>
+        <div class="finale-chain-title">The Exploration</div>
+        <div class="finale-chain-kill">Eliminated: <em>creative hypotheses that never get tested because "we don't have time"</em></div>
+      </div>
+      <div class="finale-chain-item">
+        <div class="finale-chain-num">CH.06</div>
+        <div class="finale-chain-title">The Framework</div>
+        <div class="finale-chain-kill">Eliminated: <em>new ways of working that organizations have no language to evaluate or reward</em></div>
+      </div>
+    </div>
+
+    <!-- Two key insights -->
+    <div class="finale-insights reveal">
+      <div class="finale-insight-card accent">
+        <div class="fi-eyebrow">The honest truth</div>
+        <div class="fi-text">5–10% still needs a human. That's not a limitation — <strong>that's the job.</strong> AI executes. Humans decide what matters, when 90% is good enough, and when the last 10% is non-negotiable. Taste. Ethics. Judgment. These don't compress.</div>
+      </div>
+      <div class="finale-insight-card">
+        <div class="fi-eyebrow">The actual insight</div>
+        <div class="fi-text">This isn't a story about a faster designer. It's about <strong>a shorter distance between insight and shipped product</strong> — where the person who understands the user is the same person who verifies the code is right. That's a qualitatively different kind of work.</div>
+      </div>
+    </div>
+
+    <!-- Closing -->
+    <div class="finale-closing reveal">
+      <div class="finale-closing-quote">
+        "The methods are proven.<br>The system is documented.<br>The next problem is <em>organizational.</em>"
+      </div>
+      <div class="finale-next">
+        <p>How does a team of five Principal designers all work this way? How does the 60–70% cycle reduction become a company-wide practice — not a personal superpower?</p>
+        <p>Not "I work fast." But: "I know what it takes to make a whole team work this way." <strong>The personal chapter of this story is done. The organizational one is just getting interesting.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── ABOUT ─────────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="container">
+    <div class="section-label reveal">About</div>
+    <h2 class="section-title reveal">Who is Lin</h2>
+
+    <div class="about-grid">
+      <div class="observations">
+        <div class="observation reveal">
+          <span class="obs-arrow">→</span>
+          <span class="obs-text"><strong>Finds structural solutions, not workarounds.</strong> If the handoff is lossy, the answer isn't a better checklist — it's a different architecture.</span>
+        </div>
+        <div class="observation reveal">
+          <span class="obs-arrow">→</span>
+          <span class="obs-text"><strong>Goes first, then documents it for the next person.</strong> MCP pipeline, D3.js globe, career ladder — tries things before there's a tutorial, then writes the tutorial.</span>
+        </div>
+        <div class="observation reveal">
+          <span class="obs-arrow">→</span>
+          <span class="obs-text"><strong>Thinks in leverage, not speed.</strong> The question is never "how do I work faster?" It's "how does this work for everyone?"</span>
+        </div>
+        <div class="observation reveal">
+          <span class="obs-arrow">→</span>
+          <span class="obs-text"><strong>Precise about uncertainty.</strong> "5–10% still needs a human." Intellectual honesty as a form of credibility.</span>
+        </div>
+        <div class="observation reveal">
+          <span class="obs-arrow">→</span>
+          <span class="obs-text"><strong>Tells stories with data.</strong> The 1.55x multiplier, the 60 Decibels citation, the borrower profiles — these are design decisions, not decoration.</span>
+        </div>
+      </div>
+
+      <div class="about-right">
+        <div class="about-bio reveal">
+          <p>I'm a <strong>Principal Product Designer</strong> — which used to mean "very experienced with Figma," and now apparently also means "built a Figma → MCP → Claude → live product pipeline from scratch." Times change fast, and that turned out to be fine.</p>
+          <p>I also wrote the career framework my company now uses to define hybrid design-engineering roles — because the existing frameworks weren't built for what design actually is in 2026.</p>
+          <p>The environments where this work fits naturally are ones where AI-augmented design is already the culture — not a project to be piloted. I care about systems that multiply team output, not just tools that make one person faster.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ───────────────────────────────────────────────────── -->
+<section id="contact">
+  <div class="contact-inner">
+    <h2 class="contact-headline reveal">Let's talk.</h2>
+    <div>
+      <a class="contact-email reveal" href="mailto:lin@linzhao.design">lin@linzhao.design</a>
+    </div>
+    <p class="footer-note reveal">
+      Portfolio built with <span class="green">Claude Code</span> · Deployed on <span class="green">Vercel</span> · Domain: <span class="green">linzhao.design</span><br>
+      Because that's just how I work.
+    </p>
+  </div>
+</section>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── NAV scroll state ─────────────────────────────────────────── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+/* ── Hero entrance ────────────────────────────────────────────── */
+const heroTL = gsap.timeline({ delay: 0.2 });
+heroTL
+  .to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+  .to('.hero-headline', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4')
+  .to('.hero-sub',      { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+  .to('.pipeline-wrap', { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4')
+  .to('.hero-stats',    { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+  .to('#scrollIndicator', { opacity: 1, duration: 0.5 }, '+=0.4');
+
+/* ── Pipeline animation ───────────────────────────────────────── */
+function runPipeline() {
+  const nodes  = document.querySelectorAll('.node-pill');
+  const arrows = document.querySelectorAll('.arrow-line, .arrow-head');
+
+  // reset
+  nodes.forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.arrow-line').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.arrow-head').forEach(a => a.classList.remove('active'));
+
+  const tl = gsap.timeline({
+    onComplete: () => gsap.delayedCall(2.5, runPipeline)
+  });
+
+  nodes.forEach((node, i) => {
+    tl.call(() => {
+      node.classList.add('active');
+      if (i < 5) {
+        document.querySelectorAll(`.arrow-line[data-arrow="${i}"]`).forEach(a => a.classList.add('active'));
+        document.querySelectorAll(`.arrow-head[data-arrow="${i}"]`).forEach(a => a.classList.add('active'));
+      }
+    }, [], i * 0.6);
+  });
+  tl.to({}, { duration: 0.6 });
+}
+// start after hero animation
+gsap.delayedCall(1.8, runPipeline);
+
+/* ── ScrollTrigger reveals ────────────────────────────────────── */
+gsap.utils.toArray('.reveal').forEach((el, i) => {
+  // Skip hero items already animated
+  if (el.closest('#hero')) return;
+
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 88%',
+    onEnter: () => {
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.65,
+        ease: 'power3.out',
+        delay: 0
+      });
+    },
+    once: true
+  });
+});
+
+/* ── System diagram stagger ───────────────────────────────────── */
+ScrollTrigger.create({
+  trigger: '#systemDiagram',
+  start: 'top 75%',
+  onEnter: () => {
+    const nodes = ['dnode0','dconn0','dnode1','dconn1','dnode2','dconn2','dnode3','dconn3','dnode4'];
+    nodes.forEach((id, i) => {
+      gsap.to('#' + id, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        delay: i * 0.12,
+        ease: 'power3.out'
+      });
+    });
+  },
+  once: true
+});
+
+// Pre-set diagram connectors (they're already shown but need reveal)
+document.querySelectorAll('.diagram-connector').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(12px)';
+});
+
+/* ── Staggered children in container rows ─────────────────────── */
+document.querySelectorAll('.stat-pills, .pillars-grid').forEach(container => {
+  ScrollTrigger.create({
+    trigger: container,
+    start: 'top 80%',
+    onEnter: () => {
+      gsap.to(container.querySelectorAll('.stat-pill, .pillar-card'), {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        stagger: 0.08,
+        ease: 'power3.out'
+      });
+    },
+    once: true
+  });
+});
+
+// Make stat pills and pillar cards start invisible
+document.querySelectorAll('.stat-pill, .pillar-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(16px)';
+});
+
+/* ── About observations stagger ──────────────────────────────── */
+ScrollTrigger.create({
+  trigger: '.observations',
+  start: 'top 80%',
+  onEnter: () => {
+    gsap.to('.observation', {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: 'power3.out'
+    });
+  },
+  once: true
+});
+document.querySelectorAll('.observation').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(12px)';
+});
+
+/* ── Contact entrance ─────────────────────────────────────────── */
+ScrollTrigger.create({
+  trigger: '#contact',
+  start: 'top 80%',
+  onEnter: () => {
+    gsap.to('#contact .reveal', {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      stagger: 0.12,
+      ease: 'power3.out'
+    });
+  },
+  once: true
+});
+
+/* ── Cursor hover glow for case study sections ─────────────────── */
+document.querySelectorAll('.version-card, .pillar-card, .cs-beat').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    gsap.to(card, { y: -2, duration: 0.2, ease: 'power2.out' });
+  });
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, { y: 0, duration: 0.3, ease: 'power2.out' });
+  });
+});
+
+/* ── Inline demo: skeleton → filled → reset loop ────────────── */
+(function initDemoLoop() {
+  // ── bar data: [stoneHeightPct, greenHeightPct] per year 2026–2030
+  const barData = [
+    [32, 42], [44, 58], [55, 72], [66, 86], [75, 98]
+  ];
+  // ── donut segments: [pct, color] — circumference of r=28: 2π×28 ≈ 175.9
+  const CIRC = 175.9;
+  const donutData = [
+    { pct: 0.28, id: 'ds0' },
+    { pct: 0.22, id: 'ds1' },
+    { pct: 0.20, id: 'ds2' },
+    { pct: 0.18, id: 'ds3' },
+    { pct: 0.12, id: 'ds4' },
+  ];
+  // ── globe dot ids
+  const globeDots = ['gd0','gd1','gd2','gd3','gd4'];
+
+  function resetToSkeleton() {
+    // bars → skeleton color, full height
+    for (let i = 0; i < 5; i++) {
+      const bs = document.getElementById(`b${i}s`);
+      const bg = document.getElementById(`b${i}g`);
+      if (bs) { bs.className = 'demo-bar is-skel'; gsap.set(bs, { height: '100%' }); }
+      if (bg) { bg.className = 'demo-bar is-skel'; gsap.set(bg, { height: '100%' }); }
+    }
+    // donut → empty arcs
+    donutData.forEach(d => {
+      const el = document.getElementById(d.id);
+      if (el) el.setAttribute('stroke-dasharray', `0 ${CIRC}`);
+    });
+    // globe dots → hidden
+    globeDots.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) gsap.set(el, { opacity: 0, scale: 0, transformOrigin: 'center' });
+    });
+    // skeleton overlays → visible
+    const dSkel = document.getElementById('donutSkel');
+    const gSkel = document.getElementById('globeSkel');
+    if (dSkel) { dSkel.classList.remove('gone'); gsap.set(dSkel, { opacity: 1 }); }
+    if (gSkel) { gSkel.classList.remove('gone'); gsap.set(gSkel, { opacity: 1 }); }
+  }
+
+  function runLoop() {
+    resetToSkeleton();
+    const tl = gsap.timeline({ delay: 1.2, onComplete: () => gsap.delayedCall(2.2, runLoop) });
+
+    // 1) Bars: switch from skeleton to colored, grow from 0 → target height
+    for (let i = 0; i < 5; i++) {
+      const [sp, gp] = barData[i];
+      const bs = document.getElementById(`b${i}s`);
+      const bg = document.getElementById(`b${i}g`);
+      tl.call(() => {
+        if (bs) { bs.className = 'demo-bar is-stone'; gsap.fromTo(bs, { height: '0%' }, { height: `${sp}%`, duration: 0.65, ease: 'power2.out' }); }
+        if (bg) { bg.className = 'demo-bar is-green'; gsap.fromTo(bg, { height: '0%' }, { height: `${gp}%`, duration: 0.65, ease: 'power2.out' }); }
+      }, [], i * 0.12);
+    }
+
+    // 2) Donut skeleton fade + segments animate in
+    tl.call(() => {
+      const dSkel = document.getElementById('donutSkel');
+      if (dSkel) gsap.to(dSkel, { opacity: 0, duration: 0.4, onComplete: () => dSkel.classList.add('gone') });
+      let offset = 0;
+      donutData.forEach((d, i) => {
+        const el = document.getElementById(d.id);
+        if (!el) return;
+        const targetLen = d.pct * CIRC;
+        const negOffset = -offset;
+        el.setAttribute('stroke-dashoffset', negOffset);
+        const proxy = { v: 0 };
+        gsap.to(proxy, {
+          v: targetLen, duration: 0.7, delay: i * 0.08, ease: 'power2.out',
+          onUpdate: () => el.setAttribute('stroke-dasharray', `${proxy.v} ${CIRC - proxy.v}`)
+        });
+        offset += targetLen;
+      });
+    }, [], 0.72);
+
+    // 3) Globe skeleton fade + dots pop in
+    tl.call(() => {
+      const gSkel = document.getElementById('globeSkel');
+      if (gSkel) gsap.to(gSkel, { opacity: 0, duration: 0.4, onComplete: () => gSkel.classList.add('gone') });
+      globeDots.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) gsap.to(el, { opacity: 1, scale: 1, duration: 0.45, delay: i * 0.1, ease: 'back.out(2)', transformOrigin: 'center' });
+      });
+    }, [], 1.2);
+
+    // 4) Hold filled state for 3.5s then fade to skeleton
+    tl.call(() => {}, [], 1.2 + 3.5);
+    // (onComplete fires after the hold and resets + loops)
+  }
+
+  // kick off after hero animation settles
+  gsap.delayedCall(2.5, runLoop);
+})();
+
+/* ── Smooth active nav links ──────────────────────────────────── */
+const sections = ['research','cs1','cs2','cs3','cs4','cs5','finale','about','contact'];
+const navLinks = document.querySelectorAll('.nav-links a');
+
+sections.forEach(id => {
+  ScrollTrigger.create({
+    trigger: '#' + id,
+    start: 'top 50%',
+    end: 'bottom 50%',
+    onEnter: () => updateNav(id),
+    onEnterBack: () => updateNav(id),
+  });
+});
+
+function updateNav(activeId) {
+  navLinks.forEach(a => {
+    const href = a.getAttribute('href').replace('#', '');
+    a.style.color = (href === activeId || (activeId === 'cs1' && href === 'cs1')) ? 'var(--text)' : '';
+  });
+}
+</script>
+</body>
+</html>

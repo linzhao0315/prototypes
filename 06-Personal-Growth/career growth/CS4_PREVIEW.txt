@@ -1,0 +1,91 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║           CASE STUDY 04 — "EXPLORING THE BOUNDARIES"                       ║
+║                   New Section Added to Portfolio                           ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+LOCATION IN FLOW:
+  CS1 (Impact Dashboard) → CS2 (Design System) → CS3 (V1 vs V2)
+                                        ↓
+                         [NEW] CS4 (EXPLORATION)  ← YOU ARE HERE
+                                        ↓
+                         CS5 (Career Framework) → ABOUT → CONTACT
+
+
+SECTION STRUCTURE:
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ HEADLINE: "Exploring the Boundaries"                                        │
+│ SUBHEADING: What happens when you use AI not just to execute design,        │
+│             but to explore design possibilities?                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+CARD 1: Donation Impact Preview
+├─ Focus: Storytelling through data
+├─ Techniques:
+│  ├─ D3.js globe with rotating regions
+│  ├─ Emoji-based borrower markers
+│  ├─ Bézier-smoothed counter animations
+│  ├─ Shimmer overlays
+│  └─ Staggered content reveals
+├─ Design Question: "How do we make data feel human?"
+└─ LIVE LINK: https://linzhao0315.github.io/prototypes/donation-impact-preview.html
+
+CARD 2: Analytics Dashboard Prototype
+├─ Focus: Real-time precision
+├─ Techniques:
+│  ├─ GSAP timelines for staggered animations
+│  ├─ Gradient bar fills
+│  ├─ Counter animations with momentum easing
+│  ├─ Pulsing "LIVE" indicator
+│  └─ Responsive layout
+├─ Design Question: "How do we make speed feel accurate and trustworthy?"
+└─ LIVE LINK: https://linzhao0315.github.io/prototypes/test-analytics-prototype.html
+
+KEY INSIGHT BOX:
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ "AI doesn't just make you faster at execution. It lets you explore the      │
+│  SPACE of what's possible. In 48 hours, I could prototype 2–3 different     │
+│  animation strategies, test them with real data, and refine based on what   │
+│  actually feels right — not what I THOUGHT would feel right."               │
+│                                                                              │
+│ Old workflow: design → build → iterate (WEEKS)                              │
+│ New workflow: ideate → prototype → iterate (DAYS)                           │
+│ Quality bar: SAME. Exploration depth: 10x DEEPER.                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+COMPARISON TABLE (6 dimensions):
+┌─────────────────────┬──────────────────────────┬──────────────────────────┐
+│ Aspect              │ Donation Impact          │ Analytics                │
+├─────────────────────┼──────────────────────────┼──────────────────────────┤
+│ Primary Goal        │ Emotion + data literacy  │ Precision + confidence   │
+│ Animation Complex   │ High (globe, sequences)  │ Moderate (focused)       │
+│ Easing Strategy     │ Soft bounces, elastic    │ Momentum-based, power    │
+│ Visual Depth        │ Layered (globe, cards)   │ Flat & minimal           │
+│ Load State          │ Skeleton + shimmer       │ Skeleton + shimmer       │
+│ Iteration Speed     │ 5–6 hours to v1          │ 3–4 hours to v1          │
+└─────────────────────┴──────────────────────────┴──────────────────────────┘
+
+CLOSING NOTE:
+"Both prototypes are built as single HTML files — no build tools, no CI/CD,
+ just pure GSAP + SVG. That's the whole point: faster exploration, faster feedback."
+
+
+STRATEGIC IMPACT:
+
+✓ Shows range: You can design for emotion (Donation) OR precision (Analytics)
+✓ Authentic assets: These are real, live prototypes deployed on GitHub Pages
+✓ Experimental thinking: Not just shipping, but exploring the possibility space
+✓ Technical depth: GSAP, D3, SVG, motion design, skeleton states, easing strategies
+✓ Speed as differentiator: 48 hours from idea to deployed interactive prototype
+✓ Meta-commentary: The prototypes themselves demonstrate your design system philosophy
+  (motion, color palette, glassmorphism, dark mode depth)
+
+
+SECTION METADATA:
+├─ Case Study #: 04 (of 05)
+├─ Theme: AI Workflow · Vibe Coding Experiments
+├─ Date: 2026
+├─ Company: (Self-directed research)
+├─ Status: Shipped & Live
+├─ GitHub: https://github.com/linzhao0315/kiva-impact-demo
+└─ View Both Live: Two "View Live" buttons with direct links
+

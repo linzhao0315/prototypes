@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Particle Diary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lora:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #000008;
+  }
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    display: block;
+  }
+  #title-overlay {
+    position: fixed;
+    top: 32px; left: 0; width: 100%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 20;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 5px;
+    color: rgba(255,255,255,0.2);
+    text-transform: lowercase;
+  }
+  #animal-indicator {
+    position: fixed;
+    top: 28px; right: 36px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0;
+  }
+  #prompt {
+    position: fixed;
+    bottom: 42%;
+    left: 0; width: 100%;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+    cursor: default;
+  }
+  #prompt-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 2px;
+  }
+  #prompt-sub {
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+  }
+  #prompt-sub:hover { opacity: 0.7; }
+  #diary-panel {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    width: min(580px, 88vw);
+    max-height: 72vh;
+    background: rgba(4, 4, 18, 0.88);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 52px 56px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  #diary-panel::-webkit-scrollbar { display: none; }
+  #diary-date {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 32px;
+  }
+  #diary-text {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 2.15;
+    color: rgba(220,225,240,0.82);
+    white-space: pre-line;
+    opacity: 0;
+  }
+  .diary-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 44px auto 0;
+    opacity: 0;
+  }
+  .diary-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.4);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 10px 28px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+  .diary-btn:hover {
+    border-color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.8);
+  }
+  #share-btn:hover {
+    background: rgba(255,255,255,0.06);
+  }
+  #share-feedback {
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 12px;
+    height: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  /* ── Write diary panel ── */
+  #write-panel {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.92);
+    width: min(560px, 86vw);
+    background: rgba(9, 9, 15, 0.97);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 22px;
+    padding: 48px 52px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 110;
+    box-shadow: 0 0 80px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  #write-panel-date {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.24);
+    margin-bottom: 28px;
+  }
+  #write-textarea {
+    width: 100%;
+    min-height: 150px;
+    background: none;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 2.05;
+    color: rgba(255,255,255,0.78);
+    caret-color: rgba(255,255,255,0.55);
+  }
+  #write-textarea::placeholder { color: rgba(255,255,255,0.16); }
+  #write-char-count {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.16);
+    text-align: right;
+    margin-top: 10px;
+  }
+  .write-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 38px;
+  }
+  #write-submit {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.60);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 11px 26px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #write-submit:hover {
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.38);
+    color: rgba(255,255,255,0.92);
+  }
+  #write-cancel {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.09);
+    color: rgba(255,255,255,0.26);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 11px 26px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #write-cancel:hover {
+    border-color: rgba(255,255,255,0.26);
+    color: rgba(255,255,255,0.55);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div id="title-overlay">particle diary</div>
+<div id="animal-indicator"></div>
+
+<div id="prompt">
+  <div id="prompt-text"></div>
+  <div id="prompt-sub">click to remember</div>
+</div>
+
+<div id="diary-panel">
+  <div id="diary-date"></div>
+  <div id="diary-text"></div>
+  <div class="diary-actions" id="diary-actions">
+    <button class="diary-btn" id="share-btn">↑ share</button>
+    <button class="diary-btn" id="close-btn">← back</button>
+  </div>
+  <div id="share-feedback"></div>
+</div>
+
+<!-- Write diary panel -->
+<div id="write-panel">
+  <div id="write-panel-date"></div>
+  <textarea id="write-textarea" placeholder="write anything. the universe is listening." maxlength="500"></textarea>
+  <div id="write-char-count">0 / 500</div>
+  <div class="write-actions">
+    <button id="write-submit">tell the universe</button>
+    <button id="write-cancel">cancel</button>
+  </div>
+</div>
+
+<script>
+// ─── Canvas setup ───────────────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = window.innerWidth;
+let H = canvas.height = window.innerHeight;
+
+// ─── Mouse ──────────────────────────────────────────────────────────────────
+let mouseX = -999, mouseY = -999;
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+document.addEventListener('mouseleave', () => { mouseX = -999; mouseY = -999; });
+
+// ─── Color palette ──────────────────────────────────────────────────────────
+const PALETTE = [
+  '#4488ff','#6699ff','#88aaff',
+  '#4488ff','#6699ff','#88aaff',
+  '#4488ff','#6699ff','#88aaff',
+  '#4488ff','#6699ff','#88aaff',
+  '#4488ff','#6699ff','#88aaff',
+  '#4488ff','#6699ff','#88aaff',
+  '#4488ff','#6699ff','#88aaff',
+  '#aa66ff','#cc88ff','#9955dd',
+  '#aa66ff','#cc88ff','#9955dd',
+  '#aa66ff','#cc88ff','#9955dd',
+  '#aa66ff','#cc88ff','#9955dd',
+  '#aa66ff','#cc88ff','#9955dd',
+  '#44ddcc','#66eedd','#22ccbb',
+  '#44ddcc','#66eedd','#22ccbb',
+  '#44ddcc','#66eedd','#22ccbb',
+  '#44ddcc','#66eedd','#22ccbb',
+  '#ffcc44','#ffdd66',
+  '#ffcc44','#ffdd66',
+  '#ff88aa','#ffaacc',
+  '#ff88aa','#ffaacc',
+];
+function randomPaletteColor() {
+  return PALETTE[Math.floor(Math.random() * PALETTE.length)];
+}
+
+// ─── Stars ──────────────────────────────────────────────────────────────────
+let stars = [];
+function regenerateStars() {
+  stars = [];
+  for (let i = 0; i < 200; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 0.7 + 0.3,
+      a: Math.random() * 0.6 + 0.3
+    });
+  }
+}
+regenerateStars();
+
+function drawStars(ctx) {
+  ctx.save();
+  stars.forEach(s => {
+    ctx.globalAlpha = s.a;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+// ─── Hex to RGB helper ──────────────────────────────────────────────────────
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return {r,g,b};
+}
+function lerpColor(c1, c2, t) {
+  const a = hexToRgb(c1), b = hexToRgb(c2);
+  const r = Math.round(a.r + (b.r-a.r)*t);
+  const g = Math.round(a.g + (b.g-a.g)*t);
+  const bv = Math.round(a.b + (b.b-a.b)*t);
+  return `rgb(${r},${g},${bv})`;
+}
+
+// ─── Particle class ─────────────────────────────────────────────────────────
+class Particle {
+  constructor(i) {
+    this.i = i;
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = 0;
+    this.vy = 0;
+    this.r = Math.random() * 1.4 + 0.8;
+    this.formRate = 0.028 + Math.random() * 0.018; // each particle flows at slightly different speed
+    this.baseColor = randomPaletteColor();
+    this.color = this.baseColor;
+    this.targetColor = null;
+    this.colorLerp = 0;
+    this.alpha = Math.random() * 0.5 + 0.5;
+    this.twinkleOffset = Math.random() * Math.PI * 2;
+    this.twinkleSpeed = 0.01 + Math.random() * 0.015;
+    this.targetX = null;
+    this.targetY = null;
+    this.isFirefly = false;
+    this._depth = 0;
+    this.fireflyAngle = Math.random() * Math.PI * 2;
+    this.fireflyRadius = 0;
+    this.fireflySpeed = 0.004 + Math.random() * 0.006;
+  }
+
+  update(mx, my, t) {
+    const twinkle = 0.85 + Math.sin(t * this.twinkleSpeed + this.twinkleOffset) * 0.15;
+
+    // Color lerp toward target
+    if (this.targetColor && this.colorLerp < 1) {
+      this.colorLerp = Math.min(1, this.colorLerp + 0.015);
+      this.color = lerpColor(this.baseColor, this.targetColor, this.colorLerp);
+    } else if (!this.targetColor && this.colorLerp > 0) {
+      this.colorLerp = Math.max(0, this.colorLerp - 0.008);
+      this.color = lerpColor(this.baseColor, this.color, this.colorLerp);
+      if (this.colorLerp <= 0) this.color = this.baseColor;
+    }
+
+    if (this.isFirefly) {
+      this.fireflyAngle += this.fireflySpeed;
+      const baseX = W/2 + Math.cos(this.fireflyAngle) * this.fireflyRadius;
+      const baseY = H/2 + Math.sin(this.fireflyAngle) * (this.fireflyRadius * 0.55);
+      this.x += (baseX - this.x) * 0.04;
+      this.y += (baseY - this.y) * 0.04;
+      this.alpha = twinkle * 0.9;
+      return;
+    }
+
+    if (this.targetX !== null) {
+      // Pure smooth flow — exponential lerp, zero bounce, zero spring
+      // Each particle has its own rate so they arrive at slightly different times
+      this.vx = (this.targetX - this.x) * this.formRate;
+      this.vy = (this.targetY - this.y) * this.formRate;
+    } else {
+      // Full-screen gravitational field — every particle reacts, near strongly, far whispers
+      if (mx > 0) {
+        const dx = mx - this.x;
+        const dy = my - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 3) {
+          // Inverse-square near, floored with minimum so even distant particles softly drift
+          const force = Math.max(0.007, Math.min(0.28, 140 / (dist * dist + 90)));
+          this.vx += (dx / dist) * force;
+          this.vy += (dy / dist) * force;
+        }
+      }
+      // Brownian drift + gentle vortex swirl — "leaves carried by a soft breeze"
+      this.vx += (Math.random() - 0.5) * 0.072;
+      this.vy += (Math.random() - 0.5) * 0.072;
+
+      // Gentle outward nudge from center — maintains galaxy distribution
+      const cdx = this.x - W * 0.5, cdy = this.y - H * 0.5;
+      const cd = Math.sqrt(cdx * cdx + cdy * cdy);
+      // Vortex: constant tangential force → slow gentle rotation around center
+      if (cd > 5) {
+        this.vx += (-cdy / cd) * 0.012;
+        this.vy += (cdx / cd) * 0.012;
+      }
+      if (cd > 10 && cd < W * 0.38) {
+        this.vx += (cdx / cd) * 0.008;
+        this.vy += (cdy / cd) * 0.008;
+      }
+
+      this.vx *= 0.956;
+      this.vy *= 0.956;
+    }
+    this.x += this.vx;
+    this.y += this.vy;
+
+    if (this.x < -10) this.x = W + 10;
+    if (this.x > W+10) this.x = -10;
+    if (this.y < -10) this.y = H + 10;
+    if (this.y > H+10) this.y = -10;
+
+    this.alpha = twinkle * (0.55 + Math.min(Math.sqrt(this.vx*this.vx+this.vy*this.vy)*0.3, 0.45));
+  }
+
+  draw(ctx) {
+    let a = Math.max(0.08, Math.min(1, this.alpha));
+    let rScale = 1;
+    // Depth-based dimming during 3D rotation (farther = dimmer & smaller)
+    if (this._depth) {
+      const depthFade = Math.max(0.3, 1 - this._depth * 0.004);
+      a *= depthFade;
+      rScale = Math.max(0.6, 1 - this._depth * 0.002);
+    }
+    // Outer glow (large, transparent) — no shadowBlur needed
+    ctx.globalAlpha = a * 0.18;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r * 4 * rScale, 0, Math.PI*2);
+    ctx.fill();
+    // Inner core (bright)
+    ctx.globalAlpha = a;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r * rScale, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+// ─── Shape primitive helpers (constellation-style outlines) ──────────────────
+function seg(x1, y1, x2, y2, n, j) {
+  // Sample n points along a line segment with jitter j
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const t = n > 1 ? i / (n - 1) : 0.5;
+    pts.push({ x: x1 + (x2-x1)*t + (Math.random()-.5)*j,
+                y: y1 + (y2-y1)*t + (Math.random()-.5)*j });
+  }
+  return pts;
+}
+function arc(cx, cy, rx, ry, a1, a2, n, j) {
+  // Sample n points along an ellipse arc from angle a1 to a2
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const t = n > 1 ? i / (n - 1) : 0.5;
+    const a = a1 + (a2 - a1) * t;
+    pts.push({ x: cx + Math.cos(a)*rx + (Math.random()-.5)*j,
+                y: cy + Math.sin(a)*ry + (Math.random()-.5)*j });
+  }
+  return pts;
+}
+function concat(...arrays) { return [].concat(...arrays); }
+
+// ─── Volumetric 3D animal generators ─────────────────────────────────────────
+// Linear r = Math.random() → concentrated toward core → natural 3D glow via 'screen' blend
+
+// ── Outline sampling helper: place ~60% on contour, ~40% inside ──
+// This makes shapes read as clear silhouettes instead of blobs
+function outlineSample(cx, cy, rx, ry, n, outlineRatio = 0.6) {
+  const pts = [];
+  const nOutline = Math.floor(n * outlineRatio);
+  // Outline points (r = 0.85..1.0 — near the edge)
+  for (let i = 0; i < nOutline; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const r = 0.85 + Math.random() * 0.15;
+    pts.push({
+      x: cx + Math.cos(ang) * rx * r + (Math.random()-.5) * 2,
+      y: cy + Math.sin(ang) * ry * r + (Math.random()-.5) * 2
+    });
+  }
+  // Interior fill (r = 0..0.85)
+  for (let i = nOutline; i < n; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const r = Math.random() * 0.85;
+    pts.push({
+      x: cx + Math.cos(ang) * rx * r,
+      y: cy + Math.sin(ang) * ry * r
+    });
+  }
+  return pts;
+}
+
+// Outline along a path (array of {x,y}) with jitter
+function outlinePath(path, n, jitter = 2) {
+  const pts = [];
+  const totalLen = [];
+  let cumLen = 0;
+  totalLen.push(0);
+  for (let i = 1; i < path.length; i++) {
+    const dx = path[i].x - path[i-1].x, dy = path[i].y - path[i-1].y;
+    cumLen += Math.sqrt(dx*dx + dy*dy);
+    totalLen.push(cumLen);
+  }
+  for (let i = 0; i < n; i++) {
+    const d = Math.random() * cumLen;
+    let seg = 0;
+    for (let j = 1; j < totalLen.length; j++) {
+      if (totalLen[j] >= d) { seg = j - 1; break; }
+      seg = j - 1;
+    }
+    const segLen = totalLen[seg+1] - totalLen[seg];
+    const t = segLen > 0 ? (d - totalLen[seg]) / segLen : 0;
+    pts.push({
+      x: path[seg].x + (path[seg+1].x - path[seg].x) * t + (Math.random()-.5) * jitter,
+      y: path[seg].y + (path[seg+1].y - path[seg].y) * t + (Math.random()-.5) * jitter
+    });
+  }
+  return pts;
+}
+
+// Helper: add z-depth to an array of points
+function addZ(pts, z) { return pts.map(p => ({x:p.x, y:p.y, z})); }
+
+function fishPoints(cx, cy, size) {
+  const S = size, pts = [];
+  // Body outline — closed contour (the signature fish shape)
+  const bodyTop = [], bodyBot = [];
+  for (let i = 0; i <= 30; i++) {
+    const t = i / 30;
+    const x = cx + (t - 0.5) * S * 0.90;
+    const w = Math.sin(t * Math.PI) * S * 0.28 * (1 - 0.3 * Math.pow(t - 0.4, 2));
+    bodyTop.push({x, y: cy - w});
+    bodyBot.push({x, y: cy + w});
+  }
+  pts.push(...addZ(outlinePath(bodyTop, 50, 1.5), 0));
+  pts.push(...addZ(outlinePath(bodyBot.reverse(), 50, 1.5), 0));
+  // Tail fin — bold V
+  pts.push(...addZ(outlinePath([{x:cx+S*0.42, y:cy}, {x:cx+S*0.62, y:cy-S*0.30}], 20, 1.5), -S*0.05));
+  pts.push(...addZ(outlinePath([{x:cx+S*0.42, y:cy}, {x:cx+S*0.62, y:cy+S*0.30}], 20, 1.5), S*0.05));
+  // Dorsal fin — triangle
+  pts.push(...addZ(outlinePath([
+    {x:cx-S*0.05, y:cy-S*0.24}, {x:cx+S*0.08, y:cy-S*0.48}, {x:cx+S*0.20, y:cy-S*0.24}
+  ], 30, 1.5), S*0.12));
+  // Eye
+  pts.push(...addZ(outlineSample(cx-S*0.28, cy-S*0.04, S*0.04, S*0.04, 10, 0.9), S*0.20));
+  // Pectoral fin
+  pts.push(...addZ(outlinePath([
+    {x:cx-S*0.10, y:cy+S*0.10}, {x:cx-S*0.02, y:cy+S*0.28}
+  ], 20, 1.5), S*0.15));
+  return pts.slice(0, 200);
+}
+
+function catPoints(cx, cy, size) {
+  const S = size, pts = [];
+  const hx = cx, hy = cy - S*0.28;
+  // Head circle — bold outline
+  pts.push(...addZ(outlineSample(hx, hy, S*0.24, S*0.22, 45, 0.85), S*0.15));
+  // Left ear — pointed triangle
+  pts.push(...addZ(outlinePath([
+    {x:hx-S*0.18, y:hy-S*0.14}, {x:hx-S*0.08, y:hy-S*0.50}, {x:hx+S*0.02, y:hy-S*0.14}
+  ], 22, 1.5), S*0.20));
+  // Right ear
+  pts.push(...addZ(outlinePath([
+    {x:hx-S*0.02, y:hy-S*0.14}, {x:hx+S*0.08, y:hy-S*0.50}, {x:hx+S*0.18, y:hy-S*0.14}
+  ], 22, 1.5), S*0.20));
+  // Body oval — large
+  pts.push(...addZ(outlineSample(cx, cy+S*0.22, S*0.28, S*0.26, 55, 0.85), 0));
+  // Curved tail — sweeping S-curve
+  const tail = [];
+  for (let i = 0; i <= 18; i++) {
+    const t = i/18;
+    tail.push({
+      x: cx+S*0.28 + Math.sin(t*Math.PI*1.2)*S*0.26,
+      y: cy+S*0.14 - t*S*0.50
+    });
+  }
+  pts.push(...addZ(outlinePath(tail, 36, 1.5), -S*0.20));
+  // Eye dots (just two clusters)
+  pts.push(...addZ(outlineSample(hx-S*0.10, hy-S*0.02, S*0.035, S*0.035, 8, 0.9), S*0.22));
+  pts.push(...addZ(outlineSample(hx+S*0.10, hy-S*0.02, S*0.035, S*0.035, 8, 0.9), S*0.22));
+  return pts.slice(0, 200);
+}
+
+function dogPoints(cx, cy, size) {
+  const S = size, pts = [];
+  const hx = cx, hy = cy - S*0.30;
+  // Head circle
+  pts.push(...addZ(outlineSample(hx, hy, S*0.24, S*0.22, 40, 0.85), S*0.15));
+  // Snout — small oval protruding
+  pts.push(...addZ(outlineSample(hx, hy+S*0.16, S*0.13, S*0.10, 20, 0.85), S*0.25));
+  // Left floppy ear — bold curve
+  const earL = [];
+  for (let i = 0; i <= 14; i++) {
+    const t = i/14;
+    earL.push({x: hx-S*0.22 - Math.sin(t*Math.PI)*S*0.12, y: hy-S*0.10 + t*S*0.42});
+  }
+  pts.push(...addZ(outlinePath(earL, 22, 1.5), S*0.10));
+  // Right floppy ear
+  const earR = [];
+  for (let i = 0; i <= 14; i++) {
+    const t = i/14;
+    earR.push({x: hx+S*0.22 + Math.sin(t*Math.PI)*S*0.12, y: hy-S*0.10 + t*S*0.42});
+  }
+  pts.push(...addZ(outlinePath(earR, 22, 1.5), S*0.10));
+  // Body oval
+  pts.push(...addZ(outlineSample(cx, cy+S*0.22, S*0.30, S*0.24, 50, 0.85), 0));
+  // Tail — curved upward
+  const tail = [];
+  for (let i = 0; i <= 12; i++) {
+    const t = i/12;
+    tail.push({x: cx+S*0.30 + t*S*0.18, y: cy+S*0.10 - t*S*0.36 - Math.sin(t*Math.PI)*S*0.10});
+  }
+  pts.push(...addZ(outlinePath(tail, 26, 1.5), -S*0.20));
+  // Nose dot
+  pts.push(...addZ(outlineSample(hx, hy+S*0.10, S*0.04, S*0.04, 10, 0.9), S*0.28));
+  return pts.slice(0, 200);
+}
+
+function elephantPoints(cx, cy, size) {
+  const S = size, pts = [];
+  // Body — massive oval outline
+  pts.push(...addZ(outlineSample(cx, cy+S*0.06, S*0.38, S*0.28, 55, 0.85), 0));
+  // Head — front oval
+  pts.push(...addZ(outlineSample(cx-S*0.34, cy-S*0.10, S*0.22, S*0.20, 30, 0.85), S*0.12));
+  // Trunk — bold curling path (the signature feature)
+  const trunk = [];
+  for (let i = 0; i <= 20; i++) {
+    const t = i / 20;
+    trunk.push({
+      x: cx - S*0.48 - t*S*0.06 + Math.sin(t * Math.PI * 1.2) * S*0.14,
+      y: cy - S*0.06 + t * S*0.58
+    });
+  }
+  pts.push(...addZ(outlinePath(trunk, 45, 2), S*0.25));
+  // Large ear — oval behind head
+  pts.push(...addZ(outlineSample(cx-S*0.16, cy-S*0.14, S*0.26, S*0.32, 35, 0.80), -S*0.12));
+  // 4 leg lines — simple vertical strokes
+  const legXs = [cx-S*0.22, cx-S*0.04, cx+S*0.14, cx+S*0.30];
+  legXs.forEach((lx, li) => {
+    pts.push(...addZ(outlinePath([
+      {x:lx, y:cy+S*0.30}, {x:lx, y:cy+S*0.54}
+    ], 7, 2), (li < 2 ? S*0.06 : -S*0.06)));
+  });
+  // Tusk
+  pts.push(...addZ(outlinePath([
+    {x:cx-S*0.44, y:cy+S*0.02}, {x:cx-S*0.62, y:cy+S*0.12}
+  ], 10, 1.5), S*0.18));
+  return pts.slice(0, 200);
+}
+
+function giraffePoints(cx, cy, size) {
+  const S = size, pts = [];
+  // Long neck — two bold parallel lines (the signature)
+  const neckL = [], neckR = [];
+  for (let i = 0; i <= 16; i++) {
+    const t = i / 16;
+    const y = cy - S*0.12 - t * S*0.68;
+    neckL.push({x: cx - S*0.08, y});
+    neckR.push({x: cx + S*0.02, y});
+  }
+  pts.push(...addZ(outlinePath(neckL, 28, 1.5), S*0.06));
+  pts.push(...addZ(outlinePath(neckR, 28, 1.5), -S*0.06));
+  // Small head
+  pts.push(...addZ(outlineSample(cx-S*0.04, cy-S*0.78, S*0.12, S*0.10, 22, 0.85), S*0.12));
+  // Ossicones — two short sticks
+  pts.push(...addZ(outlinePath([{x:cx-S*0.08, y:cy-S*0.86}, {x:cx-S*0.10, y:cy-S*0.98}], 8, 1), S*0.14));
+  pts.push(...addZ(outlinePath([{x:cx+S*0.04, y:cy-S*0.86}, {x:cx+S*0.06, y:cy-S*0.98}], 8, 1), S*0.14));
+  // Body — wide oval
+  pts.push(...addZ(outlineSample(cx+S*0.08, cy+S*0.10, S*0.30, S*0.20, 45, 0.85), 0));
+  // 4 long legs
+  const legXs = [cx-S*0.22, cx-S*0.04, cx+S*0.16, cx+S*0.32];
+  legXs.forEach((lx, li) => {
+    pts.push(...addZ(outlinePath([
+      {x:lx, y:cy+S*0.28}, {x:lx, y:cy+S*0.76}
+    ], 10, 1.5), (li < 2 ? S*0.06 : -S*0.06)));
+  });
+  // Tail
+  pts.push(...addZ(outlinePath([
+    {x:cx+S*0.38, y:cy}, {x:cx+S*0.44, y:cy+S*0.24}
+  ], 10, 1.5), -S*0.10));
+  return pts.slice(0, 200);
+}
+
+function rabbitPoints(cx, cy, size) {
+  const S = size, pts = [];
+  // Head — round
+  pts.push(...addZ(outlineSample(cx, cy-S*0.14, S*0.24, S*0.22, 40, 0.85), S*0.15));
+  // Left ear — very long (signature feature)
+  const earL = [];
+  for (let i = 0; i <= 14; i++) {
+    const t = i / 14;
+    earL.push({x: cx-S*0.10 - Math.sin(t*0.4)*S*0.04, y: cy-S*0.34 - t*S*0.58});
+  }
+  pts.push(...addZ(outlinePath(earL, 25, 1.5), -S*0.10));
+  // Right ear
+  const earR = [];
+  for (let i = 0; i <= 14; i++) {
+    const t = i / 14;
+    earR.push({x: cx+S*0.10 + Math.sin(t*0.4)*S*0.04, y: cy-S*0.34 - t*S*0.58});
+  }
+  pts.push(...addZ(outlinePath(earR, 25, 1.5), S*0.10));
+  // Round body
+  pts.push(...addZ(outlineSample(cx, cy+S*0.28, S*0.30, S*0.28, 55, 0.85), 0));
+  // Fluffy tail puff
+  pts.push(...addZ(outlineSample(cx+S*0.32, cy+S*0.28, S*0.10, S*0.10, 15, 0.80), -S*0.22));
+  // Front paws — two short lines
+  pts.push(...addZ(outlinePath([{x:cx-S*0.12, y:cy+S*0.52}, {x:cx-S*0.12, y:cy+S*0.62}], 8, 2), S*0.08));
+  pts.push(...addZ(outlinePath([{x:cx+S*0.12, y:cy+S*0.52}, {x:cx+S*0.12, y:cy+S*0.62}], 8, 2), S*0.08));
+  // Eye dots
+  pts.push(...addZ(outlineSample(cx-S*0.10, cy-S*0.18, S*0.035, S*0.035, 8, 0.9), S*0.20));
+  pts.push(...addZ(outlineSample(cx+S*0.10, cy-S*0.18, S*0.035, S*0.035, 8, 0.9), S*0.20));
+  return pts.slice(0, 200);
+}
+
+function turtlePoints(cx, cy, size) {
+  const S = size, pts = [];
+  // Shell dome — large oval (the signature)
+  pts.push(...addZ(outlineSample(cx, cy, S*0.40, S*0.26, 70, 0.80), 0));
+  // Shell ridge pattern — a few arcs inside
+  for (let ring = 0; ring < 5; ring++) {
+    const a = (ring / 5) * Math.PI * 2;
+    pts.push(...addZ(outlinePath([
+      {x: cx, y: cy},
+      {x: cx + Math.cos(a)*S*0.24, y: cy + Math.sin(a)*S*0.16}
+    ], 5, 2), Math.sin(a)*S*0.08));
+  }
+  // Head — poking out left
+  pts.push(...addZ(outlineSample(cx-S*0.44, cy-S*0.02, S*0.12, S*0.10, 22, 0.85), S*0.18));
+  // Neck
+  pts.push(...addZ(outlinePath([{x:cx-S*0.30, y:cy-S*0.02}, {x:cx-S*0.40, y:cy-S*0.02}], 8, 2), S*0.12));
+  // Four legs — short stubs
+  pts.push(...addZ(outlinePath([{x:cx-S*0.24, y:cy+S*0.22}, {x:cx-S*0.36, y:cy+S*0.36}], 10, 2), S*0.10));
+  pts.push(...addZ(outlinePath([{x:cx+S*0.24, y:cy+S*0.20}, {x:cx+S*0.36, y:cy+S*0.34}], 10, 2), S*0.10));
+  pts.push(...addZ(outlinePath([{x:cx-S*0.20, y:cy-S*0.20}, {x:cx-S*0.32, y:cy-S*0.32}], 10, 2), -S*0.10));
+  pts.push(...addZ(outlinePath([{x:cx+S*0.20, y:cy-S*0.18}, {x:cx+S*0.32, y:cy-S*0.30}], 10, 2), -S*0.10));
+  // Tail — short stub
+  pts.push(...addZ(outlinePath([{x:cx+S*0.38, y:cy+S*0.02}, {x:cx+S*0.50, y:cy+S*0.08}], 10, 1.5), -S*0.15));
+  // Eye
+  pts.push(...addZ(outlineSample(cx-S*0.48, cy-S*0.06, S*0.03, S*0.03, 6, 0.9), S*0.22));
+  return pts.slice(0, 200);
+}
+
+function butterflyPoints(cx, cy, size) {
+  const S = size, pts = [];
+  // Upper left wing — bold arc outline
+  const ulWing = [];
+  for (let i = 0; i <= 20; i++) {
+    const t = i / 20;
+    const ang = Math.PI * 0.5 + t * Math.PI;
+    ulWing.push({
+      x: cx - S*0.18 - Math.abs(Math.cos(ang)) * S*0.34,
+      y: cy - S*0.06 - Math.abs(Math.sin(ang)) * S*0.42
+    });
+  }
+  pts.push(...addZ(outlinePath(ulWing, 30, 1.5), -S*0.18));
+  // Upper right wing — mirror
+  const urWing = ulWing.map(p => ({x: cx + (cx - p.x), y: p.y}));
+  pts.push(...addZ(outlinePath(urWing, 30, 1.5), S*0.18));
+  // Lower left wing
+  const llWing = [];
+  for (let i = 0; i <= 16; i++) {
+    const t = i / 16;
+    const ang = Math.PI * 0.5 + t * Math.PI;
+    llWing.push({
+      x: cx - S*0.14 - Math.abs(Math.cos(ang)) * S*0.26,
+      y: cy + S*0.10 + Math.abs(Math.sin(ang)) * S*0.32
+    });
+  }
+  pts.push(...addZ(outlinePath(llWing, 25, 1.5), -S*0.14));
+  // Lower right wing — mirror
+  const lrWing = llWing.map(p => ({x: cx + (cx - p.x), y: p.y}));
+  pts.push(...addZ(outlinePath(lrWing, 25, 1.5), S*0.14));
+  // Body — bold center line
+  pts.push(...addZ(outlinePath([
+    {x:cx, y:cy-S*0.42}, {x:cx, y:cy+S*0.42}
+  ], 30, 1.5), 0));
+  // Antennae — two curving lines
+  const antL = [];
+  for (let i = 0; i <= 8; i++) {
+    const t = i / 8;
+    antL.push({x: cx - S*0.04 - t*S*0.18, y: cy - S*0.42 - t*S*0.24});
+  }
+  pts.push(...addZ(outlinePath(antL, 14, 1), -S*0.08));
+  const antR = antL.map(p => ({x: cx + (cx - p.x), y: p.y}));
+  pts.push(...addZ(outlinePath(antR, 14, 1), S*0.08));
+  return pts.slice(0, 200);
+}
+
+// ─── Animal definitions — 8 constellations spread across the galaxy ──────────
+const animals = [
+  {
+    id: 'fish', name: 'fish',
+    generatePoints: (W,H) => fishPoints(W*0.26, H*0.36, Math.min(W,H)*0.20),
+    color: '#99ddff', colorRgb: '102,170,255',
+    diaryBg: 'rgba(3,6,28,0.92)', diaryTextColor: 'rgba(195,212,255,0.80)',
+    particleColors: ['#88ccff','#99ddff','#aaeeff','#bbddff'],
+    promptText: 'The universe kept this for you.',
+    diary: { date: 'November 3, 2023', text: `The rain hasn't stopped since morning.\n\nI sat by the window for a long time, watching drops race each other down the glass. I didn't pick a favorite. I didn't move.\n\nI don't know what I was waiting for. Maybe I wasn't waiting for anything. Maybe I was just waiting to feel something other than this quiet, familiar heaviness — the kind that has no reason, and asks for none.` }
+  },
+  {
+    id: 'cat', name: 'cat',
+    generatePoints: (W,H) => catPoints(W*0.72, H*0.30, Math.min(W,H)*0.18),
+    color: '#ff88aa', colorRgb: '255,136,170',
+    diaryBg: 'rgba(22,4,14,0.92)', diaryTextColor: 'rgba(255,200,215,0.78)',
+    particleColors: ['#ff88aa','#ffaacc','#ffbbdd','#ff99bb'],
+    promptText: 'Something soft lives here. It remembers you.',
+    diary: { date: 'February 14, 2024', text: `Spent the whole afternoon wrapped in the oversized sweater I never returned.\n\nThe cat knocked over my tea. I watched it spread across the table, slow and amber, and I didn't move to stop it. The sunlight moved across the floor like something golden and unhurried.\n\nThis, I thought, is enough. Not everything. Just enough.` }
+  },
+  {
+    id: 'dog', name: 'dog',
+    generatePoints: (W,H) => dogPoints(W*0.50, H*0.62, Math.min(W,H)*0.18),
+    color: '#ffdd66', colorRgb: '255,221,102',
+    diaryBg: 'rgba(18,14,2,0.92)', diaryTextColor: 'rgba(255,238,190,0.78)',
+    particleColors: ['#ffcc44','#ffdd66','#ffe080','#ffcc55'],
+    promptText: 'A bright day is folded here, still warm.',
+    diary: { date: 'June 21, 2024', text: `We ran all the way to the hilltop and back.\n\nMy lungs burned. I laughed too loud. None of it mattered.\n\nThe world was just grass and wind and the sound of someone calling my name from somewhere behind me, laughing too. I didn't look back. I didn't need to. I already knew what happiness sounded like.` }
+  },
+  {
+    id: 'elephant', name: 'elephant',
+    generatePoints: (W,H) => elephantPoints(W*0.22, H*0.55, Math.min(W,H)*0.17),
+    color: '#cc88ff', colorRgb: '200,136,255',
+    diaryBg: 'rgba(10,3,22,0.92)', diaryTextColor: 'rgba(220,195,255,0.78)',
+    particleColors: ['#aa66ee','#cc88ff','#ddaaff','#bb77ee'],
+    promptText: 'Memory is a country with no borders.',
+    diary: { date: 'March 15, 2023', text: `They say elephants never forget. I wonder if that's a blessing or a curse.\n\nToday I found the ticket stub from the first time we saw the mountains together. I didn't throw it away. I put it back exactly where I found it.\n\nSome things are too heavy to carry and too precious to put down.` }
+  },
+  {
+    id: 'giraffe', name: 'giraffe',
+    generatePoints: (W,H) => giraffePoints(W*0.76, H*0.58, Math.min(W,H)*0.16),
+    color: '#ff9944', colorRgb: '255,153,68',
+    diaryBg: 'rgba(20,8,2,0.92)', diaryTextColor: 'rgba(255,220,180,0.78)',
+    particleColors: ['#ff8833','#ff9944','#ffbb66','#ffaa55'],
+    promptText: 'From up here, everything looks different.',
+    diary: { date: 'August 7, 2023', text: `From up here, everything looks smaller.\n\nThe arguments, the distances, the things I thought I couldn't get past. Maybe the sky is just a reminder that there is always more above whatever is pressing you down.\n\nI stood on the rooftop for a long time. No conclusions. Just air, and the feeling of being very small, and for once, not minding.` }
+  },
+  {
+    id: 'rabbit', name: 'rabbit',
+    generatePoints: (W,H) => rabbitPoints(W*0.50, H*0.25, Math.min(W,H)*0.17),
+    color: '#c8d8ff', colorRgb: '200,216,255',
+    diaryBg: 'rgba(5,7,20,0.92)', diaryTextColor: 'rgba(210,220,255,0.80)',
+    particleColors: ['#aabbff','#c8d8ff','#ddeeff','#bbccff'],
+    promptText: 'Still awake. Still here. That is enough.',
+    diary: { date: 'January 12, 2024', text: `I couldn't sleep again.\n\nLay still for a long time, heart going fast for no reason. Got up and made tea. Watched the dark outside the window slowly turn gray, then blue, then almost-morning.\n\nSometimes just surviving until sunrise is enough. I think that's what people mean when they say they got through it. They just kept going until the light came back.` }
+  },
+  {
+    id: 'turtle', name: 'turtle',
+    generatePoints: (W,H) => turtlePoints(W*0.34, H*0.70, Math.min(W,H)*0.17),
+    color: '#44ddaa', colorRgb: '68,221,170',
+    diaryBg: 'rgba(2,14,12,0.92)', diaryTextColor: 'rgba(180,245,220,0.78)',
+    particleColors: ['#22cc88','#44ddaa','#66eebb','#33cc99'],
+    promptText: 'Slow and steady, and still so far.',
+    diary: { date: 'October 3, 2023', text: `I have been moving slowly on purpose.\n\nThe world outside is all hurry, hurry, hurry. But I have found that the things worth having don't run away from you. They wait. Like a kind of faith.\n\nMy grandmother used to say: the patient ones always find the good seats. I didn't understand that until today.` }
+  },
+  {
+    id: 'butterfly', name: 'butterfly',
+    generatePoints: (W,H) => butterflyPoints(W*0.65, H*0.68, Math.min(W,H)*0.17),
+    color: '#ff44cc', colorRgb: '255,68,204',
+    diaryBg: 'rgba(20,3,16,0.92)', diaryTextColor: 'rgba(255,190,240,0.78)',
+    particleColors: ['#ee22bb','#ff44cc','#ff88dd','#ff55cc'],
+    promptText: 'You are not who you were. Look.',
+    diary: { date: 'May 20, 2024', text: `I am not the same person I was at the start of the year.\n\nI can't pinpoint the exact moment of change — it was more like weather: gradual shifts in pressure, then one day you look up and realize the sky is a different color.\n\nI don't miss who I was. I just want to remember her kindly. She was doing her best.` }
+  }
+];
+
+// ─── Particle system ─────────────────────────────────────────────────────────
+const TOTAL = 3200;
+const ANIMAL_COUNT = 200;
+let particles = [];
+for (let i = 0; i < TOTAL; i++) {
+  particles.push(new Particle(i));
+}
+
+// ─── State machine ───────────────────────────────────────────────────────────
+const STATE = {
+  SPACE: 'SPACE',
+  FORMING: 'FORMING',
+  FORMED: 'FORMED',
+  OPENING: 'OPENING',
+  DIARY: 'DIARY',
+  CLOSING: 'CLOSING'
+};
+
+let currentState = STATE.SPACE;
+let currentAnimalIndex = 0;
+let currentAnimalPoints = [];
+let currentAnimalParticles = []; // dynamically chosen nearest particles
+let fireflyParticles = [];
+let isHoveringAnimal = false;
+let hoverRotY = 0; // current Y-axis rotation angle (radians)
+let noClickTimer = null;
+
+// ─── Animal center helper ────────────────────────────────────────────────────
+// Centers match the cx/cy fractions passed inside each generatePoints call
+const ANIMAL_CENTERS = {
+  fish:      { wx: 0.26, hy: 0.36 },
+  cat:       { wx: 0.72, hy: 0.30 },
+  dog:       { wx: 0.50, hy: 0.62 },
+  elephant:  { wx: 0.22, hy: 0.55 },
+  giraffe:   { wx: 0.76, hy: 0.58 },
+  rabbit:    { wx: 0.50, hy: 0.25 },
+  turtle:    { wx: 0.34, hy: 0.70 },
+  butterfly: { wx: 0.65, hy: 0.68 },
+};
+function animalCenter(animal) {
+  const c = ANIMAL_CENTERS[animal.id] || { wx: 0.50, hy: 0.50 };
+  return { x: W * c.wx, y: H * c.hy };
+}
+
+// ─── Assign animal targets ───────────────────────────────────────────────────
+function assignAnimalTargets(animalIndex) {
+  const animal = animals[animalIndex];
+  const pts = animal.generatePoints(W, H);
+  currentAnimalPoints = pts;
+  const center = animalCenter(animal);
+
+  // Find nearest free particles to this animal's position
+  const free = particles.filter(p => !p.isFirefly && p.targetX === null);
+  free.sort((a, b) => {
+    const da = (a.x - center.x) ** 2 + (a.y - center.y) ** 2;
+    const db = (b.x - center.x) ** 2 + (b.y - center.y) ** 2;
+    return da - db;
+  });
+  const chosen = free.slice(0, ANIMAL_COUNT);
+  currentAnimalParticles = chosen;
+
+  chosen.forEach((p, i) => {
+    p.targetX = pts[i] ? pts[i].x : center.x;
+    p.targetY = pts[i] ? pts[i].y : center.y;
+    p.targetColor = animal.particleColors[i % animal.particleColors.length];
+    p.colorLerp = 0;
+  });
+}
+
+function releaseAnimalTargets() {
+  currentAnimalParticles.forEach(p => {
+    p.targetX = null;
+    p.targetY = null;
+    p.targetColor = null;
+  });
+  currentAnimalParticles = [];
+}
+
+function reassignAnimalTargets() {
+  if (currentState === STATE.FORMING || currentState === STATE.FORMED) {
+    assignAnimalTargets(currentAnimalIndex);
+  }
+}
+
+// ─── Prompt UI ───────────────────────────────────────────────────────────────
+const promptEl = document.getElementById('prompt');
+const promptText = document.getElementById('prompt-text');
+const animalIndicator = document.getElementById('animal-indicator');
+
+function showPrompt(animal) {
+  promptText.textContent = animal.promptText;
+  promptText.style.textShadow = `0 0 20px ${animal.color}`;
+  gsap.killTweensOf(promptEl);
+  gsap.set(promptEl, { opacity: 0, y: 0 });
+  gsap.to(promptEl, { opacity: 1, y: -8, duration: 1.2, ease: 'power2.out' });
+}
+
+function hidePrompt() {
+  gsap.to(promptEl, { opacity: 0, y: 0, duration: 0.5, ease: 'power2.in' });
+}
+
+function showAnimalIndicator(name) {
+  animalIndicator.textContent = name;
+  gsap.to(animalIndicator, { opacity: 1, duration: 0.8, ease: 'power2.out' });
+}
+
+function hideAnimalIndicator() {
+  gsap.to(animalIndicator, { opacity: 0, duration: 0.5 });
+}
+
+// ─── Diary panel ─────────────────────────────────────────────────────────────
+const diaryPanel = document.getElementById('diary-panel');
+const diaryDate = document.getElementById('diary-date');
+const diaryText = document.getElementById('diary-text');
+const closeBtn = document.getElementById('close-btn');
+
+function openDiary() {
+  if (currentState !== STATE.FORMED) return;
+  currentState = STATE.OPENING;
+
+  const animal = animals[currentAnimalIndex];
+
+  // Clear no-click timer
+  if (noClickTimer) { clearTimeout(noClickTimer); noClickTimer = null; }
+
+  // Hide prompt
+  hidePrompt();
+  hideAnimalIndicator();
+
+  // Step 1: Particles implode to center first (brief gathering)
+  const animalParticles = currentAnimalParticles;
+  // Increase formRate so particles move faster during diary transition
+  animalParticles.forEach(p => {
+    p.formRate = 0.08 + Math.random() * 0.04;
+    p.targetX = W/2 + (Math.random()-0.5)*30;
+    p.targetY = H/2 + (Math.random()-0.5)*30;
+  });
+
+  // Step 2: Show diary panel quickly (reduced from 600ms to 300ms)
+  setTimeout(() => {
+    // Set diary panel color per animal
+    diaryPanel.style.background = animal.diaryBg;
+    diaryPanel.style.boxShadow = `0 0 80px rgba(${animal.colorRgb}, 0.2), 0 0 200px rgba(${animal.colorRgb}, 0.08), inset 0 0 60px rgba(${animal.colorRgb}, 0.04)`;
+    diaryText.style.color = animal.diaryTextColor;
+
+    // Populate content
+    diaryDate.textContent = animal.diary.date;
+    diaryText.textContent = animal.diary.text;
+    gsap.set(diaryText, { opacity: 0 });
+    gsap.set('#diary-actions', { opacity: 0 });
+
+    // Activate firefly particles (80 free particles)
+    fireflyParticles = [];
+    const freeStart = 8 * ANIMAL_COUNT;
+    for (let i = freeStart; i < freeStart + 80 && i < particles.length; i++) {
+      const p = particles[i];
+      p.isFirefly = true;
+      p.fireflyAngle = Math.random() * Math.PI * 2;
+      p.fireflyRadius = 290 + Math.random() * 130;
+      fireflyParticles.push(p);
+    }
+
+    // ── Animal particles migrate to surround the diary panel border ──
+    // Panel is ~580px wide, ~400px tall, centered at W/2, H/2
+    const panelW = Math.min(580, W * 0.88);
+    const panelH = panelW * 0.7;
+    const marginOut = 18; // how far outside the panel border
+    animalParticles.forEach((p, i) => {
+      // Distribute particles around the panel perimeter (rectangle border)
+      const perim = 2 * (panelW + panelH);
+      const t = (i / animalParticles.length) * perim;
+      let px, py;
+      if (t < panelW) {
+        // Top edge
+        px = W/2 - panelW/2 + t;
+        py = H/2 - panelH/2 - marginOut;
+      } else if (t < panelW + panelH) {
+        // Right edge
+        px = W/2 + panelW/2 + marginOut;
+        py = H/2 - panelH/2 + (t - panelW);
+      } else if (t < 2*panelW + panelH) {
+        // Bottom edge
+        px = W/2 + panelW/2 - (t - panelW - panelH);
+        py = H/2 + panelH/2 + marginOut;
+      } else {
+        // Left edge
+        px = W/2 - panelW/2 - marginOut;
+        py = H/2 + panelH/2 - (t - 2*panelW - panelH);
+      }
+      // Add slight randomness so they don't look like a rigid grid
+      p.targetX = px + (Math.random()-0.5) * 24;
+      p.targetY = py + (Math.random()-0.5) * 24;
+      p.formRate = 0.04 + Math.random() * 0.03;
+    });
+
+    // Open panel
+    gsap.to(diaryPanel, {
+      opacity: 1,
+      scale: 1,
+      duration: 0.6,
+      ease: 'power3.out',
+      onStart: () => { diaryPanel.style.pointerEvents = 'auto'; },
+      onComplete: () => {
+        currentState = STATE.DIARY;
+        // Fade in text content
+        setTimeout(() => {
+          gsap.to(diaryText, { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' });
+          gsap.to(document.getElementById('diary-actions'), { opacity: 1, duration: 0.8, delay: 0.3, ease: 'power2.out' });
+        }, 200);
+      }
+    });
+  }, 300);
+}
+
+function closeDiary() {
+  if (currentState !== STATE.DIARY) return;
+  currentState = STATE.CLOSING;
+
+  // Step 1: Close panel
+  gsap.to(diaryPanel, {
+    opacity: 0,
+    scale: 0.9,
+    duration: 0.5,
+    ease: 'power2.in',
+    onComplete: () => {
+      diaryPanel.style.pointerEvents = 'none';
+      gsap.set(diaryPanel, { scale: 0.85 });
+    }
+  });
+
+  // Release fireflies
+  fireflyParticles.forEach(p => { p.isFirefly = false; });
+  fireflyParticles = [];
+
+  // Step 2: Reform animal briefly then release
+  setTimeout(() => {
+    assignAnimalTargets(currentAnimalIndex);
+  }, 400);
+
+  setTimeout(() => {
+    releaseAnimalTargets();
+  }, 1600);
+
+  // Step 3: Next animal
+  setTimeout(() => {
+    currentAnimalIndex = (currentAnimalIndex + 1) % animals.length;
+    startFormingAnimal();
+  }, 2900);
+}
+
+document.getElementById('close-btn').addEventListener('click', closeDiary);
+
+document.getElementById('share-btn').addEventListener('click', () => {
+  const animal = animals[currentAnimalIndex];
+  const shareText = `${animal.diary.date}\n\n${animal.diary.text}\n\n— from my particle diary`;
+  const feedback = document.getElementById('share-feedback');
+
+  if (navigator.share) {
+    navigator.share({ title: 'A memory from my particle diary', text: shareText })
+      .catch(() => {});
+  } else {
+    navigator.clipboard.writeText(shareText).then(() => {
+      feedback.textContent = 'copied to clipboard';
+      feedback.style.opacity = '1';
+      setTimeout(() => { feedback.style.opacity = '0'; }, 2200);
+    });
+  }
+});
+
+// ─── Animal formation sequence ───────────────────────────────────────────────
+function startFormingAnimal() {
+  currentState = STATE.FORMING;
+  const animal = animals[currentAnimalIndex];
+
+  assignAnimalTargets(currentAnimalIndex);
+  showAnimalIndicator(animal.name);
+
+  // After ~1.5s animal is mostly formed — show prompt
+  setTimeout(() => {
+    if (currentState !== STATE.FORMING) return;
+    currentState = STATE.FORMED;
+    showPrompt(animal);
+
+    // Auto-advance after 10s of no click
+    noClickTimer = setTimeout(() => {
+      if (currentState !== STATE.FORMED) return;
+      hidePrompt();
+      hideAnimalIndicator();
+      releaseAnimalTargets();
+      promptText.textContent = '';
+
+      setTimeout(() => {
+        currentAnimalIndex = (currentAnimalIndex + 1) % animals.length;
+        startFormingAnimal();
+      }, 2800);
+    }, 10000);
+  }, 1500);
+}
+
+// ─── Click detection on canvas ───────────────────────────────────────────────
+canvas.addEventListener('click', e => {
+  if (currentState !== STATE.FORMED) return;
+  const animal = animals[currentAnimalIndex];
+  const center = animalCenter(animal);
+  const dx = e.clientX - center.x;
+  const dy = e.clientY - center.y;
+  if (dx*dx + dy*dy < 160*160) {
+    openDiary();
+  }
+});
+
+// Cursor pointer near animal + boost particle speed on hover for snappy rotation
+canvas.addEventListener('mousemove', e => {
+  if (currentState !== STATE.FORMED && currentState !== STATE.FORMING) {
+    canvas.style.cursor = 'default';
+    isHoveringAnimal = false;
+    return;
+  }
+  const animal = animals[currentAnimalIndex];
+  const center = animalCenter(animal);
+  const dx = e.clientX - center.x;
+  const dy = e.clientY - center.y;
+  const near = (dx * dx + dy * dy < 200 * 200);
+  canvas.style.cursor = near ? 'pointer' : 'default';
+  const wasHovering = isHoveringAnimal;
+  isHoveringAnimal = near;
+  // formRate is now managed in render loop during 3D rotation
+});
+
+// ─── Resize ───────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  regenerateStars();
+  reassignAnimalTargets();
+});
+
+// ─── Render loop ──────────────────────────────────────────────────────────────
+let frameTime = 0;
+function render(ts) {
+  frameTime = ts * 0.001;
+
+  // ── True 3D Y-axis rotation — continuous 360° while hovering ────────────────
+  if (isHoveringAnimal && currentState === STATE.FORMED) {
+    hoverRotY += 0.015; // ~1 full turn per 7s at 60fps
+    if (hoverRotY > Math.PI * 2) hoverRotY -= Math.PI * 2;
+  } else {
+    // Smoothly return to 0
+    if (Math.abs(hoverRotY) > 0.001) {
+      if (hoverRotY > Math.PI) hoverRotY -= Math.PI * 2;
+      hoverRotY *= 0.90;
+      if (Math.abs(hoverRotY) < 0.001) hoverRotY = 0;
+    }
+  }
+
+  if (Math.abs(hoverRotY) > 0.001 && currentAnimalParticles.length > 0 && currentAnimalPoints.length > 0) {
+    const animal = animals[currentAnimalIndex];
+    const center = animalCenter(animal);
+    const cosR = Math.cos(hoverRotY);
+    const sinR = Math.sin(hoverRotY);
+    const FOV = 500; // perspective focal length
+    currentAnimalParticles.forEach((p, i) => {
+      const bp = currentAnimalPoints[i];
+      if (!bp) return;
+      const dx = bp.x - center.x; // relative x
+      const dy = bp.y - center.y; // relative y
+      const dz = bp.z || 0;       // relative z (depth from animal generators)
+      // Y-axis 3D rotation matrix
+      const rx = dx * cosR - dz * sinR;
+      const rz = dx * sinR + dz * cosR;
+      const ry = dy;
+      // Perspective projection
+      const scale = FOV / (FOV + rz);
+      p.targetX = center.x + rx * scale;
+      p.targetY = center.y + ry * scale;
+      // During rotation, use high formRate so particles track rigidly
+      p.formRate = 0.28;
+      // Store depth for rendering (dimmer when far)
+      p._depth = rz;
+    });
+  } else if (currentAnimalParticles.length > 0) {
+    // Not rotating — restore normal formRate
+    currentAnimalParticles.forEach(p => {
+      p._depth = 0;
+      if (p.formRate > 0.1) p.formRate = 0.028 + Math.random() * 0.018;
+    });
+  }
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Deep space base
+  const grad = ctx.createRadialGradient(W*0.42, H*0.48, 0, W*0.42, H*0.48, Math.max(W,H)*0.85);
+  grad.addColorStop(0, '#120a22');
+  grad.addColorStop(0.45, '#080414');
+  grad.addColorStop(1, '#000008');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Milky Way band — faint diagonal nebula smear
+  const mw = ctx.createLinearGradient(0, H * 0.65, W, H * 0.22);
+  mw.addColorStop(0,    'rgba(18,10,38,0)');
+  mw.addColorStop(0.3,  'rgba(28,14,55,0.14)');
+  mw.addColorStop(0.5,  'rgba(35,18,68,0.20)');
+  mw.addColorStop(0.7,  'rgba(28,14,55,0.14)');
+  mw.addColorStop(1,    'rgba(18,10,38,0)');
+  ctx.fillStyle = mw;
+  ctx.fillRect(0, 0, W, H);
+
+  // Stars
+  drawStars(ctx);
+
+  // Particles with screen blending for luminous nebula effect
+  ctx.globalCompositeOperation = 'screen';
+  particles.forEach(p => {
+    p.update(mouseX, mouseY, frameTime);
+    p.draw(ctx);
+  });
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+
+  requestAnimationFrame(render);
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+const titleOverlay = document.getElementById('title-overlay');
+gsap.to(titleOverlay, { opacity: 0, duration: 1.5, delay: 3, ease: 'power2.out' });
+
+// Show "click to remember" in SPACE state immediately
+gsap.set('#prompt', { opacity: 0, y: 0 });
+gsap.to('#prompt', { opacity: 1, y: -8, duration: 1.5, delay: 0.8, ease: 'power2.out' });
+
+// Start first animal after 1s
+setTimeout(() => {
+  startFormingAnimal();
+}, 1000);
+
+requestAnimationFrame(render);
+
+// ─── Text → Animal analysis ───────────────────────────────────────────────────
+function pickAnimalFromText(text) {
+  const t = text.toLowerCase();
+  const scores = { fish:0, cat:0, dog:0, elephant:0, giraffe:0, rabbit:0, turtle:0, butterfly:0 };
+  if (/sad|rain|heavy|alone|lonely|miss|cry|tear|dark|cloud|gray|grey|hurt|loss|empty|sigh|numb|melancholy|water|sea|ocean|drift|flow|swim|deep|wave/.test(t)) scores.fish += 2;
+  if (/cozy|warm|tea|coffee|lazy|soft|sweet|afternoon|nap|comfort|sun|window|blanket|sweater|curl|still/.test(t)) scores.cat += 2;
+  if (/happy|joy|laugh|run|play|fun|excited|bright|smile|dance|love|friend|outside|jump|energy|fast/.test(t)) scores.dog += 2;
+  if (/remember|memory|forget|past|old|photo|ticket|yesterday|used to|once|long ago|years|kept|held/.test(t)) scores.elephant += 2;
+  if (/above|high|tall|perspective|horizon|sky|future|hope|dream|far|roof|mountain|distance|see/.test(t)) scores.giraffe += 2;
+  if (/sleep|awake|night|heart|restless|worry|anxious|morning|midnight|insomnia|racing|nervous|fast|beat/.test(t)) scores.rabbit += 2;
+  if (/slow|patient|quiet|peace|calm|steady|wait|time|still|unhurried|deliberate|faith|careful|soft/.test(t)) scores.turtle += 2;
+  if (/change|transform|different|new|grow|become|evolve|emerge|shift|no longer|anymore|anymore|yet|becoming/.test(t)) scores.butterfly += 2;
+  // Chinese keywords
+  if (/雨|难过|忧伤|孤独|失落|悲|哭|痛|沉|水|海|鱼|游|漂|深/.test(t)) scores.fish += 2;
+  if (/温暖|慵懒|舒服|午后|茶|猫|窝/.test(t)) scores.cat += 2;
+  if (/开心|快乐|笑|跑|玩|兴奋|高兴/.test(t)) scores.dog += 2;
+  if (/记忆|回忆|过去|忘记|曾经|照片|票根/.test(t)) scores.elephant += 2;
+  if (/高处|视角|未来|梦|远方|希望/.test(t)) scores.giraffe += 2;
+  if (/睡不着|失眠|夜|心跳|焦虑|等待|紧张/.test(t)) scores.rabbit += 2;
+  if (/慢|耐心|平静|安静|稳|信念|缓/.test(t)) scores.turtle += 2;
+  if (/改变|不同|新|成长|变化|蜕变|转变/.test(t)) scores.butterfly += 2;
+
+  const max = Math.max(...Object.values(scores));
+  const winners = Object.keys(scores).filter(k => scores[k] === max);
+  return winners[Math.floor(Math.random() * winners.length)];
+}
+
+// ─── Write panel ──────────────────────────────────────────────────────────────
+const writePanel = document.getElementById('write-panel');
+const writeTextarea = document.getElementById('write-textarea');
+const writeCharCount = document.getElementById('write-char-count');
+const writePanelDate = document.getElementById('write-panel-date');
+
+function openWritePanel() {
+  const now = new Date();
+  writePanelDate.textContent = now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  writeTextarea.value = '';
+  writeCharCount.textContent = '0 / 500';
+  gsap.to(writePanel, { opacity:1, scale:1, duration:0.55, ease:'power3.out',
+    onStart: () => { writePanel.style.pointerEvents = 'auto'; } });
+  setTimeout(() => writeTextarea.focus(), 350);
+}
+
+function closeWritePanel() {
+  gsap.to(writePanel, { opacity:0, scale:0.92, duration:0.4, ease:'power2.in',
+    onComplete: () => { writePanel.style.pointerEvents = 'none'; } });
+}
+
+document.getElementById('prompt-sub').addEventListener('click', () => {
+  if (currentState === STATE.SPACE || currentState === STATE.FORMING || currentState === STATE.FORMED) {
+    // If an animal is currently forming/formed, release it first
+    if (currentState === STATE.FORMING || currentState === STATE.FORMED) {
+      if (noClickTimer) { clearTimeout(noClickTimer); noClickTimer = null; }
+      hidePrompt();
+      hideAnimalIndicator();
+      releaseAnimalTargets();
+      currentState = STATE.SPACE;
+    }
+    openWritePanel();
+  }
+});
+
+writeTextarea.addEventListener('input', () => {
+  writeCharCount.textContent = `${writeTextarea.value.length} / 500`;
+});
+
+document.getElementById('write-cancel').addEventListener('click', closeWritePanel);
+
+document.getElementById('write-submit').addEventListener('click', () => {
+  const text = writeTextarea.value.trim();
+  if (text.length < 3) return; // need at least a few chars
+
+  // Analyze text → pick animal
+  const animalId = pickAnimalFromText(text);
+  const animalIndex = animals.findIndex(a => a.id === animalId);
+
+  // Stamp diary with user's writing
+  const now = new Date();
+  animals[animalIndex].diary.date = now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  animals[animalIndex].diary.text = text;
+
+  // Close write panel
+  closeWritePanel();
+
+  // Release currently active animal if any
+  if (currentState === STATE.FORMING || currentState === STATE.FORMED) {
+    if (noClickTimer) { clearTimeout(noClickTimer); noClickTimer = null; }
+    hidePrompt();
+    hideAnimalIndicator();
+    releaseAnimalTargets();
+    currentState = STATE.SPACE;
+  }
+
+  // Form the matching animal after a short pause
+  setTimeout(() => {
+    currentAnimalIndex = animalIndex;
+    startFormingAnimal();
+  }, 900);
+});
+</script>
+</body>
+</html>

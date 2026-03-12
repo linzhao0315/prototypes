@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Donation Impact Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #07071a;
+  --bg-center: #0d0d24;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+  --skeleton: rgba(255,255,255,0.06);
+  --skeleton-shine: rgba(255,255,255,0.12);
+  --teal: #4ecdc4;
+  --coral: #ff6b6b;
+  --gold: #ffd93d;
+  --lavender: #a78bfa;
+  --text: #ffffff;
+  --subtext: #8888aa;
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: radial-gradient(ellipse at 50% 30%, var(--bg-center) 0%, var(--bg) 70%);
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* HEADER */
+.page-header {
+  text-align: center;
+  padding: 72px 0 56px;
+  opacity: 0;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #ffffff 0%, #8888aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.page-subtitle {
+  font-size: 18px;
+  color: var(--subtext);
+  font-weight: 400;
+}
+
+/* SECTION STRUCTURE */
+.section-block {
+  margin-bottom: 0;
+  opacity: 0;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 48px 0;
+  opacity: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.section-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--subtext);
+  flex-shrink: 0;
+}
+
+.section-title-group {
+  flex: 1;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: var(--subtext);
+  margin-top: 2px;
+}
+
+.auto-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(78,205,196,0.08);
+  border: 1px solid rgba(78,205,196,0.2);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--teal);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ── SECTION 1: BORROWER CARDS ── */
+.cards-row {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  flex: 1;
+  max-width: 360px;
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  overflow: hidden;
+  min-height: 300px;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Shimmer keyframes */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  padding: 28px;
+  background: rgba(255,255,255,0.04);
+  z-index: 2;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skel-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skel {
+  background: linear-gradient(90deg, var(--skeleton) 0%, var(--skeleton-shine) 50%, var(--skeleton) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+.skel-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, var(--skeleton) 0%, var(--skeleton-shine) 50%, var(--skeleton) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skel-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skel-line-70 { height: 12px; width: 70%; }
+.skel-line-50 { height: 10px; width: 50%; }
+.skel-line-90 { height: 10px; width: 90%; }
+.skel-line-80 { height: 10px; width: 80%; }
+.skel-line-60 { height: 10px; width: 60%; }
+.skel-block   { height: 64px; width: 100%; border-radius: 10px; }
+
+/* Real content */
+.card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  opacity: 0;
+  transform: scale(0.7);
+}
+
+.card-name {
+  font-size: 16px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.card-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(78,205,196,0.12);
+  border: 1px solid rgba(78,205,196,0.25);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--teal);
+  opacity: 0;
+  transform: translateY(6px);
+  align-self: flex-start;
+}
+
+.card-bio {
+  font-size: 13px;
+  color: var(--subtext);
+  font-style: italic;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.card-goal {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  padding: 14px;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.goal-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--subtext);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.progress-track {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  transition: none;
+}
+
+.goal-text {
+  font-size: 11px;
+  color: var(--subtext);
+}
+
+.goal-text strong {
+  color: var(--text);
+}
+
+/* ── SECTION 2: GLOBE ── */
+.globe-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#globe-svg {
+  filter: drop-shadow(0 0 60px rgba(78,205,196,0.06));
+}
+
+/* ── SECTION 3: PIE + CATEGORIES ── */
+.stats-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.pie-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+#pie-svg {
+  transform: rotate(-90deg);
+}
+
+.pie-center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  text-align: center;
+  pointer-events: none;
+}
+
+.pie-center-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.pie-center-sub {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--subtext);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.cat-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cat-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.3s, border-left-color 0.3s;
+}
+
+.cat-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+  transition: background 0.4s;
+}
+
+.cat-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.cat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cat-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.cat-bar-track {
+  height: 5px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.cat-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+}
+
+.cat-pct {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  opacity: 0.2;
+  flex-shrink: 0;
+  transition: opacity 0.4s;
+  min-width: 48px;
+  text-align: right;
+}
+
+/* Bottom fade */
+.bottom-fade {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <header class="page-header" id="page-header">
+    <div class="eyebrow">Live Preview</div>
+    <h1 class="page-title">Watch your donation<br>change lives</h1>
+    <p class="page-subtitle">See exactly what happens when you give.</p>
+  </header>
+
+  <!-- SECTION 1 -->
+  <div class="section-block" id="sec1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title-group">
+        <div class="section-title">Real Borrowers, Real Impact</div>
+        <div class="section-subtitle">Your loan connects directly to an entrepreneur in need</div>
+      </div>
+      <div class="auto-badge"><div class="pulse-dot"></div>Auto-previewing</div>
+    </div>
+
+    <div class="cards-row" id="cards-row">
+
+      <!-- Card 1: Maria Santos -->
+      <div class="card" id="card-0">
+        <div class="skeleton-overlay" id="skel-0">
+          <div class="skel-row">
+            <div class="skel-circle"></div>
+            <div class="skel-lines">
+              <div class="skel skel-line-70"></div>
+              <div class="skel skel-line-50"></div>
+            </div>
+          </div>
+          <div class="skel skel-line-90"></div>
+          <div class="skel skel-line-80"></div>
+          <div class="skel skel-line-60"></div>
+          <div class="skel skel-block"></div>
+        </div>
+        <div class="card-content" id="content-0">
+          <div class="card-avatar" id="av-0" style="background: linear-gradient(135deg, #f9a8d4, #ec4899);">👩</div>
+          <div class="card-name" id="name-0">Maria Santos</div>
+          <div class="card-location" id="loc-0">📍 Philippines</div>
+          <div class="card-bio" id="bio-0">"I want to expand my sari-sari store so my children can go to school without worrying about money."</div>
+          <div class="card-goal" id="goal-0">
+            <div class="goal-label">Funding Progress</div>
+            <div class="progress-track">
+              <div class="progress-fill" id="prog-0" style="background: linear-gradient(90deg, #f9a8d4, #ec4899);"></div>
+            </div>
+            <div class="goal-text"><strong>$680</strong> raised of $1,200 goal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Amina Diallo -->
+      <div class="card" id="card-1">
+        <div class="skeleton-overlay" id="skel-1">
+          <div class="skel-row">
+            <div class="skel-circle"></div>
+            <div class="skel-lines">
+              <div class="skel skel-line-70"></div>
+              <div class="skel skel-line-50"></div>
+            </div>
+          </div>
+          <div class="skel skel-line-90"></div>
+          <div class="skel skel-line-80"></div>
+          <div class="skel skel-line-60"></div>
+          <div class="skel skel-block"></div>
+        </div>
+        <div class="card-content" id="content-1">
+          <div class="card-avatar" id="av-1" style="background: linear-gradient(135deg, #fbbf24, #d97706);">👩‍🌾</div>
+          <div class="card-name" id="name-1">Amina Diallo</div>
+          <div class="card-location" id="loc-1">📍 Senegal</div>
+          <div class="card-bio" id="bio-1">"With a small loan, I can grow enough millet to feed my village and have surplus to sell at market."</div>
+          <div class="card-goal" id="goal-1">
+            <div class="goal-label">Funding Progress</div>
+            <div class="progress-track">
+              <div class="progress-fill" id="prog-1" style="background: linear-gradient(90deg, #fbbf24, #d97706);"></div>
+            </div>
+            <div class="goal-text"><strong>$420</strong> raised of $800 goal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Priya Sharma -->
+      <div class="card" id="card-2">
+        <div class="skeleton-overlay" id="skel-2">
+          <div class="skel-row">
+            <div class="skel-circle"></div>
+            <div class="skel-lines">
+              <div class="skel skel-line-70"></div>
+              <div class="skel skel-line-50"></div>
+            </div>
+          </div>
+          <div class="skel skel-line-90"></div>
+          <div class="skel skel-line-80"></div>
+          <div class="skel skel-line-60"></div>
+          <div class="skel skel-block"></div>
+        </div>
+        <div class="card-content" id="content-2">
+          <div class="card-avatar" id="av-2" style="background: linear-gradient(135deg, #6ee7b7, #059669);">👩‍💼</div>
+          <div class="card-name" id="name-2">Priya Sharma</div>
+          <div class="card-location" id="loc-2">📍 India</div>
+          <div class="card-bio" id="bio-2">"I teach 30 students in my village. A loan helps me buy books and solar lighting for evening classes."</div>
+          <div class="card-goal" id="goal-2">
+            <div class="goal-label">Funding Progress</div>
+            <div class="progress-track">
+              <div class="progress-fill" id="prog-2" style="background: linear-gradient(90deg, #6ee7b7, #059669);"></div>
+            </div>
+            <div class="goal-text"><strong>$900</strong> raised of $1,000 goal</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider" id="div1"></div>
+
+  <!-- SECTION 2 -->
+  <div class="section-block" id="sec2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title-group">
+        <div class="section-title">Global Reach</div>
+        <div class="section-subtitle">Connecting donors to communities across the developing world</div>
+      </div>
+      <div class="auto-badge"><div class="pulse-dot"></div>Auto-previewing</div>
+    </div>
+    <div class="globe-wrapper">
+      <svg id="globe-svg" width="700" height="450"></svg>
+    </div>
+  </div>
+
+  <div class="divider" id="div2"></div>
+
+  <!-- SECTION 3 -->
+  <div class="section-block" id="sec3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title-group">
+        <div class="section-title">Where Your Money Goes</div>
+        <div class="section-subtitle">Every dollar is allocated across high-impact categories</div>
+      </div>
+      <div class="auto-badge"><div class="pulse-dot"></div>Auto-previewing</div>
+    </div>
+
+    <div class="stats-layout">
+      <div class="pie-wrapper">
+        <svg id="pie-svg" width="280" height="280" viewBox="0 0 280 280">
+          <!-- Background ring -->
+          <circle cx="140" cy="140" r="110" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="30"/>
+          <!-- Slices -->
+          <circle id="pie-0" cx="140" cy="140" r="110" fill="none" stroke="#4ecdc4" stroke-width="30"
+                  stroke-dasharray="0 691.15" stroke-dashoffset="0"/>
+          <circle id="pie-1" cx="140" cy="140" r="110" fill="none" stroke="#a78bfa" stroke-width="30"
+                  stroke-dasharray="0 691.15" stroke-dashoffset="-241.9"/>
+          <circle id="pie-2" cx="140" cy="140" r="110" fill="none" stroke="#ff6b6b" stroke-width="30"
+                  stroke-dasharray="0 691.15" stroke-dashoffset="-435.4"/>
+          <circle id="pie-3" cx="140" cy="140" r="110" fill="none" stroke="#ffd93d" stroke-width="30"
+                  stroke-dasharray="0 691.15" stroke-dashoffset="-573.7"/>
+        </svg>
+        <div class="pie-center-label">
+          <div class="pie-center-num" id="pie-counter">0%</div>
+          <div class="pie-center-sub">Allocated</div>
+        </div>
+      </div>
+
+      <div class="cat-list">
+        <div class="cat-item" id="cat-0">
+          <div class="cat-dot" id="dot-0"></div>
+          <div class="cat-icon">🌾</div>
+          <div class="cat-info">
+            <div class="cat-name">Agriculture</div>
+            <div class="cat-bar-track">
+              <div class="cat-bar-fill" id="bar-0" style="background: #4ecdc4;"></div>
+            </div>
+          </div>
+          <div class="cat-pct" id="pct-0">35%</div>
+        </div>
+        <div class="cat-item" id="cat-1">
+          <div class="cat-dot" id="dot-1"></div>
+          <div class="cat-icon">📚</div>
+          <div class="cat-info">
+            <div class="cat-name">Education</div>
+            <div class="cat-bar-track">
+              <div class="cat-bar-fill" id="bar-1" style="background: #a78bfa;"></div>
+            </div>
+          </div>
+          <div class="cat-pct" id="pct-1">28%</div>
+        </div>
+        <div class="cat-item" id="cat-2">
+          <div class="cat-dot" id="dot-2"></div>
+          <div class="cat-icon">🏥</div>
+          <div class="cat-info">
+            <div class="cat-name">Healthcare</div>
+            <div class="cat-bar-track">
+              <div class="cat-bar-fill" id="bar-2" style="background: #ff6b6b;"></div>
+            </div>
+          </div>
+          <div class="cat-pct" id="pct-2">20%</div>
+        </div>
+        <div class="cat-item" id="cat-3">
+          <div class="cat-dot" id="dot-3"></div>
+          <div class="cat-icon">🛒</div>
+          <div class="cat-info">
+            <div class="cat-name">Retail &amp; Business</div>
+            <div class="cat-bar-track">
+              <div class="cat-bar-fill" id="bar-3" style="background: #ffd93d;"></div>
+            </div>
+          </div>
+          <div class="cat-pct" id="pct-3">17%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-fade"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// PAGE ENTRY ANIMATIONS
+// ─────────────────────────────────────────────
+const entryTl = gsap.timeline({ delay: 0.3 });
+entryTl.to('#page-header', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', clearProps: 'transform' }, 0);
+entryTl.to(['#sec1', '#sec2', '#sec3'], { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.2, clearProps: 'transform' }, 0.2);
+entryTl.to(['#div1', '#div2'], { opacity: 1, duration: 0.6, stagger: 0.2 }, 0.4);
+
+gsap.set(['#page-header', '#sec1', '#sec2', '#sec3'], { y: 20 });
+
+// ─────────────────────────────────────────────
+// SECTION 1: BORROWER CARDS
+// ─────────────────────────────────────────────
+const cardData = [
+  { fill: 57, color: 'rgba(249,168,212,0.4)', glowColor: 'rgba(236,72,153,0.12)' },
+  { fill: 53, color: 'rgba(251,191,36,0.4)',  glowColor: 'rgba(217,119,6,0.12)'  },
+  { fill: 90, color: 'rgba(110,231,183,0.4)', glowColor: 'rgba(5,150,105,0.12)'  },
+];
+
+function resetCard(i) {
+  const skel = document.getElementById('skel-' + i);
+  const av   = document.getElementById('av-' + i);
+  const nm   = document.getElementById('name-' + i);
+  const lc   = document.getElementById('loc-' + i);
+  const bi   = document.getElementById('bio-' + i);
+  const gl   = document.getElementById('goal-' + i);
+  const pr   = document.getElementById('prog-' + i);
+  const cd   = document.getElementById('card-' + i);
+
+  gsap.set(skel, { opacity: 1 });
+  gsap.set([av, nm, lc, bi, gl], { opacity: 0 });
+  gsap.set(av,  { scale: 0.7 });
+  gsap.set(nm,  { y: 8 });
+  gsap.set([lc, bi, gl], { y: 6 });
+  gsap.set(pr,  { width: '0%' });
+  gsap.set(cd,  { borderColor: 'rgba(255,255,255,0.08)', boxShadow: 'none', opacity: 1, y: 0 });
+}
+
+function revealCard(tl, i, startTime) {
+  const skel = document.getElementById('skel-' + i);
+  const av   = document.getElementById('av-' + i);
+  const nm   = document.getElementById('name-' + i);
+  const lc   = document.getElementById('loc-' + i);
+  const bi   = document.getElementById('bio-' + i);
+  const gl   = document.getElementById('goal-' + i);
+  const pr   = document.getElementById('prog-' + i);
+  const cd   = document.getElementById('card-' + i);
+  const d    = cardData[i];
+
+  // Flash shimmer overlay
+  const flashEl = document.createElement('div');
+  flashEl.style.cssText = `position:absolute;top:0;left:-100%;width:100%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
+    z-index:10;pointer-events:none;border-radius:16px;`;
+  cd.appendChild(flashEl);
+
+  tl.to(flashEl, { left: '100%', duration: 0.5, ease: 'power2.out' }, startTime);
+  tl.call(() => { if (flashEl.parentNode) flashEl.parentNode.removeChild(flashEl); }, [], startTime + 0.5);
+
+  // Skeleton fades out
+  tl.to(skel, { opacity: 0, duration: 0.5, ease: 'power2.out' }, startTime + 0.15);
+
+  // Avatar pops in
+  tl.to(av, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' }, startTime + 0.35);
+
+  // Name
+  tl.to(nm, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }, startTime + 0.55);
+
+  // Location
+  tl.to(lc, { opacity: 1, y: 0, duration: 0.3, ease: 'power3.out' }, startTime + 0.65);
+
+  // Bio
+  tl.to(bi, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, startTime + 0.75);
+
+  // Goal box + progress bar
+  tl.to(gl, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, startTime + 0.85);
+  tl.to(pr, { width: d.fill + '%', duration: 0.8, ease: 'power2.out' }, startTime + 0.9);
+
+  // Card glow
+  tl.to(cd, {
+    borderColor: d.color,
+    boxShadow: `0 0 40px ${d.glowColor}`,
+    duration: 0.6, ease: 'power2.out'
+  }, startTime + 0.85);
+
+  return startTime + 1.8;
+}
+
+function loopSection1() {
+  // Reset all
+  for (let i = 0; i < 3; i++) resetCard(i);
+
+  const tl = gsap.timeline({
+    onComplete: () => gsap.delayedCall(1, loopSection1)
+  });
+
+  let t = 0;
+  for (let i = 0; i < 3; i++) {
+    const endTime = revealCard(tl, i, t);
+    t = endTime + (i < 2 ? 1 : 0);
+  }
+
+  // Hold all revealed: 2.5s
+  const holdUntil = t + 2.5;
+
+  // Reset: all 3 cards fade out simultaneously
+  tl.to(['#card-0', '#card-1', '#card-2'], {
+    opacity: 0, y: -15, duration: 0.5, ease: 'power2.in', stagger: 0.1
+  }, holdUntil);
+
+  tl.call(() => {
+    for (let i = 0; i < 3; i++) resetCard(i);
+  }, [], holdUntil + 0.6);
+}
+
+// ─────────────────────────────────────────────
+// SECTION 2: GLOBE
+// ─────────────────────────────────────────────
+const CIRCUMFERENCE = 2 * Math.PI * 110;
+
+const tealIds  = [608, 764, 360, 104, 418, 116];
+const coralIds = [404, 800, 834, 706, 508, 231];
+const goldIds  = [356, 524, 586,  50, 144];
+
+const regionMap = {};
+tealIds.forEach(id  => regionMap[id] = 'teal');
+coralIds.forEach(id => regionMap[id] = 'coral');
+goldIds.forEach(id  => regionMap[id] = 'gold');
+
+const regionStyles = {
+  teal:  { fill: '#4ecdc4', glow: 'drop-shadow(0 0 10px rgba(78,205,196,0.9))',  stroke: '#4ecdc4' },
+  coral: { fill: '#ff6b6b', glow: 'drop-shadow(0 0 10px rgba(255,107,107,0.9))', stroke: '#ff6b6b' },
+  gold:  { fill: '#ffd93d', glow: 'drop-shadow(0 0 10px rgba(255,217,61,0.9))',  stroke: '#ffd93d' },
+};
+
+const avatarDefs = [
+  { lon: 121, lat:  12, emoji: '🧕', region: 'teal',  id: 'gab-0' },
+  { lon: 108, lat:  -7, emoji: '👨‍🌾', region: 'teal',  id: 'gab-1' },
+  { lon:  37, lat:   1, emoji: '👩', region: 'coral', id: 'gab-2' },
+  { lon:  36, lat:  -6, emoji: '👴', region: 'coral', id: 'gab-3' },
+  { lon:  78, lat:  21, emoji: '👩‍💼', region: 'gold',  id: 'gab-4' },
+  { lon:  90, lat:  23, emoji: '👨‍🎓', region: 'gold',  id: 'gab-5' },
+];
+
+let projection, pathGenerator, countryPaths, graticulePath, globeLoaded = false;
+
+async function initGlobe() {
+  const svg = d3.select('#globe-svg');
+  projection = d3.geoOrthographic()
+    .scale(200)
+    .translate([350, 225])
+    .rotate([0, -20]);
+
+  pathGenerator = d3.geoPath().projection(projection);
+
+  // Ocean
+  svg.append('circle')
+    .attr('cx', 350).attr('cy', 225).attr('r', 200)
+    .attr('fill', '#0d0d24')
+    .attr('stroke', '#1a1a40')
+    .attr('stroke-width', 1);
+
+  let world;
+  try {
+    world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+  } catch(e) {
+    console.warn('Globe: could not load world atlas. Skipping globe animation.', e);
+    return;
+  }
+
+  const countries = topojson.feature(world, world.objects.countries);
+
+  // Graticule
+  const graticule = d3.geoGraticule()();
+  graticulePath = svg.append('path')
+    .datum(graticule)
+    .attr('fill', 'none')
+    .attr('stroke', 'rgba(255,255,255,0.03)')
+    .attr('stroke-width', 0.5)
+    .attr('d', pathGenerator);
+
+  // Countries
+  const countryGroup = svg.append('g').attr('id', 'countries-group');
+  countryPaths = countryGroup.selectAll('path')
+    .data(countries.features)
+    .enter().append('path')
+    .attr('d', pathGenerator)
+    .attr('fill', '#1e1e3f')
+    .attr('stroke', '#2d2d5e')
+    .attr('stroke-width', 0.5);
+
+  // Avatar bubbles
+  const abGroup = svg.append('g').attr('id', 'avatar-bubbles');
+  avatarDefs.forEach(av => {
+    const [x, y] = projection([av.lon, av.lat]);
+    const style = regionStyles[av.region];
+    const g = abGroup.append('g')
+      .attr('id', av.id)
+      .attr('transform', `translate(${x}, ${y})`);
+
+    g.append('circle')
+      .attr('r', 22)
+      .attr('fill', '#07071a')
+      .attr('stroke', style.stroke)
+      .attr('stroke-width', 2.5);
+
+    g.append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .attr('font-size', '18px')
+      .attr('y', 1)
+      .text(av.emoji);
+
+    gsap.set('#' + av.id, { scale: 0, opacity: 0, transformOrigin: 'center' });
+  });
+
+  globeLoaded = true;
+  loopSection2();
+}
+
+function rerenderGlobe(activeRegions) {
+  if (!countryPaths) return;
+  countryPaths.each(function(d) {
+    const id = +d.id;
+    const region = regionMap[id];
+    const el = d3.select(this);
+    if (region && activeRegions.includes(region)) {
+      const s = regionStyles[region];
+      el.attr('fill', s.fill).attr('filter', s.glow).attr('stroke', s.fill).attr('stroke-width', 1);
+    } else {
+      el.attr('fill', '#1e1e3f').attr('filter', null).attr('stroke', '#2d2d5e').attr('stroke-width', 0.5);
+    }
+    el.attr('d', pathGenerator);
+  });
+  if (graticulePath) graticulePath.attr('d', pathGenerator);
+}
+
+function updateAvatarPositions() {
+  avatarDefs.forEach(av => {
+    const [x, y] = projection([av.lon, av.lat]);
+    const el = document.getElementById(av.id);
+    if (el) {
+      // preserve gsap transform by updating base position
+      el.setAttribute('data-base-x', x);
+      el.setAttribute('data-base-y', y);
+    }
+  });
+}
+
+function loopSection2() {
+  if (!globeLoaded) return;
+
+  // Reset state
+  rerenderGlobe([]);
+  avatarDefs.forEach(av => {
+    gsap.set('#' + av.id, { scale: 0, opacity: 0 });
+  });
+  projection.rotate([0, -20]);
+  rerenderGlobe([]);
+
+  const rotProxy = { lambda: 0, phi: -20 };
+  let activeRegions = [];
+
+  const tl = gsap.timeline({
+    onComplete: () => gsap.delayedCall(1, loopSection2)
+  });
+
+  // t=0.5: teal lights up
+  tl.call(() => {
+    activeRegions = ['teal'];
+    rerenderGlobe(activeRegions);
+  }, [], 0.5);
+
+  // t=1: av0 and av1 pop in
+  tl.to(['#gab-0', '#gab-1'], {
+    scale: 1, opacity: 1,
+    duration: 0.5, ease: 'back.out(2)', stagger: 0.2
+  }, 1);
+
+  // t=2.5: rotate to [-35, -15]
+  tl.to(rotProxy, {
+    lambda: -35, phi: -15,
+    duration: 2.5, ease: 'power2.inOut',
+    onUpdate: () => {
+      projection.rotate([rotProxy.lambda, rotProxy.phi]);
+      rerenderGlobe(activeRegions);
+      // reposition avatars
+      avatarDefs.forEach(av => {
+        const [x, y] = projection([av.lon, av.lat]);
+        const el = document.getElementById(av.id);
+        if (el) {
+          const currentTransform = el.getAttribute('transform') || '';
+          // Keep gsap scale/opacity but update translate
+          el.style.transformOrigin = `${x}px ${y}px`;
+          // We'll directly set the SVG translate via attribute
+          el.setAttribute('transform', `translate(${x}, ${y})`);
+        }
+      });
+    }
+  }, 2.5);
+
+  // t=5.5: coral lights up
+  tl.call(() => {
+    activeRegions = ['teal', 'coral'];
+    rerenderGlobe(activeRegions);
+  }, [], 5.5);
+
+  // t=6: av2, av3
+  tl.to(['#gab-2', '#gab-3'], {
+    scale: 1, opacity: 1,
+    duration: 0.5, ease: 'back.out(2)', stagger: 0.2
+  }, 6);
+
+  // t=7.5: rotate to [30, -25]
+  tl.to(rotProxy, {
+    lambda: 30, phi: -25,
+    duration: 2.5, ease: 'power2.inOut',
+    onUpdate: () => {
+      projection.rotate([rotProxy.lambda, rotProxy.phi]);
+      rerenderGlobe(activeRegions);
+      avatarDefs.forEach(av => {
+        const [x, y] = projection([av.lon, av.lat]);
+        const el = document.getElementById(av.id);
+        if (el) el.setAttribute('transform', `translate(${x}, ${y})`);
+      });
+    }
+  }, 7.5);
+
+  // t=10.5: gold lights up
+  tl.call(() => {
+    activeRegions = ['teal', 'coral', 'gold'];
+    rerenderGlobe(activeRegions);
+  }, [], 10.5);
+
+  // t=11: av4, av5
+  tl.to(['#gab-4', '#gab-5'], {
+    scale: 1, opacity: 1,
+    duration: 0.5, ease: 'back.out(2)', stagger: 0.2
+  }, 11);
+
+  // t=13: hold
+  // t=15: fade out all avatars + regions
+  tl.to(['#gab-0', '#gab-1', '#gab-2', '#gab-3', '#gab-4', '#gab-5'], {
+    opacity: 0, scale: 0.5, duration: 0.5, ease: 'power2.in'
+  }, 15);
+
+  tl.call(() => {
+    activeRegions = [];
+    rerenderGlobe([]);
+  }, [], 15.5);
+
+  // t=16.5: pause before loop (handled by onComplete + delayedCall)
+}
+
+// ─────────────────────────────────────────────
+// SECTION 3: PIE + CATEGORIES
+// ─────────────────────────────────────────────
+const catData = [
+  { pct: 35, color: '#4ecdc4', total: 35 },
+  { pct: 28, color: '#a78bfa', total: 63 },
+  { pct: 20, color: '#ff6b6b', total: 83 },
+  { pct: 17, color: '#ffd93d', total: 100 },
+];
+
+const pieOffsets = [0, -241.9, -435.4, -573.7];
+
+function resetSection3() {
+  for (let i = 0; i < 4; i++) {
+    const cat  = document.getElementById('cat-' + i);
+    const dot  = document.getElementById('dot-' + i);
+    const bar  = document.getElementById('bar-' + i);
+    const pct  = document.getElementById('pct-' + i);
+    const pie  = document.getElementById('pie-' + i);
+
+    gsap.set(pie, { attr: { 'stroke-dasharray': `0 ${CIRCUMFERENCE}` } });
+    gsap.set(bar, { width: '0%' });
+    gsap.set(pct, { opacity: 0.2 });
+    gsap.set(dot, { backgroundColor: 'rgba(255,255,255,0.1)' });
+    cat.style.borderLeftColor = 'transparent';
+    cat.style.background = 'rgba(255,255,255,0.04)';
+  }
+  document.getElementById('pie-counter').textContent = '0%';
+}
+
+function loopSection3() {
+  resetSection3();
+
+  const counter = { val: 0 };
+  let prevTotal = 0;
+
+  const tl = gsap.timeline({
+    onComplete: () => gsap.delayedCall(1, loopSection3)
+  });
+
+  for (let i = 0; i < 4; i++) {
+    const startT = i * 0.9;
+    const d = catData[i];
+    const targetLen = (d.pct / 100) * CIRCUMFERENCE;
+    const prevTotalCopy = prevTotal;
+    const newTotal = d.total;
+    const colorCopy = d.color;
+    const idx = i;
+
+    // Activate category item
+    tl.call(() => {
+      const cat = document.getElementById('cat-' + idx);
+      const dot = document.getElementById('dot-' + idx);
+      cat.style.borderLeftColor = colorCopy;
+      cat.style.background = 'rgba(255,255,255,0.07)';
+      gsap.to(dot, { backgroundColor: colorCopy, duration: 0.3 });
+    }, [], startT);
+
+    // Pie slice draws in
+    const pieProxy = { v: 0 };
+    tl.to(pieProxy, {
+      v: targetLen,
+      duration: 0.7, ease: 'power2.out',
+      onUpdate: function() {
+        document.getElementById('pie-' + idx).setAttribute(
+          'stroke-dasharray', `${pieProxy.v} ${CIRCUMFERENCE}`
+        );
+      }
+    }, startT);
+
+    // Bar fill
+    tl.to('#bar-' + i, { width: d.pct + '%', duration: 0.7, ease: 'power2.out' }, startT);
+
+    // Counter
+    const ctrProxy = { v: prevTotalCopy };
+    tl.to(ctrProxy, {
+      v: newTotal,
+      duration: 0.7, ease: 'power2.out',
+      onUpdate: () => {
+        document.getElementById('pie-counter').textContent = Math.round(ctrProxy.v) + '%';
+      }
+    }, startT);
+
+    // Pct opacity
+    tl.to('#pct-' + i, { opacity: 1, duration: 0.4 }, startT + 0.3);
+
+    prevTotal = newTotal;
+  }
+
+  // Hold at 100% for 2.5s
+  const holdEnd = 3 * 0.9 + 0.9 + 2.5;
+
+  // Reset: shrink pie simultaneously, counter counts back
+  const ctrBack = { v: 100 };
+  tl.to(ctrBack, {
+    v: 0, duration: 0.8, ease: 'power2.in',
+    onUpdate: () => {
+      document.getElementById('pie-counter').textContent = Math.round(ctrBack.v) + '%';
+    }
+  }, holdEnd);
+
+  for (let i = 0; i < 4; i++) {
+    tl.to({ v: (catData[i].pct / 100) * CIRCUMFERENCE }, {
+      v: 0, duration: 0.8, ease: 'power2.in',
+      onUpdate: function() {
+        // can't easily ref the proxy here in a for loop without closure
+      }
+    }, holdEnd);
+
+    // Use individual pie proxy
+    ((idx) => {
+      const startLen = (catData[idx].pct / 100) * CIRCUMFERENCE;
+      const pieBackProxy = { v: startLen };
+      tl.to(pieBackProxy, {
+        v: 0, duration: 0.8, ease: 'power2.in',
+        onUpdate: () => {
+          document.getElementById('pie-' + idx).setAttribute(
+            'stroke-dasharray', `${pieBackProxy.v} ${CIRCUMFERENCE}`
+          );
+        }
+      }, holdEnd);
+    })(i);
+
+    tl.to('#bar-' + i, { width: '0%', duration: 0.8, ease: 'power2.in' }, holdEnd);
+    tl.to('#pct-' + i, { opacity: 0.2, duration: 0.4 }, holdEnd);
+
+    const catEl = document.getElementById('cat-' + i);
+    tl.call(() => {
+      catEl.style.borderLeftColor = 'transparent';
+      catEl.style.background = 'rgba(255,255,255,0.04)';
+    }, [], holdEnd + 0.8);
+    tl.to('#dot-' + i, { backgroundColor: 'rgba(255,255,255,0.1)', duration: 0.4 }, holdEnd);
+  }
+}
+
+// ─────────────────────────────────────────────
+// KICK EVERYTHING OFF
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // Start section 1 after entry anim
+  gsap.delayedCall(1.2, loopSection1);
+
+  // Start globe
+  initGlobe();
+
+  // Start section 3
+  gsap.delayedCall(1.4, loopSection3);
+});
+</script>
+</body>
+</html>
