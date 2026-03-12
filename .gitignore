@@ -9,6 +9,13 @@
 # Claude internal files (root level only)
 /.claude/
 
+# ============================
+# 🔒 Obsidian 笔记 — 永远不要碰！
+# 所有 Markdown 笔记文件由 Obsidian 管理，不进 git
+# ============================
+*.md
+*.canvas
+
 # Node
 node_modules/
 npm-debug.log*
