@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>TranquilPath · EMDR 智能疗愈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════
+   0. RESET & ROOT
+   ═══════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --mint:#E0F2F1;--mint-deep:#4DB6AC;--mint-mid:#80CBC4;--mint-light:#B2DFDB;
+  --warm:#FFF9F0;--warm-accent:#FFAB91;--warm-deep:#FF8A65;
+  --cloud:#ECEFF1;--cloud-deep:#90A4AE;
+  --text-1:#263238;--text-2:#546E7A;--text-3:#78909C;
+  --glass:rgba(255,255,255,0.42);--glass-strong:rgba(255,255,255,0.62);
+  --glass-border:rgba(255,255,255,0.55);--glass-shadow:0 8px 32px rgba(0,0,0,0.07);
+  --r-sm:12px;--r-md:20px;--r-lg:28px;
+}
+html,body{height:100%;overflow:hidden;background:#c8e6e4}
+body{
+  font-family:'Noto Sans SC','Inter',system-ui,sans-serif;
+  color:var(--text-1);line-height:1.6;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ═══════════════════════════════════════════
+   1. PHONE FRAME
+   ═══════════════════════════════════════════ */
+.phone{
+  width:390px;height:844px;border-radius:44px;overflow:hidden;
+  position:relative;
+  background:linear-gradient(160deg,var(--mint) 0%,var(--warm) 50%,var(--cloud) 100%);
+  box-shadow:0 30px 90px rgba(0,0,0,0.18),0 0 0 8px #1a1a2e,0 0 0 10px #333;
+}
+@media(max-width:430px){
+  .phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none;}
+  html,body{background:var(--mint)}
+}
+
+/* ═══════════════════════════════════════════
+   2. BACKGROUND ORBS (living, breathing bg)
+   ═══════════════════════════════════════════ */
+.bg-orbs{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;will-change:transform}
+.orb-1{width:280px;height:280px;background:#B2DFDB;top:-60px;left:-40px}
+.orb-2{width:220px;height:220px;background:#FFCCBC;bottom:60px;right:-30px}
+.orb-3{width:180px;height:180px;background:#CFD8DC;top:45%;left:40%}
+.orb-4{width:150px;height:150px;background:#C8E6C9;bottom:30%;left:-20px}
+
+/* ═══════════════════════════════════════════
+   3. SCREENS
+   ═══════════════════════════════════════════ */
+.screen{
+  position:absolute;inset:0;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+  padding:60px 28px 40px;opacity:0;pointer-events:none;
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.screen.active{opacity:1;pointer-events:auto}
+.screen::-webkit-scrollbar{display:none}
+
+/* ═══════════════════════════════════════════
+   4. STAGE INDICATOR
+   ═══════════════════════════════════════════ */
+.stage-bar{
+  position:absolute;top:16px;left:28px;right:28px;z-index:10;
+  display:flex;align-items:center;gap:6px;
+}
+.stage-dot{
+  flex:1;height:3px;border-radius:2px;
+  background:rgba(77,182,172,0.18);transition:background .5s;
+}
+.stage-dot.done{background:var(--mint-deep)}
+.stage-dot.current{background:var(--mint-deep);animation:stage-pulse 2s ease-in-out infinite}
+@keyframes stage-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.stage-label{
+  position:absolute;top:24px;left:0;
+  font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:.5px;
+}
+
+/* ═══════════════════════════════════════════
+   5. GLASSMORPHISM COMPONENTS
+   ═══════════════════════════════════════════ */
+.glass{
+  background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);border-radius:var(--r-md);
+  box-shadow:var(--glass-shadow);
+}
+.glass-strong{
+  background:var(--glass-strong);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border:1px solid rgba(255,255,255,0.7);border-radius:var(--r-md);
+  box-shadow:var(--glass-shadow);
+}
+
+/* ═══════════════════════════════════════════
+   6. BUTTONS
+   ═══════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 36px;border:none;border-radius:50px;cursor:pointer;
+  font-family:inherit;font-size:15px;font-weight:500;
+  transition:transform .2s,box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--mint-deep),#26A69A);
+  color:#fff;box-shadow:0 6px 24px rgba(77,182,172,0.35);
+}
+.btn-primary:hover{box-shadow:0 8px 30px rgba(77,182,172,0.5)}
+.btn-soft{
+  background:rgba(255,255,255,0.5);backdrop-filter:blur(12px);
+  color:var(--text-1);border:1px solid rgba(255,255,255,0.6);
+}
+.btn-ghost{
+  background:transparent;color:var(--text-2);padding:10px 20px;font-size:13px;
+}
+.btn-icon{
+  width:44px;height:44px;padding:0;border-radius:50%;
+  background:rgba(255,255,255,0.45);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.5);color:var(--text-1);
+  font-size:18px;cursor:pointer;transition:transform .15s;
+}
+.btn-icon:active{transform:scale(.9)}
+
+/* ═══════════════════════════════════════════
+   7. WELCOME SCREEN
+   ═══════════════════════════════════════════ */
+#welcome{justify-content:center;padding-bottom:80px}
+.welcome-logo{
+  width:80px;height:80px;border-radius:24px;
+  background:linear-gradient(135deg,var(--mint-deep),#26A69A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;margin-bottom:24px;
+  box-shadow:0 12px 40px rgba(77,182,172,0.3);
+}
+.welcome-title{
+  font-size:28px;font-weight:600;letter-spacing:-.5px;
+  background:linear-gradient(135deg,var(--text-1),var(--mint-deep));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:4px;
+}
+.welcome-sub{font-size:13px;color:var(--text-3);letter-spacing:2px;margin-bottom:36px}
+.welcome-quote{
+  font-size:14.5px;color:var(--text-2);text-align:center;
+  max-width:300px;line-height:1.7;margin-bottom:48px;
+}
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.particle{
+  position:absolute;bottom:-10px;border-radius:50%;
+  background:rgba(77,182,172,0.3);
+  animation:float-up linear infinite;
+}
+@keyframes float-up{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  8%{opacity:.4}85%{opacity:.15}
+  100%{transform:translateY(-850px) translateX(30px);opacity:0}
+}
+
+/* ═══════════════════════════════════════════
+   8. SAFE PLACE SCREEN
+   ═══════════════════════════════════════════ */
+#safe-place{justify-content:center;gap:0}
+.breath-container{position:relative;width:200px;height:200px;margin-bottom:32px}
+.breath-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:2.5px solid rgba(77,182,172,0.25);
+}
+.breath-circle{
+  position:absolute;inset:12px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,rgba(178,223,219,0.6),rgba(77,182,172,0.2));
+  box-shadow:0 0 50px rgba(77,182,172,0.15);
+  will-change:transform;
+}
+.breath-glow{
+  position:absolute;inset:-20px;border-radius:50%;
+  background:radial-gradient(circle,rgba(77,182,172,0.08) 0%,transparent 70%);
+  will-change:transform;
+}
+.breath-text{
+  font-size:16px;font-weight:400;color:var(--mint-deep);
+  text-align:center;min-height:28px;
+}
+.safe-title{font-size:20px;font-weight:600;color:var(--text-1);margin-bottom:12px;text-align:center}
+.safe-desc{
+  font-size:13.5px;color:var(--text-2);text-align:center;
+  max-width:280px;line-height:1.7;margin-bottom:28px;
+}
+.breath-counter{font-size:12px;color:var(--text-3);margin-top:16px}
+
+/* ═══════════════════════════════════════════
+   9. MODE SELECTION SCREEN
+   ═══════════════════════════════════════════ */
+#mode-select{padding-top:52px;gap:0}
+.mode-title{font-size:20px;font-weight:600;margin-bottom:8px;margin-top:8px;text-align:center}
+.mode-desc{font-size:13px;color:var(--text-2);text-align:center;max-width:280px;margin-bottom:24px;line-height:1.65}
+.mode-cards{display:flex;flex-direction:column;gap:14px;width:100%;margin-bottom:28px}
+.mode-card{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 20px;border-radius:var(--r-md);cursor:pointer;
+  background:rgba(255,255,255,0.38);backdrop-filter:blur(18px);
+  border:2px solid transparent;transition:all .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mode-card:hover{background:rgba(255,255,255,0.52)}
+.mode-card.selected{
+  border-color:var(--mint-deep);
+  background:rgba(224,242,241,0.5);
+  box-shadow:0 4px 20px rgba(77,182,172,0.15);
+}
+.mode-icon{
+  width:48px;height:48px;border-radius:14px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  background:rgba(77,182,172,0.12);
+}
+.mode-card.selected .mode-icon{background:rgba(77,182,172,0.22)}
+.mode-label{font-size:15px;font-weight:500;margin-bottom:2px}
+.mode-detail{font-size:12px;color:var(--text-3);line-height:1.5}
+
+/* ═══════════════════════════════════════════
+   10. BLS SESSION SCREEN
+   ═══════════════════════════════════════════ */
+#session{padding:52px 20px 24px;gap:0}
+.session-header{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;margin-bottom:8px;
+}
+.session-phase{font-size:13px;font-weight:500;color:var(--mint-deep)}
+.session-sets{font-size:12px;color:var(--text-3)}
+.bls-area{
+  position:relative;width:100%;flex:1;min-height:280px;
+  border-radius:var(--r-lg);overflow:hidden;
+  background:rgba(255,255,255,0.2);
+  margin:12px 0;
+}
+.bls-ball{
+  position:absolute;width:44px;height:44px;border-radius:50%;
+  background:radial-gradient(circle at 38% 35%,#B2DFDB,var(--mint-deep));
+  box-shadow:0 0 24px rgba(77,182,172,0.4),0 0 48px rgba(77,182,172,0.15);
+  top:50%;left:0;transform:translate(0,-50%);
+  will-change:transform;z-index:2;
+}
+.bls-path-line{
+  position:absolute;top:50%;left:22px;right:22px;height:2px;
+  background:rgba(77,182,172,0.12);border-radius:1px;z-index:1;
+}
+.bls-path-inf{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+}
+.bls-path-inf svg{width:80%;opacity:.1}
+.guide-text{
+  font-size:13.5px;color:var(--text-2);text-align:center;
+  min-height:44px;line-height:1.65;margin-bottom:8px;
+  max-width:320px;align-self:center;
+}
+.session-controls{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  width:100%;padding-top:8px;
+}
+.speed-label{font-size:11px;color:var(--text-3)}
+.path-toggle{
+  display:flex;align-items:center;gap:0;
+  background:rgba(255,255,255,0.4);border-radius:20px;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.5);
+}
+.path-opt{
+  padding:6px 14px;font-size:12px;cursor:pointer;
+  color:var(--text-3);transition:all .25s;border:none;background:none;
+  font-family:inherit;
+}
+.path-opt.active{background:var(--mint-deep);color:#fff;border-radius:18px}
+
+/* Audio vis */
+.audio-vis{
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  position:absolute;inset:0;z-index:2;
+}
+.audio-bar{
+  width:6px;border-radius:3px;background:var(--mint-deep);
+  transition:height .15s;will-change:height;opacity:.6;
+}
+/* Haptic vis */
+.haptic-vis{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;
+}
+.haptic-hands{position:relative;width:200px;height:200px}
+.haptic-hand{
+  position:absolute;font-size:52px;transition:opacity .3s,transform .3s;opacity:.3;
+}
+.haptic-hand.left{left:10px;top:50%;transform:translateY(-50%) scaleX(-1)}
+.haptic-hand.right{right:10px;top:50%;transform:translateY(-50%)}
+.haptic-hand.active{opacity:1;transform:translateY(-50%) scale(1.15)}
+.haptic-hand.right.active{transform:translateY(-50%) scale(1.15)}
+.haptic-label{
+  position:absolute;bottom:30%;left:50%;transform:translateX(-50%);
+  font-size:13px;color:var(--text-3);white-space:nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   11. SUD POPUP
+   ═══════════════════════════════════════════ */
+.sud-overlay{
+  position:absolute;inset:0;z-index:20;
+  background:rgba(0,0,0,0.15);backdrop-filter:blur(4px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.sud-overlay.show{opacity:1;pointer-events:auto}
+.sud-sheet{
+  width:100%;padding:28px 24px 44px;
+  background:rgba(255,255,255,0.88);backdrop-filter:blur(30px);
+  border-radius:28px 28px 0 0;border:1px solid rgba(255,255,255,0.8);
+  border-bottom:none;transform:translateY(100%);transition:transform .45s cubic-bezier(.32,.72,.37,1.1);
+}
+.sud-overlay.show .sud-sheet{transform:translateY(0)}
+.sud-handle{width:36px;height:4px;background:rgba(0,0,0,0.1);border-radius:2px;margin:0 auto 20px}
+.sud-title{font-size:17px;font-weight:600;text-align:center;margin-bottom:4px}
+.sud-subtitle{font-size:13px;color:var(--text-3);text-align:center;margin-bottom:20px}
+.sud-scale{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px}
+.sud-num{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:500;cursor:pointer;
+  background:rgba(77,182,172,0.08);color:var(--text-2);
+  border:2px solid transparent;transition:all .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.sud-num:hover{background:rgba(77,182,172,0.15)}
+.sud-num.selected{
+  border-color:var(--mint-deep);background:rgba(77,182,172,0.2);
+  color:var(--mint-deep);font-weight:600;transform:scale(1.15);
+}
+.sud-num.high{background:rgba(255,107,107,0.08)}
+.sud-num.high.selected{border-color:#ef5350;background:rgba(255,107,107,0.15);color:#ef5350}
+.sud-labels{display:flex;justify-content:space-between;margin-bottom:16px;padding:0 4px}
+.sud-labels span{font-size:10px;color:var(--text-3)}
+.sud-feedback{
+  font-size:13px;color:var(--text-2);text-align:center;
+  min-height:40px;line-height:1.6;margin-bottom:16px;
+}
+.sud-actions{display:flex;justify-content:center}
+
+/* ═══════════════════════════════════════════
+   12. BODY SCAN SCREEN
+   ═══════════════════════════════════════════ */
+#body-scan{padding-top:52px;gap:0}
+.scan-title{font-size:20px;font-weight:600;margin-bottom:8px;text-align:center}
+.scan-desc{font-size:13px;color:var(--text-2);text-align:center;max-width:280px;margin-bottom:16px;line-height:1.65}
+.body-svg-wrap{
+  position:relative;width:180px;height:340px;margin:0 auto 12px;
+}
+.body-svg-wrap svg{width:100%;height:100%}
+.body-part{
+  fill:rgba(77,182,172,0.1);stroke:rgba(77,182,172,0.3);stroke-width:1.5;
+  cursor:pointer;transition:fill .3s,stroke .3s,filter .3s;
+}
+.body-part:hover{fill:rgba(77,182,172,0.2)}
+.body-part.active{
+  fill:rgba(77,182,172,0.35);stroke:var(--mint-deep);stroke-width:2;
+  filter:drop-shadow(0 0 8px rgba(77,182,172,0.4));
+}
+.body-part.released{
+  fill:rgba(200,230,201,0.3);stroke:rgba(129,199,132,0.5);
+  filter:drop-shadow(0 0 6px rgba(129,199,132,0.3));
+}
+.scan-feedback{
+  font-size:13.5px;color:var(--text-2);text-align:center;
+  min-height:44px;line-height:1.65;max-width:280px;
+}
+.scan-count{font-size:12px;color:var(--text-3);margin-top:8px;margin-bottom:16px}
+
+/* ═══════════════════════════════════════════
+   13. CLOSURE SCREEN
+   ═══════════════════════════════════════════ */
+#closure{justify-content:center;gap:0}
+.closure-icon{font-size:56px;margin-bottom:20px}
+.closure-title{font-size:22px;font-weight:600;text-align:center;margin-bottom:12px}
+.closure-msg{
+  font-size:14px;color:var(--text-2);text-align:center;
+  max-width:280px;line-height:1.7;margin-bottom:32px;
+}
+.closure-stats{
+  display:flex;gap:20px;margin-bottom:36px;
+}
+.stat-card{
+  padding:16px 20px;text-align:center;min-width:100px;
+}
+.stat-val{font-size:24px;font-weight:600;color:var(--mint-deep);margin-bottom:2px}
+.stat-label{font-size:11px;color:var(--text-3)}
+.closure-hearts{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.heart{
+  position:absolute;bottom:-20px;font-size:16px;opacity:0;
+  animation:heart-float 4s ease-out forwards;
+}
+@keyframes heart-float{
+  0%{transform:translateY(0) scale(0);opacity:0}
+  15%{opacity:.6;transform:translateY(-80px) scale(1)}
+  100%{opacity:0;transform:translateY(-600px) scale(.6) rotate(20deg)}
+}
+
+/* ═══════════════════════════════════════════
+   14. UTILITIES
+   ═══════════════════════════════════════════ */
+.mt-8{margin-top:8px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}
+.hidden{display:none!important}
+.fade-text{transition:opacity .4s}
+</style>
+</head>
+<body>
+
+<div class="phone" id="app">
+  <!-- ── BG Orbs ── -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+
+  <!-- ── Stage Indicator ── -->
+  <div class="stage-bar" id="stageBar" style="opacity:0">
+    <div class="stage-dot" data-stage="0"></div>
+    <div class="stage-dot" data-stage="1"></div>
+    <div class="stage-dot" data-stage="2"></div>
+    <div class="stage-dot" data-stage="3"></div>
+    <div class="stage-dot" data-stage="4"></div>
+    <div class="stage-dot" data-stage="5"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 1: WELCOME
+       ══════════════════════════════════════ -->
+  <div class="screen active" id="welcome">
+    <div class="particles" id="particles"></div>
+    <div class="welcome-logo" id="wLogo">🌿</div>
+    <div class="welcome-title" id="wTitle">TranquilPath</div>
+    <div class="welcome-sub" id="wSub">EMDR 智能疗愈</div>
+    <p class="welcome-quote" id="wQuote">
+      欢迎回到你的避风港。<br>在这里，我们安全地面对过去，<br>轻装走向未来。
+    </p>
+    <button class="btn btn-primary" id="wBtn" onclick="goTo('safe-place',0)">开始旅程</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 2: SAFE PLACE (Breathing)
+       ══════════════════════════════════════ -->
+  <div class="screen" id="safe-place">
+    <div class="safe-title">建立你的安全屋</div>
+    <p class="safe-desc">闭上眼，想象一个绝对安全的地方。<br>跟随光圈的节奏，慢慢呼吸。</p>
+    <div class="breath-container" id="breathBox">
+      <div class="breath-glow" id="breathGlow"></div>
+      <div class="breath-ring"></div>
+      <div class="breath-circle" id="breathCircle"></div>
+    </div>
+    <div class="breath-text" id="breathText">准备开始...</div>
+    <div class="breath-counter" id="breathCounter"></div>
+    <button class="btn btn-primary mt-24" id="safeBtn" style="opacity:0;pointer-events:none" onclick="goTo('mode-select',1)">我准备好了</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 3: MODE SELECTION
+       ══════════════════════════════════════ -->
+  <div class="screen" id="mode-select">
+    <div class="mode-title">选择双侧刺激方式</div>
+    <p class="mode-desc">请选择最让你感到安稳的方式。我们可以先试运行一下。</p>
+    <div class="mode-cards">
+      <div class="mode-card selected" data-mode="visual" onclick="selectMode(this)">
+        <div class="mode-icon">👁️</div>
+        <div>
+          <div class="mode-label">视觉引导 · 眼动追踪</div>
+          <div class="mode-detail">柔和的光球左右移动，引导视觉焦点交替</div>
+        </div>
+      </div>
+      <div class="mode-card" data-mode="audio" onclick="selectMode(this)">
+        <div class="mode-icon">🎧</div>
+        <div>
+          <div class="mode-label">听觉引导 · 8D 环绕</div>
+          <div class="mode-detail">左右耳交替的颂钵声，感受声音的流动</div>
+        </div>
+      </div>
+      <div class="mode-card" data-mode="haptic" onclick="selectMode(this)">
+        <div class="mode-icon">🦋</div>
+        <div>
+          <div class="mode-label">蝴蝶抱引导 · 触觉</div>
+          <div class="mode-detail">手机交替震动，引导双臂交叉轻拍肩膀</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="startSession()">开始疗程</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 4: BLS SESSION
+       ══════════════════════════════════════ -->
+  <div class="screen" id="session">
+    <div class="session-header">
+      <span class="session-phase" id="sessionPhase">脱敏阶段</span>
+      <span class="session-sets" id="sessionSets">第 0/30 组</span>
+    </div>
+    <div class="bls-area" id="blsArea">
+      <!-- Visual mode -->
+      <div class="bls-path-line" id="blsPathLine"></div>
+      <div class="bls-path-inf" id="blsPathInf" style="display:none">
+        <svg viewBox="0 0 300 120"><path d="M30 60 C30 10 120 10 150 60 C180 110 270 110 270 60 C270 10 180 10 150 60 C120 110 30 110 30 60Z" fill="none" stroke="rgba(77,182,172,0.2)" stroke-width="2"/></svg>
+      </div>
+      <div class="bls-ball" id="blsBall"></div>
+      <!-- Audio mode -->
+      <div class="audio-vis" id="audioVis" style="display:none"></div>
+      <!-- Haptic mode -->
+      <div class="haptic-vis" id="hapticVis" style="display:none">
+        <div class="haptic-hands">
+          <div class="haptic-hand left" id="hapticL">🤚</div>
+          <div class="haptic-hand right" id="hapticR">🤚</div>
+        </div>
+        <div class="haptic-label">交叉双臂，跟随节奏轻拍肩膀</div>
+      </div>
+    </div>
+    <div class="guide-text" id="guideText">专注在那个画面上，同时感受身体的节奏。</div>
+    <div class="session-controls">
+      <button class="btn-icon" onclick="adjustSpeed(-1)" title="减速">🐢</button>
+      <span class="speed-label" id="speedLabel">1.0x</span>
+      <button class="btn-icon" onclick="togglePlay()" id="playBtn">⏸</button>
+      <span class="speed-label" id="pathLabel" style="min-width:40px;text-align:center">线性</span>
+      <button class="btn-icon" onclick="adjustSpeed(1)" title="加速">🐇</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="path-opt active" data-path="linear" onclick="setPath('linear')">直线</button>
+      <button class="path-opt" data-path="infinity" onclick="setPath('infinity')">∞ 型</button>
+      <button class="btn-ghost" onclick="endSession()" style="margin-left:auto">结束疗程 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 5: BODY SCAN
+       ══════════════════════════════════════ -->
+  <div class="screen" id="body-scan">
+    <div class="scan-title">身体扫描</div>
+    <p class="scan-desc">用手指轻触身体中感到紧张或不适的部位。</p>
+    <div class="body-svg-wrap">
+      <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Head -->
+        <ellipse cx="100" cy="32" rx="22" ry="26" class="body-part" data-label="头部" onclick="tapBody(this)"/>
+        <!-- Neck -->
+        <rect x="91" y="58" width="18" height="14" rx="6" class="body-part" data-label="颈部" onclick="tapBody(this)"/>
+        <!-- L Shoulder -->
+        <ellipse cx="60" cy="82" rx="20" ry="10" class="body-part" data-label="左肩" onclick="tapBody(this)"/>
+        <!-- R Shoulder -->
+        <ellipse cx="140" cy="82" rx="20" ry="10" class="body-part" data-label="右肩" onclick="tapBody(this)"/>
+        <!-- Chest -->
+        <rect x="68" y="92" width="64" height="42" rx="10" class="body-part" data-label="胸腔" onclick="tapBody(this)"/>
+        <!-- L Arm -->
+        <rect x="36" y="92" width="18" height="60" rx="9" class="body-part" data-label="左臂" onclick="tapBody(this)"/>
+        <!-- R Arm -->
+        <rect x="146" y="92" width="18" height="60" rx="9" class="body-part" data-label="右臂" onclick="tapBody(this)"/>
+        <!-- Stomach -->
+        <rect x="70" y="136" width="60" height="38" rx="10" class="body-part" data-label="腹部" onclick="tapBody(this)"/>
+        <!-- Hips -->
+        <rect x="68" y="176" width="64" height="30" rx="12" class="body-part" data-label="骨盆" onclick="tapBody(this)"/>
+        <!-- L Hand -->
+        <ellipse cx="40" cy="168" rx="10" ry="14" class="body-part" data-label="左手" onclick="tapBody(this)"/>
+        <!-- R Hand -->
+        <ellipse cx="160" cy="168" rx="10" ry="14" class="body-part" data-label="右手" onclick="tapBody(this)"/>
+        <!-- L Thigh -->
+        <rect x="72" y="210" width="22" height="60" rx="10" class="body-part" data-label="左大腿" onclick="tapBody(this)"/>
+        <!-- R Thigh -->
+        <rect x="106" y="210" width="22" height="60" rx="10" class="body-part" data-label="右大腿" onclick="tapBody(this)"/>
+        <!-- L Shin -->
+        <rect x="74" y="275" width="18" height="58" rx="9" class="body-part" data-label="左小腿" onclick="tapBody(this)"/>
+        <!-- R Shin -->
+        <rect x="108" y="275" width="18" height="58" rx="9" class="body-part" data-label="右小腿" onclick="tapBody(this)"/>
+        <!-- L Foot -->
+        <ellipse cx="83" cy="345" rx="15" ry="10" class="body-part" data-label="左脚" onclick="tapBody(this)"/>
+        <!-- R Foot -->
+        <ellipse cx="117" cy="345" rx="15" ry="10" class="body-part" data-label="右脚" onclick="tapBody(this)"/>
+      </svg>
+    </div>
+    <div class="scan-feedback" id="scanFeedback">轻触你感到不适的区域</div>
+    <div class="scan-count" id="scanCount"></div>
+    <button class="btn btn-primary" onclick="goTo('closure',5)">完成身体扫描</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 6: CLOSURE
+       ══════════════════════════════════════ -->
+  <div class="screen" id="closure">
+    <div class="closure-hearts" id="hearts"></div>
+    <div class="closure-icon" id="closureIcon">🌸</div>
+    <div class="closure-title" id="closureTitle">疗程完成</div>
+    <p class="closure-msg" id="closureMsg">
+      你完成了一次深度的自我修复。<br>现在，回到当下。<br>你比你想象的更强大。
+    </p>
+    <div class="closure-stats" id="closureStats">
+      <div class="stat-card glass">
+        <div class="stat-val" id="statSets">0</div>
+        <div class="stat-label">完成组数</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-val" id="statSud">-</div>
+        <div class="stat-label">最低 SUD</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="restart()">返回首页</button>
+  </div>
+
+  <!-- ── SUD Popup ── -->
+  <div class="sud-overlay" id="sudOverlay">
+    <div class="sud-sheet">
+      <div class="sud-handle"></div>
+      <div class="sud-title">暂停一下</div>
+      <div class="sud-subtitle">你现在的痛苦程度是？</div>
+      <div class="sud-scale" id="sudScale"></div>
+      <div class="sud-labels"><span>没有痛苦</span><span>最大痛苦</span></div>
+      <div class="sud-feedback" id="sudFeedback"></div>
+      <div class="sud-actions">
+        <button class="btn btn-primary" id="sudContinue" onclick="sudSubmit()">继续</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═════════════════════════════════════════════════════════ -->
+<script>
+/* ───────────────────────────────────
+   STATE
+   ─────────────────────────────────── */
+const S = {
+  screen: 'welcome',
+  mode: 'visual',        // visual | audio | haptic
+  path: 'linear',        // linear | infinity
+  speed: 1.0,            // seconds per full cycle
+  playing: false,
+  setsDone: 0,
+  setsPerRound: 30,
+  sud: 7,
+  lowestSud: 10,
+  phase: 'desensitize',  // desensitize | install
+  breathCycles: 0,
+};
+
+let blsAnim = null;
+let audioEngine = null;
+let hapticInterval = null;
+let guideInterval = null;
+let breathTL = null;
+let orbTweens = [];
+
+/* ───────────────────────────────────
+   INIT
+   ─────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  createParticles();
+  animateOrbs();
+  buildSudScale();
+  buildAudioBars();
+  animateWelcome();
+});
+
+/* ───────────────────────────────────
+   BACKGROUND ORBS
+   ─────────────────────────────────── */
+function animateOrbs() {
+  orbTweens.push(gsap.to('.orb-1', { x:55, y:35, duration:9, repeat:-1, yoyo:true, ease:'sine.inOut' }));
+  orbTweens.push(gsap.to('.orb-2', { x:-45, y:-25, duration:11, repeat:-1, yoyo:true, ease:'sine.inOut' }));
+  orbTweens.push(gsap.to('.orb-3', { x:35, y:-40, duration:13, repeat:-1, yoyo:true, ease:'sine.inOut' }));
+  orbTweens.push(gsap.to('.orb-4', { x:30, y:45, duration:10, repeat:-1, yoyo:true, ease:'sine.inOut' }));
+}
+
+/* ───────────────────────────────────
+   PARTICLES (welcome)
+   ─────────────────────────────────── */
+function createParticles() {
+  const c = document.getElementById('particles');
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (4 + Math.random() * 5) + 's';
+    p.style.animationDelay = Math.random() * 4 + 's';
+    const sz = 2 + Math.random() * 4;
+    p.style.width = p.style.height = sz + 'px';
+    p.style.opacity = 0.15 + Math.random() * 0.25;
+    c.appendChild(p);
+  }
+}
+
+/* ───────────────────────────────────
+   WELCOME ANIMATION
+   ─────────────────────────────────── */
+function animateWelcome() {
+  const tl = gsap.timeline({ delay: 0.3 });
+  gsap.set(['#wLogo','#wTitle','#wSub','#wQuote','#wBtn'], { opacity:0, y:20 });
+  tl.to('#wLogo', { opacity:1, y:0, duration:.6, ease:'back.out(2)' })
+    .to('#wTitle', { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=.25')
+    .to('#wSub',   { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=.2')
+    .to('#wQuote', { opacity:1, y:0, duration:.6, ease:'power3.out' }, '-=.2')
+    .to('#wBtn',   { opacity:1, y:0, duration:.5, ease:'back.out(1.5)' }, '-=.1');
+}
+
+/* ───────────────────────────────────
+   SCREEN TRANSITIONS
+   ─────────────────────────────────── */
+function goTo(id, stageIdx) {
+  const cur = document.querySelector('.screen.active');
+  const nxt = document.getElementById(id);
+  if (!nxt || cur === nxt) return;
+
+  // Stop any active BLS/breath
+  stopAllBLS();
+  if (breathTL) { breathTL.kill(); breathTL = null; }
+
+  const tl = gsap.timeline();
+  tl.to(cur, { opacity:0, duration:.45, ease:'power2.inOut',
+    onComplete: () => { cur.classList.remove('active'); }
+  })
+  .call(() => {
+    nxt.classList.add('active');
+    gsap.set(nxt, { opacity:0 });
+    S.screen = id;
+    updateStage(stageIdx);
+  })
+  .to(nxt, { opacity:1, duration:.45, ease:'power2.inOut',
+    onComplete: () => onScreenEnter(id)
+  });
+}
+
+function onScreenEnter(id) {
+  if (id === 'safe-place') startBreathing();
+  if (id === 'closure') animateClosure();
+}
+
+/* ───────────────────────────────────
+   STAGE BAR
+   ─────────────────────────────────── */
+function updateStage(idx) {
+  const bar = document.getElementById('stageBar');
+  if (idx === undefined || idx < 0) { gsap.to(bar,{opacity:0,duration:.3}); return; }
+  gsap.to(bar, { opacity:1, duration:.3 });
+  document.querySelectorAll('.stage-dot').forEach((d,i) => {
+    d.className = 'stage-dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
+  });
+}
+
+/* ───────────────────────────────────
+   SAFE PLACE / BREATHING
+   ─────────────────────────────────── */
+function startBreathing() {
+  S.breathCycles = 0;
+  const circle = document.getElementById('breathCircle');
+  const glow = document.getElementById('breathGlow');
+  const text = document.getElementById('breathText');
+  const counter = document.getElementById('breathCounter');
+  const btn = document.getElementById('safeBtn');
+
+  gsap.set(circle, { scale:1 });
+  gsap.set(glow, { scale:1, opacity:.5 });
+
+  breathTL = gsap.timeline({ repeat:-1, onRepeat: () => {
+    S.breathCycles++;
+    counter.textContent = `第 ${S.breathCycles} 次呼吸`;
+    if (S.breathCycles >= 3 && btn.style.opacity === '0') {
+      gsap.to(btn, { opacity:1, duration:.5 });
+      btn.style.pointerEvents = 'auto';
+    }
+  }});
+
+  // Inhale 4s
+  breathTL
+    .call(() => { text.textContent = '吸气...'; gsap.to(text,{opacity:1,duration:.3}); })
+    .to(circle, { scale:1.35, duration:4, ease:'sine.inOut' }, 0)
+    .to(glow,   { scale:1.5, opacity:.8, duration:4, ease:'sine.inOut' }, 0)
+  // Brief hold
+    .call(() => { text.textContent = '屏住...'; }, '+=0')
+    .to({}, { duration:.8 })
+  // Exhale 4s
+    .call(() => { text.textContent = '呼气...'; })
+    .to(circle, { scale:1, duration:4, ease:'sine.inOut' })
+    .to(glow,   { scale:1, opacity:.5, duration:4, ease:'sine.inOut' }, '-=4')
+    .to({}, { duration:.5 });
+}
+
+/* ───────────────────────────────────
+   MODE SELECTION
+   ─────────────────────────────────── */
+function selectMode(el) {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  S.mode = el.dataset.mode;
+}
+
+/* ───────────────────────────────────
+   BLS SESSION START
+   ─────────────────────────────────── */
+function startSession() {
+  S.setsDone = 0;
+  S.phase = 'desensitize';
+  S.sud = 7;
+  S.lowestSud = 10;
+  S.playing = false;
+  goTo('session', 2);
+  setTimeout(() => {
+    setupSessionUI();
+    togglePlay();
+  }, 600);
+}
+
+function setupSessionUI() {
+  const ball = document.getElementById('blsBall');
+  const area = document.getElementById('blsArea');
+  const audioVis = document.getElementById('audioVis');
+  const hapticVis = document.getElementById('hapticVis');
+  const pathLine = document.getElementById('blsPathLine');
+  const pathInf = document.getElementById('blsPathInf');
+  const pathBtns = document.querySelectorAll('.path-opt');
+  const pathLabel = document.getElementById('pathLabel');
+
+  // Hide all vis layers
+  ball.style.display = 'none';
+  pathLine.style.display = 'none';
+  pathInf.style.display = 'none';
+  audioVis.style.display = 'none';
+  hapticVis.style.display = 'none';
+
+  // Show path toggle only for visual
+  pathBtns.forEach(b => b.style.display = S.mode === 'visual' ? '' : 'none');
+  pathLabel.style.display = S.mode === 'visual' ? '' : 'none';
+
+  if (S.mode === 'visual') {
+    ball.style.display = '';
+    if (S.path === 'linear') pathLine.style.display = '';
+    else pathInf.style.display = '';
+    gsap.set(ball, { x:0, y:0 });
+  } else if (S.mode === 'audio') {
+    audioVis.style.display = 'flex';
+  } else {
+    hapticVis.style.display = 'flex';
+  }
+
+  updateSessionInfo();
+  startGuideRotation();
+}
+
+function updateSessionInfo() {
+  document.getElementById('sessionPhase').textContent =
+    S.phase === 'install' ? '✨ 正面信念植入' : '脱敏阶段';
+  document.getElementById('sessionSets').textContent =
+    `第 ${S.setsDone}/${S.setsPerRound} 组`;
+  document.getElementById('speedLabel').textContent = S.speed.toFixed(1) + 'x';
+}
+
+/* ───────────────────────────────────
+   BLS ANIMATIONS
+   ─────────────────────────────────── */
+function togglePlay() {
+  S.playing = !S.playing;
+  document.getElementById('playBtn').textContent = S.playing ? '⏸' : '▶️';
+  if (S.playing) runBLS();
+  else stopAllBLS();
+}
+
+function runBLS() {
+  stopAllBLS();
+  if (!S.playing) return;
+  if (S.mode === 'visual') runVisualBLS();
+  else if (S.mode === 'audio') runAudioBLS();
+  else runHapticBLS();
+}
+
+/* ── VISUAL BLS ── */
+function runVisualBLS() {
+  const ball = document.getElementById('blsBall');
+  const area = document.getElementById('blsArea');
+  const w = area.clientWidth - 44;
+  const h = area.clientHeight - 44;
+  const dur = S.speed;
+
+  if (S.path === 'linear') {
+    gsap.set(ball, { x:0, y: h/2 - 22, top:0, left:0 });
+    blsAnim = gsap.to(ball, {
+      x: w, duration: dur/2, ease:'sine.inOut',
+      repeat:-1, yoyo:true,
+      onRepeat: onBLSRep
+    });
+  } else {
+    // Infinity / lemniscate
+    const cx = w/2, cy = h/2 - 22;
+    const ax = w * 0.42, ay = h * 0.18;
+    const proxy = { t:0 };
+    gsap.set(ball, { top:0, left:0 });
+    blsAnim = gsap.to(proxy, {
+      t: Math.PI*2, duration: dur, ease:'none', repeat:-1,
+      onUpdate: () => {
+        const t = proxy.t;
+        const s = Math.sin(t), c = Math.cos(t);
+        const d = 1 + s*s;
+        gsap.set(ball, { x: cx + ax*c/d, y: cy + ay*s*c/d });
+      },
+      onRepeat: onBLSRep
+    });
+  }
+}
+
+/* ── AUDIO BLS ── */
+function runAudioBLS() {
+  if (!audioEngine) audioEngine = new AudioBLS();
+  audioEngine.start(S.speed);
+  startAudioVisBars();
+}
+
+function startAudioVisBars() {
+  const bars = document.querySelectorAll('.audio-bar');
+  let isLeft = true;
+  let repCount = 0;
+
+  function pulse() {
+    if (!S.playing) return;
+    bars.forEach((b,i) => {
+      const isLeftBar = i < bars.length/2;
+      const active = isLeft ? isLeftBar : !isLeftBar;
+      const h = active ? (30 + Math.random()*80) : (8 + Math.random()*15);
+      gsap.to(b, { height:h, duration:.15, ease:'power2.out' });
+    });
+    isLeft = !isLeft;
+    repCount++;
+    if (repCount % 2 === 0) onBLSRep();
+    hapticInterval = setTimeout(pulse, S.speed * 500);
+  }
+  pulse();
+}
+
+/* ── HAPTIC BLS ── */
+function runHapticBLS() {
+  const lh = document.getElementById('hapticL');
+  const rh = document.getElementById('hapticR');
+  let isLeft = true;
+  let repCount = 0;
+
+  function tap() {
+    if (!S.playing) return;
+    lh.classList.toggle('active', isLeft);
+    rh.classList.toggle('active', !isLeft);
+    // Try vibration API
+    if (navigator.vibrate) navigator.vibrate(isLeft ? [80,0,0] : [0,0,80]);
+    isLeft = !isLeft;
+    repCount++;
+    if (repCount % 2 === 0) onBLSRep();
+    hapticInterval = setTimeout(tap, S.speed * 500);
+  }
+  tap();
+}
+
+/* ── BLS rep counter ── */
+let repCounter = 0;
+function onBLSRep() {
+  repCounter++;
+  // Every ~30 reps = 1 set (adjusting for mode: visual counts per yoyo)
+  if (repCounter >= 60) {  // 60 half-cycles = 30 full cycles
+    repCounter = 0;
+    S.setsDone++;
+    updateSessionInfo();
+    // Show SUD check every set
+    pauseForSUD();
+  }
+}
+
+function stopAllBLS() {
+  if (blsAnim) { blsAnim.kill(); blsAnim = null; }
+  if (audioEngine) audioEngine.stop();
+  if (hapticInterval) { clearTimeout(hapticInterval); hapticInterval = null; }
+  if (guideInterval) { clearInterval(guideInterval); guideInterval = null; }
+}
+
+/* ───────────────────────────────────
+   AUDIO ENGINE (Web Audio API)
+   ─────────────────────────────────── */
+class AudioBLS {
+  constructor() {
+    this.ctx = null;
+    this.playing = false;
+    this.timer = null;
+  }
+  init() {
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  playTone(pan) {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const dur = 1.0;
+
+    // Singing bowl approximation: layered sine waves
+    const freqs = [396, 528, 264];
+    const gains = [0.08, 0.05, 0.04];
+
+    const masterGain = this.ctx.createGain();
+    const panner = this.ctx.createStereoPanner();
+    panner.pan.value = pan;
+    masterGain.connect(panner);
+    panner.connect(this.ctx.destination);
+
+    masterGain.gain.setValueAtTime(0, now);
+    masterGain.gain.linearRampToValueAtTime(1, now + 0.1);
+    masterGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+    freqs.forEach((f, i) => {
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      g.gain.value = gains[i];
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + dur);
+    });
+  }
+  start(speed) {
+    if (!this.ctx) this.init();
+    this.playing = true;
+    let isLeft = true;
+    const tick = () => {
+      if (!this.playing) return;
+      this.playTone(isLeft ? -1 : 1);
+      isLeft = !isLeft;
+      this.timer = setTimeout(tick, speed * 500);
+    };
+    tick();
+  }
+  stop() {
+    this.playing = false;
+    if (this.timer) clearTimeout(this.timer);
+  }
+}
+
+/* ───────────────────────────────────
+   BUILD AUDIO BARS
+   ─────────────────────────────────── */
+function buildAudioBars() {
+  const vis = document.getElementById('audioVis');
+  for (let i = 0; i < 24; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'audio-bar';
+    bar.style.height = '8px';
+    vis.appendChild(bar);
+  }
+}
+
+/* ───────────────────────────────────
+   GUIDED TEXT ROTATION
+   ─────────────────────────────────── */
+const GUIDE_TEXTS = {
+  desensitize: [
+    '专注在那个画面上，同时感受身体的节奏。不要评判，只是观察。',
+    '只是观察它，像观察窗外的风景，让它流过。',
+    '让思绪像溪流一样流动，不需要抓住任何一个。',
+    '注意身体的感觉，允许任何情绪浮现。',
+    '你是安全的。这些只是记忆，不是当下。',
+    '深吸一口气，继续跟随节奏。',
+  ],
+  install: [
+    '感受内心正在生长的力量。你值得被温柔以待。',
+    '让这份正面的信念扎根。你比你想象的更强大。',
+    '感受温暖从心中扩散到全身每一个角落。',
+    '你正在重建内心的平衡。每一刻都在变得更好。',
+    '拥抱真实的自己，带着爱与接纳继续前行。',
+  ],
+  stuck: [
+    '如果感到阻碍，试着深呼吸，想象这些念头像云朵一样飘走。',
+    '我们换一种节奏试试。没有关系，慢慢来。',
+  ]
+};
+let guideIdx = 0;
+
+function startGuideRotation() {
+  const el = document.getElementById('guideText');
+  guideIdx = 0;
+  updateGuideText(el);
+  guideInterval = setInterval(() => {
+    guideIdx++;
+    gsap.to(el, { opacity:0, duration:.3, onComplete: () => {
+      updateGuideText(el);
+      gsap.to(el, { opacity:1, duration:.3 });
+    }});
+  }, 6000);
+}
+
+function updateGuideText(el) {
+  const texts = GUIDE_TEXTS[S.phase] || GUIDE_TEXTS.desensitize;
+  el.textContent = texts[guideIdx % texts.length];
+}
+
+/* ───────────────────────────────────
+   SPEED & PATH CONTROLS
+   ─────────────────────────────────── */
+function adjustSpeed(dir) {
+  S.speed = Math.max(0.4, Math.min(2.0, S.speed - dir * 0.2));
+  document.getElementById('speedLabel').textContent = S.speed.toFixed(1) + 'x';
+  if (S.playing) { stopAllBLS(); runBLS(); }
+}
+
+function setPath(p) {
+  S.path = p;
+  document.querySelectorAll('.path-opt').forEach(b =>
+    b.classList.toggle('active', b.dataset.path === p)
+  );
+  document.getElementById('pathLabel').textContent = p === 'linear' ? '线性' : '∞ 型';
+  document.getElementById('blsPathLine').style.display = p === 'linear' ? '' : 'none';
+  document.getElementById('blsPathInf').style.display = p === 'infinity' ? '' : 'none';
+  if (S.playing && S.mode === 'visual') {
+    if (blsAnim) blsAnim.kill();
+    runVisualBLS();
+  }
+}
+
+/* ───────────────────────────────────
+   SUD POPUP
+   ─────────────────────────────────── */
+function buildSudScale() {
+  const wrap = document.getElementById('sudScale');
+  for (let i = 0; i <= 10; i++) {
+    const d = document.createElement('div');
+    d.className = 'sud-num' + (i >= 7 ? ' high' : '');
+    d.textContent = i;
+    d.dataset.val = i;
+    d.onclick = () => selectSud(i);
+    wrap.appendChild(d);
+  }
+}
+
+function selectSud(v) {
+  S.sud = v;
+  document.querySelectorAll('.sud-num').forEach(d =>
+    d.classList.toggle('selected', +d.dataset.val === v)
+  );
+  const fb = document.getElementById('sudFeedback');
+  if (v <= 2) fb.textContent = '很好！痛苦程度已经很低了。我们进入正面信念植入阶段。';
+  else if (v <= 5) fb.textContent = '你正在进步。让我们继续，保持节奏。';
+  else fb.textContent = '如果感到阻碍，试着深呼吸，想象这些念头像云朵一样飘走。我们换一种节奏试试。';
+}
+
+function pauseForSUD() {
+  S.playing = false;
+  stopAllBLS();
+  document.getElementById('playBtn').textContent = '▶️';
+
+  // Pre-select last SUD
+  selectSud(S.sud);
+  document.getElementById('sudOverlay').classList.add('show');
+}
+
+function sudSubmit() {
+  document.getElementById('sudOverlay').classList.remove('show');
+  S.lowestSud = Math.min(S.lowestSud, S.sud);
+
+  // Phase transition
+  if (S.sud <= 2 && S.phase === 'desensitize') {
+    S.phase = 'install';
+    S.speed = Math.max(0.4, S.speed - 0.2); // Faster for install
+    // Brighten UI
+    gsap.to('.bls-area', { background:'rgba(255,249,240,0.3)', duration:1 });
+    gsap.to('.bls-ball', { background:'radial-gradient(circle at 38% 35%,#FFE0B2,#FF8A65)', duration:1 });
+    document.getElementById('sessionPhase').textContent = '✨ 正面信念植入';
+    guideIdx = 0;
+  }
+  // If SUD > 5, slow down
+  if (S.sud > 5) {
+    S.speed = Math.min(2.0, S.speed + 0.2);
+    document.getElementById('speedLabel').textContent = S.speed.toFixed(1) + 'x';
+  }
+
+  updateSessionInfo();
+  // Auto-resume
+  setTimeout(() => {
+    S.playing = true;
+    document.getElementById('playBtn').textContent = '⏸';
+    repCounter = 0;
+    runBLS();
+  }, 500);
+}
+
+/* ───────────────────────────────────
+   END SESSION → BODY SCAN
+   ─────────────────────────────────── */
+function endSession() {
+  S.playing = false;
+  stopAllBLS();
+  goTo('body-scan', 4);
+}
+
+/* ───────────────────────────────────
+   BODY SCAN
+   ─────────────────────────────────── */
+const scanMessages = {
+  '头部': '感受头部的重量慢慢释放，像清晨的露珠蒸发。',
+  '颈部': '让颈部的紧绷慢慢融化，像冰雪在阳光下消融。',
+  '左肩': '左肩的压力正在流走，让它自然下沉。',
+  '右肩': '右肩的重担正在卸下，感受轻盈。',
+  '胸腔': '深呼吸，感受胸腔的空间在扩展。',
+  '左臂': '让左臂完全放松，感受温暖流过每一寸肌肤。',
+  '右臂': '让右臂的力量慢慢释放，如同放下一件沉重的外套。',
+  '腹部': '腹部是情绪的容器。深呼吸，让它柔软。',
+  '骨盆': '感受骨盆的稳定与安全，你被大地支撑着。',
+  '左手': '张开左手，释放指尖的紧握。',
+  '右手': '张开右手，让掌心的温暖扩散。',
+  '左大腿': '感受左腿的力量与支撑，让紧绷自然消散。',
+  '右大腿': '右腿承载着你的前行，给它一份感谢。',
+  '左小腿': '放松左小腿，感受血液的温暖流动。',
+  '右小腿': '右小腿的疲劳正在释放，感受轻松。',
+  '左脚': '左脚踏在大地上，你与此刻相连。',
+  '右脚': '右脚稳稳着地，你是安全的。',
+};
+let scannedParts = new Set();
+
+function tapBody(el) {
+  const label = el.dataset.label;
+
+  if (el.classList.contains('released')) return;
+
+  // Toggle active
+  if (el.classList.contains('active')) {
+    el.classList.remove('active');
+    el.classList.add('released');
+    scannedParts.add(label);
+    document.getElementById('scanFeedback').textContent = `✓ ${label} — 张力已释放`;
+  } else {
+    el.classList.add('active');
+    document.getElementById('scanFeedback').textContent =
+      scanMessages[label] || `深呼吸，感受${label}的变化...`;
+  }
+  document.getElementById('scanCount').textContent =
+    scannedParts.size > 0 ? `已扫描 ${scannedParts.size} 个部位` : '';
+}
+
+/* ───────────────────────────────────
+   CLOSURE
+   ─────────────────────────────────── */
+function animateClosure() {
+  // Stats
+  const setsEl = document.getElementById('statSets');
+  const sudEl = document.getElementById('statSud');
+  const counter = { sets:0, sud:10 };
+
+  gsap.to(counter, {
+    sets: S.setsDone, duration:1.5, ease:'power2.out',
+    onUpdate: () => { setsEl.textContent = Math.round(counter.sets); }
+  });
+  gsap.to(counter, {
+    sud: S.lowestSud, duration:1.5, ease:'power2.out', delay:.3,
+    onUpdate: () => { sudEl.textContent = Math.round(counter.sud); }
+  });
+
+  // Floating hearts
+  const heartsEl = document.getElementById('hearts');
+  heartsEl.innerHTML = '';
+  const emojis = ['💚','🌿','🍃','✨','🌸','💫','🦋'];
+  for (let i = 0; i < 15; i++) {
+    setTimeout(() => {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.left = 10 + Math.random()*80 + '%';
+      h.style.animationDelay = '0s';
+      h.style.animationDuration = (3 + Math.random()*2) + 's';
+      heartsEl.appendChild(h);
+      setTimeout(() => h.remove(), 5000);
+    }, i * 300);
+  }
+
+  // Entrance animation
+  gsap.set(['#closureIcon','#closureTitle','#closureMsg','#closureStats'], { opacity:0, y:20 });
+  const tl = gsap.timeline({ delay:.2 });
+  tl.to('#closureIcon',  { opacity:1, y:0, duration:.6, ease:'back.out(2)' })
+    .to('#closureTitle', { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=.2')
+    .to('#closureMsg',   { opacity:1, y:0, duration:.6, ease:'power3.out' }, '-=.2')
+    .to('#closureStats', { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=.1');
+}
+
+/* ───────────────────────────────────
+   RESTART
+   ─────────────────────────────────── */
+function restart() {
+  S.setsDone = 0; S.sud = 7; S.lowestSud = 10;
+  S.phase = 'desensitize'; S.playing = false;
+  scannedParts.clear();
+  repCounter = 0;
+
+  // Reset body scan
+  document.querySelectorAll('.body-part').forEach(p => {
+    p.classList.remove('active','released');
+  });
+  document.getElementById('scanFeedback').textContent = '轻触你感到不适的区域';
+  document.getElementById('scanCount').textContent = '';
+
+  // Reset BLS area color
+  gsap.set('.bls-area', { background:'rgba(255,255,255,0.2)' });
+
+  // Reset safe place button
+  const safeBtn = document.getElementById('safeBtn');
+  safeBtn.style.opacity = '0';
+  safeBtn.style.pointerEvents = 'none';
+
+  goTo('welcome', -1);
+  setTimeout(animateWelcome, 500);
+}
+
+</script>
+</body>
+</html>
