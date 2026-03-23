@@ -290,6 +290,49 @@ body{
 /* ═══ 20. UTILS ═══ */
 .mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}
 .w-full{width:100%}
+
+/* ═══ 21. CHECK-IN OVERLAY ═══ */
+.checkin-overlay{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,0.12);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+.checkin-overlay.show{opacity:1;pointer-events:auto}
+.checkin-sheet{width:100%;padding:18px 22px 34px;background:rgba(255,255,255,0.92);backdrop-filter:blur(30px);border-radius:24px 24px 0 0;border:1px solid rgba(255,255,255,0.8);border-bottom:none;transform:translateY(100%);transition:transform .45s cubic-bezier(.32,.72,.37,1.1)}
+.checkin-overlay.show .checkin-sheet{transform:translateY(0)}
+.checkin-title{font-size:17px;font-weight:500;text-align:center;margin-bottom:2px}
+.checkin-subtitle{font-size:12px;color:var(--text-3);text-align:center;margin-bottom:12px}
+.report-types{display:flex;gap:7px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.report-chip{padding:7px 12px;border-radius:20px;font-size:12px;cursor:pointer;background:rgba(255,255,255,0.5);border:1.5px solid rgba(77,182,172,0.15);transition:all .25s;display:flex;align-items:center;gap:4px}
+.report-chip.selected{background:rgba(77,182,172,0.15);border-color:var(--mint-deep);color:var(--mint-deep)}
+.checkin-input{width:100%;padding:10px 14px;border-radius:var(--r-sm);border:1.5px solid rgba(77,182,172,0.2);background:rgba(255,255,255,0.5);font-family:inherit;font-size:13px;color:var(--text-1);outline:none;resize:none;height:56px;line-height:1.5;margin-bottom:8px}
+.checkin-input:focus{border-color:var(--mint-deep)}
+.checkin-actions{display:flex;justify-content:center;gap:10px}
+.checkin-meta{font-size:11px;color:var(--text-3);text-align:center;margin-bottom:6px;min-height:14px}
+
+/* ═══ 22. RETURN TO TARGET ═══ */
+.rtt-overlay{position:absolute;inset:0;z-index:22;background:rgba(0,0,0,0.10);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.rtt-overlay.show{opacity:1;pointer-events:auto}
+.rtt-card{padding:22px 20px;border-radius:var(--r-lg);background:rgba(255,255,255,0.92);backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,0.8);text-align:center;max-width:330px;width:90%}
+.rtt-icon{font-size:32px;margin-bottom:6px}
+.rtt-title{font-size:17px;font-weight:500;margin-bottom:8px}
+.rtt-msg{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:8px}
+.rtt-nc{color:var(--mint-deep);font-weight:500}
+.rtt-train{font-size:12px;color:var(--text-3);line-height:1.65;padding:10px 14px;border-radius:var(--r-sm);background:rgba(77,182,172,0.05);margin-bottom:12px;font-style:italic}
+
+/* ═══ 23. COGNITIVE INTERWEAVE ═══ */
+.interweave-overlay{position:absolute;inset:0;z-index:22;background:rgba(0,0,0,0.10);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.interweave-overlay.show{opacity:1;pointer-events:auto}
+.interweave-card{padding:22px 20px;border-radius:var(--r-lg);background:rgba(255,255,255,0.92);backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,0.8);text-align:center;max-width:330px;width:90%}
+.interweave-icon{font-size:32px;margin-bottom:6px}
+.interweave-title{font-size:17px;font-weight:500;margin-bottom:10px}
+.interweave-q{font-size:14px;color:var(--text-1);line-height:1.7;margin-bottom:6px;font-style:italic;padding:12px 16px;border-radius:var(--r-sm);background:rgba(77,182,172,0.06)}
+.interweave-hint{font-size:12px;color:var(--text-3);margin-bottom:12px}
+
+/* ═══ 24. ABREACTION SUPPORT ═══ */
+.abreaction-overlay{position:absolute;inset:0;z-index:24;background:rgba(0,0,0,0.08);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.abreaction-overlay.show{opacity:1;pointer-events:auto}
+.abreaction-card{padding:22px 20px;border-radius:var(--r-lg);background:rgba(255,255,255,0.94);backdrop-filter:blur(30px);border:1.5px solid rgba(77,182,172,0.3);text-align:center;max-width:330px;width:90%}
+.abreaction-icon{font-size:36px;margin-bottom:6px}
+.abreaction-title{font-size:17px;font-weight:500;margin-bottom:8px}
+.abreaction-msg{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px}
+.abreaction-actions{display:flex;flex-direction:column;gap:8px;align-items:center}
 </style>
 </head>
 <body>
@@ -386,6 +429,7 @@ body{
   <div class="screen" id="safe-place">
     <div class="safe-title">Build Your Safe Place</div>
     <p class="safe-desc">Close your eyes. Imagine a place where you feel absolutely safe. Follow the light and breathe slowly.</p>
+    <p class="safe-desc" style="font-size:12px;font-style:italic;color:var(--text-3);margin-bottom:20px;margin-top:-4px">🚂 During processing, imagine you're on a train — the memories are scenery passing outside. You're safe on the train, just an observer.</p>
     <div class="breath-container" id="breathBox">
       <div class="breath-glow" id="breathGlow"></div>
       <div class="breath-ring"></div>
@@ -589,6 +633,61 @@ body{
     </div>
   </div>
 
+  <!-- ══ CHECK-IN OVERLAY (Shapiro Phase 4) ══ -->
+  <div class="checkin-overlay" id="checkinOverlay">
+    <div class="checkin-sheet">
+      <div class="sud-handle"></div>
+      <div class="checkin-title">What do you notice?</div>
+      <div class="checkin-subtitle">Take a moment. What comes up for you right now?</div>
+      <div class="report-types" id="reportTypes">
+        <div class="report-chip" data-type="image" onclick="selectReportType(this)">🖼 Image</div>
+        <div class="report-chip" data-type="emotion" onclick="selectReportType(this)">💛 Emotion</div>
+        <div class="report-chip" data-type="body" onclick="selectReportType(this)">🫁 Body</div>
+        <div class="report-chip" data-type="thought" onclick="selectReportType(this)">💭 Thought</div>
+      </div>
+      <textarea class="checkin-input" id="checkinInput" placeholder="Describe briefly what you notice..." maxlength="200"></textarea>
+      <div class="checkin-meta" id="checkinMeta"></div>
+      <div class="checkin-actions">
+        <button class="btn btn-primary" onclick="submitCheckin()">Go with that →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RETURN TO TARGET OVERLAY ══ -->
+  <div class="rtt-overlay" id="rttOverlay">
+    <div class="rtt-card">
+      <div class="rtt-icon">🎯</div>
+      <div class="rtt-title">Return to Target</div>
+      <p class="rtt-msg">Bring up the original memory. Notice the thought <span class="rtt-nc" id="rttNC">"..."</span> and where you feel it in your body.</p>
+      <div class="rtt-train">🚂 Imagine you're on a train, watching scenery pass outside the window. You're safe on the train — you're just an observer. The memory is the scenery, not the ride.</div>
+      <button class="btn btn-primary" onclick="confirmRTT()">I'm ready, continue →</button>
+    </div>
+  </div>
+
+  <!-- ══ COGNITIVE INTERWEAVE OVERLAY ══ -->
+  <div class="interweave-overlay" id="interweaveOverlay">
+    <div class="interweave-card">
+      <div class="interweave-icon">🔑</div>
+      <div class="interweave-title">A Different Perspective</div>
+      <div class="interweave-q" id="interweaveQ">Consider this thought...</div>
+      <div class="interweave-hint">Take a moment to sit with this question.</div>
+      <button class="btn btn-primary" onclick="confirmInterweave()">Let me consider that →</button>
+    </div>
+  </div>
+
+  <!-- ══ ABREACTION SUPPORT OVERLAY ══ -->
+  <div class="abreaction-overlay" id="abreactionOverlay">
+    <div class="abreaction-card">
+      <div class="abreaction-icon">🫂</div>
+      <div class="abreaction-title">I'm Right Here With You</div>
+      <p class="abreaction-msg" id="abreactionMsg">You are safe. This is a memory, not the present moment. Take all the time you need.</p>
+      <div class="abreaction-actions">
+        <button class="btn btn-primary btn-sm" onclick="confirmAbreaction()">I'm okay, continue →</button>
+        <button class="btn btn-ghost" onclick="endSession()">End session</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ CRISIS OVERLAY ══ -->
   <div class="crisis-overlay" id="crisisOverlay">
     <div class="crisis-card">
@@ -627,6 +726,68 @@ const S={
   sessionStart:null, ttsOn:false, eyeTrack:false,
   nc:'', pc:''
 };
+
+/* ═══ PROCESSING STATE (Shapiro Phase 4 Decision Tree) ═══ */
+const PS={
+  reports:[],        // {type,content,setNum} history of client reports
+  sameCount:0,       // consecutive similar reports (looping detection)
+  loopCount:0,       // times RTT triggered with no SUD drop
+  rttActive:false,   // currently in Return-to-Target cycle
+  sudAtRTT:null,     // SUD when RTT was triggered
+  interweaveIdx:0,   // which interweave question we're on
+  selectedType:null, // currently selected report type chip
+  pendingSUD:false,  // whether SUD check follows current check-in
+  abreactionCount:0  // abreaction events this session
+};
+function resetPS(){PS.reports=[];PS.sameCount=0;PS.loopCount=0;PS.rttActive=false;PS.sudAtRTT=null;PS.interweaveIdx=0;PS.selectedType=null;PS.pendingSUD=false;PS.abreactionCount=0;}
+
+/* ═══ COGNITIVE INTERWEAVE LIBRARY (Shapiro domains) ═══ */
+const INTERWEAVES={
+  responsibility:[
+    "If a child were in that exact same situation, would it be their fault?",
+    "With what you knew then — not now — could you have done anything differently?",
+    "Who was actually responsible for what happened?",
+    "What would you say to a close friend who blamed themselves for the same thing?"
+  ],
+  safety:[
+    "Right now, in this moment, are you safe?",
+    "What tells you that you are safe right now? Name three things.",
+    "Is the danger happening now, or is it a memory from the past?",
+    "Where in your life today do you feel most safe?"
+  ],
+  control:[
+    "What choices do you have right now that you didn't have then?",
+    "Can you name one thing you have control over in this exact moment?",
+    "How did you survive that experience? What strength did that take?",
+    "What does being in control look like for you today?"
+  ],
+  worth:[
+    "Would you say that to someone you love who went through the same thing?",
+    "What would your best friend say about you right now?",
+    "Name one thing you've done this week that shows your value.",
+    "If your younger self could see who you've become, what would they think?"
+  ]
+};
+/* Map NC text → interweave domain */
+function ncToDomain(nc){
+  if(!nc)return'worth';
+  const l=nc.toLowerCase();
+  if(l.includes('fault')||l.includes('blame')||l.includes('responsible'))return'responsibility';
+  if(l.includes('safe')||l.includes('danger')||l.includes('threat'))return'safety';
+  if(l.includes('control')||l.includes('power')||l.includes('helpless')||l.includes('weak'))return'control';
+  return'worth';
+}
+
+/* ═══ ABREACTION SUPPORT PHRASES ═══ */
+const ABREACTION_PHRASES=[
+  "You are safe. That was then, this is now. I'm right here with you.",
+  "Just notice what you're feeling. You don't need to fight it. Let it pass through like a wave.",
+  "You're doing incredibly brave work. This intensity means your brain is processing. Keep breathing.",
+  "Feel your feet on the floor. You're here, in the present. The memory can't hurt you now.",
+  "Take a deep breath. You survived it then, and you're safe now. This feeling will pass.",
+  "It's okay to feel this. Your body is releasing what it's been holding. You're not alone."
+];
+
 let blsAnim=null,audioEng=null,hapticTmr=null,guideTmr=null,breathTL=null,orbTweens=[];
 let repCnt=0,audioVisTmr=null,tryTmr=null,cameraStream=null;
 
@@ -777,7 +938,7 @@ function tryMode(e,mode){
 
 /* ═══ SESSION START ═══ */
 function startSession(){
-  S.setsDone=0;S.phase='desensitize';S.sud=S.initSud||7;S.lowestSud=10;S.playing=false;S.moodHistory=[];S.sessionStart=Date.now();
+  S.setsDone=0;S.phase='desensitize';S.sud=S.initSud||7;S.lowestSud=10;S.playing=false;S.moodHistory=[];S.sessionStart=Date.now();resetPS();
   S.eyeTrack=document.getElementById('eyeTrackToggle')?.checked||false;
   goTo('session',4);setTimeout(()=>{setupSession();togglePlay();},600);
 }
@@ -833,7 +994,15 @@ function runHap(){
   function tap(){if(!S.playing)return;lh.classList.toggle('active',isL);rh.classList.toggle('active',!isL);if(navigator.vibrate)navigator.vibrate(dur);isL=!isL;reps++;if(reps%2===0&&!S.modes.visual&&!S.modes.audio)onRep();hapticTmr=setTimeout(tap,S.speed*500);}
   tap();
 }
-function onRep(){repCnt++;if(repCnt>=S.repsPerSet*2){repCnt=0;S.setsDone++;updInfo();pauseSUD();}}
+function onRep(){
+  repCnt++;
+  if(repCnt>=S.repsPerSet*2){
+    repCnt=0;S.setsDone++;updInfo();
+    /* Shapiro Phase 4 decision: check-in after every set, SUD every 4th */
+    if(S.phase==='install'){pauseSUD();return;}
+    pauseForCheckin();
+  }
+}
 function stopAllBLS(){if(blsAnim){blsAnim.kill();blsAnim=null;}if(audioEng)audioEng.stop();if(hapticTmr){clearTimeout(hapticTmr);hapticTmr=null;}if(audioVisTmr){clearTimeout(audioVisTmr);audioVisTmr=null;}if(guideTmr){clearInterval(guideTmr);guideTmr=null;}}
 
 /* ═══ AUDIO ENGINE ═══ */
@@ -868,13 +1037,156 @@ function buildAudioBars(){const v=document.getElementById('audioVis');for(let i=
 
 /* ═══ GUIDED TEXTS ═══ */
 const G={
-  desensitize:["Focus on the image while feeling your body's rhythm. Don't judge, just observe.","Just observe it, like watching scenery outside a window. Let it flow through.","Let your thoughts flow like a stream. You don't need to hold any of them.","Notice the sensations in your body. Allow any emotions to surface.","You are safe. These are just memories, not the present moment.","Take a deep breath and continue following the rhythm."],
-  install:["Feel the strength growing within you. You deserve to be treated gently.","Let this positive belief take root. You are stronger than you think.","Feel warmth spreading from your heart to every corner of your body.","You are rebuilding your inner balance. Every moment is getting better.","Embrace your true self. Move forward with love and acceptance."],
-  stuck:["If you feel blocked, try breathing deeply. Imagine these thoughts drifting away like clouds.","Let's try a different rhythm. It's okay, take your time."]
+  desensitize:["Just notice whatever comes up. Don't judge, just observe — like watching scenery from a train.","You're on the train, safe and observing. Let the images pass by the window.","Let your thoughts flow like a stream. You don't need to hold any of them.","Notice the sensations in your body. Allow any emotions to surface naturally.","You are safe. These are just memories, not the present moment.","Take a deep breath. Whatever comes up, just go with it.","Your brain knows how to heal. Trust the process — just keep following.","Notice where you feel it in your body right now. Stay with that."],
+  install:["Feel the strength growing within you. You deserve to be treated gently.","Let this positive belief take root. You are stronger than you think.","Feel warmth spreading from your heart to every corner of your body.","Notice how this new belief feels in your body. Let it settle in.","Embrace your true self. Move forward with love and acceptance."],
+  stuck:["If you feel blocked, try breathing deeply. Imagine these thoughts drifting away like clouds.","Remember, you're on the train — just an observer. The scenery can't touch you.","Let's try a different rhythm. It's okay, take your time."]
 };
 let gIdx=0;
 function startGuides(){const el=document.getElementById('guideText');gIdx=0;updGuide(el);guideTmr=setInterval(()=>{gIdx++;gsap.to(el,{opacity:0,duration:.3,onComplete:()=>{updGuide(el);gsap.to(el,{opacity:1,duration:.3});}});},7000);}
 function updGuide(el){const ts=G[S.phase]||G.desensitize;const t=ts[gIdx%ts.length];el.textContent=t;ttsSpeak(t);}
+
+/* ═══ INTERACTIVE EMDR PROCESSING LOOP (Shapiro Phase 4) ═══ */
+
+/* ─ Pause for check-in after each BLS set ─ */
+function pauseForCheckin(){
+  S.playing=false;stopAllBLS();document.getElementById('playBtn').textContent='▶️';
+  PS.selectedType=null;
+  document.getElementById('checkinInput').value='';
+  document.querySelectorAll('.report-chip').forEach(c=>c.classList.remove('selected'));
+  /* Show set count + encouragement */
+  const meta=document.getElementById('checkinMeta');
+  meta.textContent='Set '+S.setsDone+' complete';
+  document.getElementById('checkinOverlay').classList.add('show');
+  ttsSpeak('What do you notice?');
+}
+
+/* ─ Report type chip selection ─ */
+function selectReportType(el){
+  document.querySelectorAll('.report-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  PS.selectedType=el.dataset.type;
+}
+
+/* ─ Submit check-in: core of Shapiro's decision tree ─ */
+function submitCheckin(){
+  const type=PS.selectedType||'thought';
+  const content=document.getElementById('checkinInput').value.trim()||'(no description)';
+  const report={type,content,setNum:S.setsDone};
+  document.getElementById('checkinOverlay').classList.remove('show');
+
+  /* 1) Check for abreaction signs */
+  if(detectAbreaction(content)){
+    PS.abreactionCount++;
+    showAbreaction();
+    PS.reports.push(report);
+    return;
+  }
+
+  /* 2) Check for looping (same report type + similar content twice) */
+  const lastR=PS.reports.length>0?PS.reports[PS.reports.length-1]:null;
+  const isSame=lastR&&lastR.type===type&&isSimilar(lastR.content,content);
+
+  PS.reports.push(report);
+
+  if(isSame){
+    PS.sameCount++;
+    if(PS.sameCount>=2){
+      if(PS.loopCount===0){
+        /* First time looping → Return to Target */
+        PS.loopCount++;
+        PS.rttActive=true;
+        PS.sudAtRTT=S.sud;
+        showRTT();
+        return;
+      }else{
+        /* Already returned to target and still looping → SUD check then interweave */
+        PS.pendingSUD=true;
+        pauseSUD();
+        return;
+      }
+    }
+  }else{
+    PS.sameCount=0;
+    if(PS.rttActive&&PS.loopCount>0){
+      /* Processing moved after RTT — reset loop state */
+      PS.rttActive=false;PS.loopCount=0;
+    }
+  }
+
+  /* 3) Periodic SUD check every 4th set */
+  if(S.setsDone>0&&S.setsDone%4===0){
+    pauseSUD();
+    return;
+  }
+
+  /* 4) Normal progression: "Go with that" → resume BLS */
+  resumeAfterCheckin();
+}
+
+/* ─ Similarity check for looping detection ─ */
+function isSimilar(a,b){
+  if(!a||!b||a==='(no description)'||b==='(no description)')return true;
+  const wa=a.toLowerCase().split(/\s+/),wb=b.toLowerCase().split(/\s+/);
+  let match=0;wa.forEach(w=>{if(wb.includes(w))match++;});
+  return match>=Math.min(2,Math.floor(wa.length*0.5));
+}
+
+/* ─ Abreaction detection ─ */
+function detectAbreaction(text){
+  const t=text.toLowerCase();
+  const signs=/\b(can'?t\s*breathe|panic|shaking|trembl|frozen|overwhelm|terror|scream|sob|choking|flashback|dissociat)\b/i;
+  return signs.test(t);
+}
+
+/* ─ Show abreaction support ─ */
+function showAbreaction(){
+  const phrase=ABREACTION_PHRASES[PS.abreactionCount%ABREACTION_PHRASES.length];
+  document.getElementById('abreactionMsg').textContent=phrase;
+  document.getElementById('abreactionOverlay').classList.add('show');
+  ttsSpeak(phrase);
+  /* Slow down BLS for gentler processing */
+  S.speed=Math.min(2,S.speed+0.3);
+  document.getElementById('speedLabel').textContent=S.speed.toFixed(1)+'x';
+}
+function confirmAbreaction(){
+  document.getElementById('abreactionOverlay').classList.remove('show');
+  setTimeout(()=>resumeAfterCheckin(),600);
+}
+
+/* ─ Show Return to Target ─ */
+function showRTT(){
+  document.getElementById('rttNC').textContent='"'+(S.nc||'the negative belief')+'"';
+  document.getElementById('rttOverlay').classList.add('show');
+  ttsSpeak('Bring up the original memory. Notice the negative belief and where you feel it in your body.');
+}
+function confirmRTT(){
+  document.getElementById('rttOverlay').classList.remove('show');
+  setTimeout(()=>resumeAfterCheckin(),500);
+}
+
+/* ─ Show Cognitive Interweave ─ */
+function showInterweave(){
+  const domain=ncToDomain(S.nc);
+  const qs=INTERWEAVES[domain]||INTERWEAVES.worth;
+  const q=qs[PS.interweaveIdx%qs.length];
+  PS.interweaveIdx++;
+  document.getElementById('interweaveQ').textContent='"'+q+'"';
+  document.getElementById('interweaveOverlay').classList.add('show');
+  ttsSpeak(q);
+}
+function confirmInterweave(){
+  document.getElementById('interweaveOverlay').classList.remove('show');
+  PS.sameCount=0; /* Reset loop counter after interweave */
+  setTimeout(()=>resumeAfterCheckin(),500);
+}
+
+/* ─ Resume BLS after any interaction ─ */
+function resumeAfterCheckin(){
+  S.playing=true;
+  document.getElementById('playBtn').textContent='⏸';
+  repCnt=0;
+  runBLS();
+}
 
 /* ═══ SPEED & PATH ═══ */
 function adjSpeed(dir){S.speed=Math.max(.4,Math.min(2,S.speed-dir*.2));document.getElementById('speedLabel').textContent=S.speed.toFixed(1)+'x';if(S.playing){stopAllBLS();runBLS();}}
@@ -886,8 +1198,39 @@ function selSud(v){S.sud=v;document.querySelectorAll('#sudScale .sud-num').forEa
 function sudSubmit(){
   document.getElementById('sudOverlay').classList.remove('show');
   S.lowestSud=Math.min(S.lowestSud,S.sud);
-  if(S.sud<=2&&S.phase==='desensitize'){S.phase='install';S.speed=Math.max(.4,S.speed-.2);gsap.to('.bls-area',{background:'rgba(255,249,240,0.3)',duration:1});document.getElementById('sessionPhase').textContent='✨ Positive Belief Installation';gIdx=0;}
+
+  /* Shapiro decision after SUD check */
+  if(S.sud<=1&&S.phase==='desensitize'){
+    /* SUD at ecological 0 → move to Installation */
+    S.phase='install';S.speed=Math.max(.4,S.speed-.2);
+    gsap.to('.bls-area',{background:'rgba(255,249,240,0.3)',duration:1});
+    document.getElementById('sessionPhase').textContent='✨ Positive Belief Installation';
+    gIdx=0;PS.rttActive=false;PS.loopCount=0;PS.sameCount=0;
+  }else if(S.sud<=2&&S.phase==='desensitize'){
+    S.phase='install';S.speed=Math.max(.4,S.speed-.2);
+    gsap.to('.bls-area',{background:'rgba(255,249,240,0.3)',duration:1});
+    document.getElementById('sessionPhase').textContent='✨ Positive Belief Installation';
+    gIdx=0;PS.rttActive=false;PS.loopCount=0;PS.sameCount=0;
+  }
+
+  /* If SUD > 5 auto-adjust for gentler processing */
   if(S.sud>5){S.speed=Math.min(2,S.speed+.2);if(S.modes.audio&&S.soundType==='bowl')S.soundType='waves';document.getElementById('speedLabel').textContent=S.speed.toFixed(1)+'x';}
+
+  /* If this SUD check was triggered by looping after RTT */
+  if(PS.pendingSUD){
+    PS.pendingSUD=false;
+    if(PS.sudAtRTT!==null&&S.sud>=PS.sudAtRTT){
+      /* SUD not decreasing after RTT → cognitive interweave */
+      PS.loopCount++;
+      updInfo();
+      setTimeout(()=>showInterweave(),500);
+      return;
+    }else{
+      /* SUD dropped after RTT → processing is working */
+      PS.rttActive=false;PS.loopCount=0;PS.sameCount=0;
+    }
+  }
+
   updInfo();setTimeout(()=>showMood(),400);
 }
 
@@ -958,6 +1301,7 @@ function shredData(){
 /* ═══ RESTART ═══ */
 function restart(){
   S.setsDone=0;S.sud=7;S.lowestSud=10;S.phase='desensitize';S.playing=false;S.moodHistory=[];S.wizStep=0;S.breathCycles=0;scanned.clear();repCnt=0;
+  resetPS(); /* Reset Shapiro processing state */
   document.querySelectorAll('.body-part').forEach(p=>p.classList.remove('active','released'));
   document.getElementById('scanFeedback').textContent='Tap an area that feels tense';
   document.getElementById('scanCount').textContent='';
@@ -965,6 +1309,8 @@ function restart(){
   const sb=document.getElementById('safeBtn');sb.style.opacity='0';sb.style.pointerEvents='none';
   const sh=document.getElementById('shredBtn');sh.textContent='🗑️ Shred Session Data';sh.disabled=false;delete sh.dataset.done;sh.style.opacity='1';
   document.getElementById('shredStatus').textContent='';
+  /* Dismiss any open overlays */
+  ['checkinOverlay','rttOverlay','interweaveOverlay','abreactionOverlay'].forEach(id=>document.getElementById(id).classList.remove('show'));
   updWiz();stopCam();goTo('welcome',-1);setTimeout(animateWelcome,500);
 }
 
